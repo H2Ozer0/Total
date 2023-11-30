@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+      </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/CSV_trans/pom.xml" />
+        <option value="$PROJECT_DIR$/Intreactive_Albaum/pom.xml" />
+        <option value="$PROJECT_DIR$/Java_Similiarity_Testor/pom.xml" />
+        <option value="$PROJECT_DIR$/MVC_UPLOADER/pom.xml" />
+        <option value="$PROJECT_DIR$/MVC_upload/pom.xml" />
+        <option value="$PROJECT_DIR$/MxNet/pom.xml" />
+        <option value="$PROJECT_DIR$/Python/pom.xml" />
+        <option value="$PROJECT_DIR$/QQ/pom.xml" />
+        <option value="$PROJECT_DIR$/albaum/pom.xml" />
+        <option value="$PROJECT_DIR$/untitled/pom.xml" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="openjdk-21" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>
