@@ -1,10 +1,12 @@
 package controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,6 +17,16 @@ public class Register_Controller {
      * @param model
      * @return
      */
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @RequestMapping("/register_page")
+    public String registerPage(HttpServletRequest request, Model model) {
+        return "register";
+    }
     @RequestMapping("/register_page")
     public String resgister_page(HttpServletRequest request, Model model)
     {
@@ -36,3 +48,4 @@ public class Register_Controller {
         return "Received username: " + username + ", password: " + password;
     }
 }
+
