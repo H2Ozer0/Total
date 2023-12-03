@@ -8,9 +8,9 @@ import java.util.List;
 
 public class AlbumDAO {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/your_database";
-    private static final String USER = "your_username";
-    private static final String PASSWORD = "your_password";
+    private static final String URL = "jdbc:mysql://localhost:3306/albumdb?useSSL=false";
+    private static final String USER = "root";
+    private static final String PASSWORD = "root";
 
     private Connection connection;
 

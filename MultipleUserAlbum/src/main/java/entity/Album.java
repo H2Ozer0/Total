@@ -115,5 +115,4 @@ public class Album {
                 '}';
     }
 
-    // 如果需要，你还可以手动添加 equals 和 hashCode 方法
 }
