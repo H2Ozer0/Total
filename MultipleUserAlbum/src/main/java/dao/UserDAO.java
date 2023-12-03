@@ -11,7 +11,6 @@ public class UserDAO {
     private static final String PASSWORD = "StrongPassword123!";
 
     private Connection connection;
-
     // 修改表名
     private static final String TABLE_NAME = "`User`";
 
@@ -26,11 +25,13 @@ public class UserDAO {
 
     public UserDAO() {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(JDBC_URL, USER, PASSWORD);
+            connection.setAutoCommit(false);
             System.out.println("数据库连接已建立。");
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
+            // 记录连接异常日志
+            System.err.println("无法连接到数据库: " + e.getMessage());
         }
     }
 
@@ -57,6 +58,7 @@ public class UserDAO {
 
 
             preparedStatement.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -153,7 +155,7 @@ public class UserDAO {
         UserDAO userDAO = new UserDAO();
 
         // 插入用户记录
-        User newUser = new User("user001", "john_doe", "password123", "john@example.com", false, "一个普通用户");
+        User newUser = new User("user001", "john_doe", "password123", "john@example.com", false, "normal user");
         userDAO.insertUser(newUser);
 
         // 根据用户ID查询用户

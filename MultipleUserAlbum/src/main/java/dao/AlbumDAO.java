@@ -10,16 +10,18 @@ public class AlbumDAO {
 
     private static final String URL = "jdbc:mysql://localhost:3306/albumdb?useSSL=false";
     private static final String USER = "root";
-    private static final String PASSWORD = "root";
+    private static final String PASSWORD = "18915513655Qq";
 
     private Connection connection;
 
     public AlbumDAO() {
         try {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
+
         } catch (SQLException e) {
             e.printStackTrace();
-            // 处理连接异常
+            // 记录连接异常日志
+            System.err.println("无法连接到数据库: " + e.getMessage());
         }
     }
 
@@ -27,23 +29,25 @@ public class AlbumDAO {
     public void insertAlbum(Album album) {
         try {
             String query = "INSERT INTO album (AlbumID, AlbumName, Description, CreatedAt, IsPublic, IsDeleted, FavoritesCount, LikesCount, CreatorID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            preparedStatement.setString(1, album.getAlbumID());
-            preparedStatement.setString(2, album.getAlbumName());
-            preparedStatement.setString(3, album.getDescription());
-            preparedStatement.setTimestamp(4, album.getCreatedAt());
-            preparedStatement.setBoolean(5, album.isPublic());
-            preparedStatement.setBoolean(6, album.isDeleted());
-            preparedStatement.setInt(7, album.getFavoritesCount());
-            preparedStatement.setInt(8, album.getLikesCount());
-            preparedStatement.setString(9, album.getCreatorID());
+                preparedStatement.setString(1, album.getAlbumID());
+                preparedStatement.setString(2, album.getAlbumName());
+                preparedStatement.setString(3, album.getDescription());
+                preparedStatement.setTimestamp(4, album.getCreatedAt());
+                preparedStatement.setBoolean(5, album.isPublic());
+                preparedStatement.setBoolean(6, album.isDeleted());
+                preparedStatement.setInt(7, album.getFavoritesCount());
+                preparedStatement.setInt(8, album.getLikesCount());
+                preparedStatement.setString(9, album.getCreatorID());
 
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
+                preparedStatement.executeUpdate();
+
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            // 处理插入异常
+            // 记录插入异常日志
+            System.err.println("插入相册记录时发生异常: " + e.getMessage());
         }
     }
 
@@ -52,19 +56,18 @@ public class AlbumDAO {
         Album album = null;
         try {
             String query = "SELECT * FROM album WHERE AlbumID = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, albumID);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                album = mapResultSetToAlbum(resultSet);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, albumID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        album = mapResultSetToAlbum(resultSet);
+                    }
+                }
             }
-
-            resultSet.close();
-            preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            // 处理查询异常
+            // 记录查询异常日志
+            System.err.println("根据相册ID查询相册时发生异常: " + e.getMessage());
         }
         return album;
     }
@@ -74,19 +77,18 @@ public class AlbumDAO {
         List<Album> albums = new ArrayList<>();
         try {
             String query = "SELECT * FROM album";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                Album album = mapResultSetToAlbum(resultSet);
-                albums.add(album);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        Album album = mapResultSetToAlbum(resultSet);
+                        albums.add(album);
+                    }
+                }
             }
-
-            resultSet.close();
-            preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            // 处理查询异常
+            // 记录查询异常日志
+            System.err.println("查询所有相册时发生异常: " + e.getMessage());
         }
         return albums;
     }
@@ -111,19 +113,18 @@ public class AlbumDAO {
         int likesCount = 0;
         try {
             String query = "SELECT LikesCount FROM album WHERE AlbumID = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, albumID);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                likesCount = resultSet.getInt("LikesCount");
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, albumID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        likesCount = resultSet.getInt("LikesCount");
+                    }
+                }
             }
-
-            resultSet.close();
-            preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            // 处理查询异常
+            // 记录查询异常日志
+            System.err.println("查询相册点赞数时发生异常: " + e.getMessage());
         }
         return likesCount;
     }
@@ -133,19 +134,18 @@ public class AlbumDAO {
         int favoritesCount = 0;
         try {
             String query = "SELECT FavoritesCount FROM album WHERE AlbumID = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, albumID);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                favoritesCount = resultSet.getInt("FavoritesCount");
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, albumID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        favoritesCount = resultSet.getInt("FavoritesCount");
+                    }
+                }
             }
-
-            resultSet.close();
-            preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            // 处理查询异常
+            // 记录查询异常日志
+            System.err.println("查询相册收藏数时发生异常: " + e.getMessage());
         }
         return favoritesCount;
     }
@@ -155,19 +155,18 @@ public class AlbumDAO {
         Timestamp createdAt = null;
         try {
             String query = "SELECT CreatedAt FROM album WHERE AlbumID = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, albumID);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                createdAt = resultSet.getTimestamp("CreatedAt");
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, albumID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        createdAt = resultSet.getTimestamp("CreatedAt");
+                    }
+                }
             }
-
-            resultSet.close();
-            preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            // 处理查询异常
+            // 记录查询异常日志
+            System.err.println("查询相册创建时间时发生异常: " + e.getMessage());
         }
         return createdAt;
     }
@@ -177,36 +176,35 @@ public class AlbumDAO {
         List<Album> publicAlbums = new ArrayList<>();
         try {
             String query = "SELECT * FROM album WHERE AlbumName = ? AND IsPublic = true";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, albumName);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                Album album = mapResultSetToAlbum(resultSet);
-                publicAlbums.add(album);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, albumName);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        Album album = mapResultSetToAlbum(resultSet);
+                        publicAlbums.add(album);
+                    }
+                }
             }
-
-            resultSet.close();
-            preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            // 处理查询异常
+            // 记录查询异常日志
+            System.err.println("通过相册名称查找公开相册时发生异常: " + e.getMessage());
         }
         return publicAlbums;
     }
-
     // 编辑相册名称
     public void updateAlbumName(String albumID, String newAlbumName) {
         try {
             String query = "UPDATE album SET AlbumName = ? WHERE AlbumID = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, newAlbumName);
-            preparedStatement.setString(2, albumID);
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, newAlbumName);
+                preparedStatement.setString(2, albumID);
+                preparedStatement.executeUpdate();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            // 处理更新异常
+            // 记录更新异常日志
+            System.err.println("编辑相册名称时发生异常: " + e.getMessage());
         }
     }
 
@@ -214,14 +212,15 @@ public class AlbumDAO {
     public void updateAlbumDescription(String albumID, String newDescription) {
         try {
             String query = "UPDATE album SET Description = ? WHERE AlbumID = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, newDescription);
-            preparedStatement.setString(2, albumID);
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, newDescription);
+                preparedStatement.setString(2, albumID);
+                preparedStatement.executeUpdate();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            // 处理更新异常
+            // 记录更新异常日志
+            System.err.println("编辑相册描述时发生异常: " + e.getMessage());
         }
     }
 
@@ -233,7 +232,8 @@ public class AlbumDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // 处理关闭连接异常
+            // 记录关闭连接异常日志
+            System.err.println("关闭数据库连接时发生异常: " + e.getMessage());
         }
     }
 
@@ -241,7 +241,7 @@ public class AlbumDAO {
         AlbumDAO albumDAO = new AlbumDAO();
 
         // 插入相册记录
-        Album newAlbum = new Album("001", "Summer Vacation", "A trip to the beach", Timestamp.valueOf("2023-01-01 12:00:00"), true, false, 0, 0, "user123");
+        Album newAlbum = new Album("001", "Summer Vacation", "A trip to the beach", Timestamp.valueOf("2023-01-01 12:00:00"), true, false, 0, 0, "user001");
         albumDAO.insertAlbum(newAlbum);
 
         // 根据相册ID查询相册
@@ -274,3 +274,5 @@ public class AlbumDAO {
         albumDAO.closeConnection();
     }
 }
+
+
