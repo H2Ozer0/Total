@@ -8,9 +8,9 @@ import java.util.List;
 
 public class AlbumDAO {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/albumdb?useSSL=false";
-    private static final String USER = "root";
-    private static final String PASSWORD = "18915513655Qq";
+    private static final String URL = "jdbc:mysql://223.2.20.14:3306/albumdb?useSSL=false&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8";
+    private static final String USER = "album";
+    private static final String PASSWORD = "StrongPassword123!";
 
     private Connection connection;
 
@@ -28,7 +28,7 @@ public class AlbumDAO {
     // 插入相册记录
     public void insertAlbum(Album album) {
         try {
-            String query = "INSERT INTO album (AlbumID, AlbumName, Description, CreatedAt, IsPublic, IsDeleted, FavoritesCount, LikesCount, CreatorID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO Album (AlbumID, AlbumName, Description, CreatedAt, IsPublic, IsDeleted, FavoritesCount, LikesCount, CreatorID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
                 preparedStatement.setString(1, album.getAlbumID());
@@ -55,7 +55,7 @@ public class AlbumDAO {
     public Album getAlbumByID(String albumID) {
         Album album = null;
         try {
-            String query = "SELECT * FROM album WHERE AlbumID = ?";
+            String query = "SELECT * FROM Album WHERE AlbumID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, albumID);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -76,7 +76,7 @@ public class AlbumDAO {
     public List<Album> getAllAlbums() {
         List<Album> albums = new ArrayList<>();
         try {
-            String query = "SELECT * FROM album";
+            String query = "SELECT * FROM Album";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
@@ -112,7 +112,7 @@ public class AlbumDAO {
     public int getLikesCount(String albumID) {
         int likesCount = 0;
         try {
-            String query = "SELECT LikesCount FROM album WHERE AlbumID = ?";
+            String query = "SELECT LikesCount FROM Album WHERE AlbumID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, albumID);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -133,7 +133,7 @@ public class AlbumDAO {
     public int getFavoritesCount(String albumID) {
         int favoritesCount = 0;
         try {
-            String query = "SELECT FavoritesCount FROM album WHERE AlbumID = ?";
+            String query = "SELECT FavoritesCount FROM Album WHERE AlbumID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, albumID);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -154,7 +154,7 @@ public class AlbumDAO {
     public Timestamp getCreatedAt(String albumID) {
         Timestamp createdAt = null;
         try {
-            String query = "SELECT CreatedAt FROM album WHERE AlbumID = ?";
+            String query = "SELECT CreatedAt FROM Album WHERE AlbumID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, albumID);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -175,7 +175,7 @@ public class AlbumDAO {
     public List<Album> getPublicAlbumsByName(String albumName) {
         List<Album> publicAlbums = new ArrayList<>();
         try {
-            String query = "SELECT * FROM album WHERE AlbumName = ? AND IsPublic = true";
+            String query = "SELECT * FROM Album WHERE AlbumName = ? AND IsPublic = true";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, albumName);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -195,7 +195,7 @@ public class AlbumDAO {
     // 编辑相册名称
     public void updateAlbumName(String albumID, String newAlbumName) {
         try {
-            String query = "UPDATE album SET AlbumName = ? WHERE AlbumID = ?";
+            String query = "UPDATE Album SET AlbumName = ? WHERE AlbumID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, newAlbumName);
                 preparedStatement.setString(2, albumID);
@@ -211,7 +211,7 @@ public class AlbumDAO {
     // 编辑相册描述
     public void updateAlbumDescription(String albumID, String newDescription) {
         try {
-            String query = "UPDATE album SET Description = ? WHERE AlbumID = ?";
+            String query = "UPDATE Album SET Description = ? WHERE AlbumID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, newDescription);
                 preparedStatement.setString(2, albumID);
