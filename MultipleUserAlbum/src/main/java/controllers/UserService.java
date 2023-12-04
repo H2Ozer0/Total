@@ -2,7 +2,9 @@ package controllers;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserService {
     private final Map<String, User> userDatabase = new HashMap<>();
 

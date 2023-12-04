@@ -20,8 +20,6 @@ public class Register_Controller {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @RequestMapping("/register_page")
     public String registerPage(HttpServletRequest request, Model model) {
