@@ -18,6 +18,10 @@ public class UserService {
 
         userDatabase.put(username, user);
     }
+    public boolean existsByUsername(String username) {
+        // Check if a user with the given username already exists
+        return userList.stream().anyMatch(user -> user.getUsername().equals(username));
+    }
 
     public void saveUser(String userId, String username, String password, String email, boolean isAdmin, String description) {
         // Save the user to the in-memory list (in a real-world scenario, you would persist it to a database)
