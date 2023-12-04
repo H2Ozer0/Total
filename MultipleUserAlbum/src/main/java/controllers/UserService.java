@@ -3,6 +3,7 @@ package controllers;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.stereotype.Service;
+import entity.User;
 
 @Service
 public class UserService {
