@@ -37,7 +37,6 @@ public class User {
     }
     // 设置用户名
     public void setUsername(String username) {
-        // 在实际应用中，你可能需要添加更多的用户名验证逻辑，比如长度、字符集等
         if (username != null && !username.trim().isEmpty()) {
             this.username = username.trim();
         } else {
