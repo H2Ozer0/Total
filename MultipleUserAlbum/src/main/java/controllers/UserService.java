@@ -24,8 +24,8 @@ public class UserService {
         User newUser = new User(userId, username, password, email, isAdmin, description);
         //userList.add(newUser);
     }
-
-
+    public int getTotalNumberOfUser(){ return userDatabase.size(); }
+    public boolean existsByUsername(String username){ return userDatabase.containsKey(username); }
 
     public User getUserByUsername(String username) {
         return userDatabase.get(username);
