@@ -86,6 +86,7 @@
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
         </dependency>
+        <!-- Spring Boot Starter Data JPA includes Hibernate -->
 
     </dependencies>
     <build>
@@ -109,4 +110,9 @@
             </resource>
         </resources>
     </build>
+
+    <dependencies>
+
+    </dependencies>
+
 </project>

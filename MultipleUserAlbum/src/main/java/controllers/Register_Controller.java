@@ -1,10 +1,12 @@
 package controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,6 +17,14 @@ public class Register_Controller {
      * @param model
      * @return
      */
+    @Autowired
+    private UserService userService;
+
+
+    @RequestMapping("/register_page")
+    public String registerPage(HttpServletRequest request, Model model) {
+        return "register";
+    }
     @RequestMapping("/register_page")
     public String resgister_page(HttpServletRequest request, Model model)
     {
@@ -29,10 +39,17 @@ public class Register_Controller {
      */
     @RequestMapping("/Regestion")
     @ResponseBody
-    public String register(@RequestParam String username, @RequestParam String password) {
-        // 处理逻辑
+    public String register(@RequestParam String username, @RequestParam String password, @RequestParam String email, boolean isAdmin, String description) {
+        // 检查用户名是否已被占用
+//        if (userService.existsByUsername(username)) {
+//            return "have existed！";
+//        }
 
+        // 将用户保存到数据库（你需要在 UserService 中实现这个方法）
+        //TODO 写uselist实体类，若uselist为列表/集合，则userid直接求长度
+        userService.saveUser(userId, username, password, email, isAdmin, description);
         // 返回响应内容
         return "Received username: " + username + ", password: " + password;
     }
 }
+
