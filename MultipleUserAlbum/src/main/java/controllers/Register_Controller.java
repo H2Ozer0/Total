@@ -22,10 +22,6 @@ public class Register_Controller {
 
 
     @RequestMapping("/register_page")
-    public String registerPage(HttpServletRequest request, Model model) {
-        return "register";
-    }
-    @RequestMapping("/register_page")
     public String resgister_page(HttpServletRequest request, Model model)
     {
         return "register";
@@ -39,7 +35,7 @@ public class Register_Controller {
      */
     @RequestMapping("/Regestion")
     @ResponseBody
-    public String register(@RequestParam String username, @RequestParam String password, @RequestParam String email, boolean isAdmin, String description) {
+    public String register(@RequestParam String username, @RequestParam String password, @RequestParam String email, @RequestParam(defaultValue = "false") boolean isAdmin, String description) {
         // 检查用户名是否已被占用
 //        if (userService.existsByUsername(username)) {
 //            return "have existed！";
@@ -47,7 +43,7 @@ public class Register_Controller {
 
         // 将用户保存到数据库（你需要在 UserService 中实现这个方法）
         //TODO 写uselist实体类，若uselist为列表/集合，则userid直接求长度
-        userService.saveUser(userId, username, password, email, isAdmin, description);
+        userService.saveUser(username, username, password, email, isAdmin, description);
         // 返回响应内容
         return "Received username: " + username + ", password: " + password;
     }

@@ -34,12 +34,16 @@
     .register-wrapper {
       background-color: #fff;
       width: 358px;
-      height: 588px;
+      height: 700px;
       border-radius: 15px;
       padding: 0 50px;
       position: relative;
       text-align: center;
+
+      /* 添加阴影效果 */
+      box-shadow: 12px 12px 15px rgba(0,0,0,0.9)/*blur值为15px*/
     }
+
 
     .header-wrapper {
       position: relative;
@@ -136,9 +140,12 @@
       <div class="form-wrapper">
         <input type="text" name="username" placeholder="用户名" class="input-item">
         <input type="password" name="password" placeholder="密码" class="input-item">
+        <input type="text" name="email" placeholder="邮箱" class="input-item">
+        <input type="text" name="description" placeholder="描述" class="input-item">
         <button type="submit" class="btn">注册</button>
       </div>
     </form>
+
 
     <div class="msg">
       <a href="${pageContext.request.contextPath}/login_page">已有账户？点击登录</a>
@@ -153,18 +160,19 @@
       // 阻止表单默认提交行为
       event.preventDefault();
 
-      // 获取用户名和密码
-      var username = $('input[name="username"]').val();
-      var password = $('input[name="password"]').val();
+      // 获取表单数据
+      var formData = {
+        username: $('input[name="username"]').val(),
+        password: $('input[name="password"]').val(),
+        email: $('input[name="email"]').val(),
+        description: $('input[name="description"]').val()
+      };
 
       // 发送Ajax请求
       $.ajax({
         type: 'POST',
-        url: '${pageContext.request.contextPath}/Regestion', // 替换为你的后端接口地址
-        data: {
-          username: username,
-          password: password
-        },
+        url: '${pageContext.request.contextPath}/Regestion',
+        data: formData,
         success: function(response) {
           // 处理后端返回的响应
           console.log(response);
@@ -176,6 +184,7 @@
       });
     });
   });
+
 </script>
 </body>
 
