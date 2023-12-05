@@ -20,7 +20,8 @@ public class UserService {
     }
     public boolean existsByUsername(String username) {
         // Check if a user with the given username already exists
-        return userList.stream().anyMatch(user -> user.getUsername().equals(username));
+        //return userList.stream().anyMatch(user -> user.getUsername().equals(username));
+        return userDatabase.containsKey(username);
     }
 
     public void saveUser(String userId, String username, String password, String email, boolean isAdmin, String description) {
@@ -29,12 +30,10 @@ public class UserService {
         //userList.add(newUser);
     }
     public int getTotalNumberOfUser(){ return userDatabase.size(); }
-    public boolean existsByUsername(String username){ return userDatabase.containsKey(username); }
 
     public User getUserByUsername(String username) {
         return userDatabase.get(username);
     }
-
     //在UserList中检查用户名唯一，用于登录
     //public boolean existsByUsername(String username) {
         // Check if a user with the given username already exists
