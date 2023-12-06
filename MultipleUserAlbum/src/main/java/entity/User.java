@@ -1,7 +1,7 @@
 package entity;
 
 public class User {
-    private String userId;
+    private int userId;  // 修改数据类型为 int
     private String username;
     private String password;
     private String email;
@@ -12,9 +12,9 @@ public class User {
     public User() {
     }
 
-    // 带参数的构造函数
-    public User(String userId, String username, String password, String email, boolean isAdmin, String description) {
-        this.userId = userId;
+    // 带参数的构造函数，不再包含 userID 参数
+    public User(String username, String password, String email, boolean isAdmin, String description) {
+        this.userId = 0;  // 初始值可以是 0 或者其他默认值
         this.username = username;
         this.password = password;
         this.email = email;
@@ -23,19 +23,23 @@ public class User {
     }
 
     // 获取用户ID
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
-    // 设置用户ID
-    public void setUserId(String userId) {
+
+
+    // 设置用户ID，注意不再需要检查 userID 是否为 null 或空
+    public void setUserId(int userId) {
         this.userId = userId;
     }
+
 
     // 获取用户名
     public String getUsername() {
         return username;
     }
-    // 设置用户名
+
+    // 设置用户名，保留了非空检查
     public void setUsername(String username) {
         if (username != null && !username.trim().isEmpty()) {
             this.username = username.trim();
@@ -43,11 +47,13 @@ public class User {
             throw new IllegalArgumentException("Username cannot be empty");
         }
     }
+
     // 获取密码
     public String getPassword() {
         return password;
     }
-    // 设置密码
+
+    // 设置密码，保留了非空检查
     public void setPassword(String password) {
         if (password != null) {
             this.password = password;
@@ -56,11 +62,11 @@ public class User {
         }
     }
 
-
     // 获取邮箱
     public String getEmail() {
         return email;
     }
+
     // 设置邮箱
     public void setEmail(String email) {
         this.email = email;
@@ -70,6 +76,7 @@ public class User {
     public boolean isAdmin() {
         return isAdmin;
     }
+
     // 设置是否为管理员
     public void setAdmin(boolean admin) {
         isAdmin = admin;
@@ -79,13 +86,16 @@ public class User {
     public String getDescription() {
         return description;
     }
+
     // 设置用户简介
     public void setDescription(String description) {
         this.description = description;
     }
 
-
-
+    // 添加获取生成的自增主键值的方法，根据需要自行使用
+    public int getGeneratedUserId() {
+        return userId;
+    }
 
     @Override
     public String toString() {

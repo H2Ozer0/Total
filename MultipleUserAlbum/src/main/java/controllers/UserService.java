@@ -26,7 +26,7 @@ public class UserService {
 
     public void saveUser(String userId, String username, String password, String email, boolean isAdmin, String description) {
         // Save the user to the in-memory list (in a real-world scenario, you would persist it to a database)
-        User newUser = new User(userId, username, password, email, isAdmin, description);
+        User newUser = new User(username, password, email, isAdmin, description);
         //userList.add(newUser);
     }
     public int getTotalNumberOfUser(){ return userDatabase.size(); }

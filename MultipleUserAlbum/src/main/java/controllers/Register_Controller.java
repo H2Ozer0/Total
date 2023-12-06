@@ -21,10 +21,7 @@ public class Register_Controller {
     private UserService userService;
 
 
-    @RequestMapping("/register_page")
-    public String registerPage(HttpServletRequest request, Model model) {
-        return "register";
-    }
+
     @RequestMapping("/register_page")
     public String resgister_page(HttpServletRequest request, Model model)
     {
