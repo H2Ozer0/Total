@@ -25,11 +25,7 @@ public class Register_Controller {
     public String registerPage(HttpServletRequest request, Model model) {
         return "register";
     }
-    @RequestMapping("/register_page")
-    public String resgister_page(HttpServletRequest request, Model model)
-    {
-        return "register";
-    }
+
 
     /**
      * 用于处理前端发送的注册信息

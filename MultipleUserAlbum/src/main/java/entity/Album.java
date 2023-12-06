@@ -3,7 +3,7 @@ package entity;
 import java.sql.Timestamp;
 
 public class Album {
-    private String albumID;
+    private int albumID;  // 修改为 int 类型，因为数据库表中 AlbumID 是 INT AUTO_INCREMENT
     private String albumName;
     private String description;
     private Timestamp createdAt;
@@ -11,13 +11,12 @@ public class Album {
     private boolean isDeleted;
     private int favoritesCount;
     private int likesCount;
-    private String creatorID;
+    private int creatorID;
 
     public Album() {
     }
 
-    public Album(String albumID, String albumName, String description, Timestamp createdAt, boolean isPublic, boolean isDeleted, int favoritesCount, int likesCount, String creatorID) {
-        this.albumID = albumID;
+    public Album( String albumName, String description, Timestamp createdAt, boolean isPublic, boolean isDeleted, int favoritesCount, int likesCount, int creatorID) {
         this.albumName = albumName;
         this.description = description;
         this.createdAt = createdAt;
@@ -28,11 +27,11 @@ public class Album {
         this.creatorID = creatorID;
     }
 
-    public String getAlbumID() {
+    public int getAlbumID() {
         return albumID;
     }
 
-    public void setAlbumID(String albumID) {
+    public void setAlbumID(int albumID) {
         this.albumID = albumID;
     }
 
@@ -92,18 +91,18 @@ public class Album {
         this.likesCount = likesCount;
     }
 
-    public String getCreatorID() {
+    public int getCreatorID() {
         return creatorID;
     }
 
-    public void setCreatorID(String creatorID) {
+    public void setCreatorID(int creatorID) {
         this.creatorID = creatorID;
     }
 
     @Override
     public String toString() {
         return "entity.Album{" +
-                "albumID='" + albumID + '\'' +
+                "albumID=" + albumID +
                 ", albumName='" + albumName + '\'' +
                 ", description='" + description + '\'' +
                 ", createdAt=" + createdAt +
@@ -114,5 +113,4 @@ public class Album {
                 ", creatorID='" + creatorID + '\'' +
                 '}';
     }
-
 }
