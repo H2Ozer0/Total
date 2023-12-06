@@ -2,13 +2,15 @@ package controllers;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import dao.UserDAO;
 import org.springframework.stereotype.Service;
 import entity.User;
 
 @Service
 public class UserService {
     private final Map<String, User> userDatabase = new HashMap<>();
-
+    UserDAO userDAO = new UserDAO();
     public void registerUser(String username, String password) {
 
         User user = new User();
@@ -24,10 +26,10 @@ public class UserService {
         return userDatabase.containsKey(username);
     }
 
-    public void saveUser(String userId, String username, String password, String email, boolean isAdmin, String description) {
+    public void saveUser( String username, String password, String email, boolean isAdmin, String description) {
         // Save the user to the in-memory list (in a real-world scenario, you would persist it to a database)
         User newUser = new User(username, password, email, isAdmin, description);
-        //userList.add(newUser);
+        userDAO.insertUser(newUser);
     }
     public int getTotalNumberOfUser(){ return userDatabase.size(); }
 
