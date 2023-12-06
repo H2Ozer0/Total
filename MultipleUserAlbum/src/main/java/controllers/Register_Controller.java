@@ -22,10 +22,10 @@ public class Register_Controller {
 
 
     @RequestMapping("/register_page")
-    public String resgister_page(HttpServletRequest request, Model model)
-    {
+    public String registerPage(HttpServletRequest request, Model model) {
         return "register";
     }
+
 
     /**
      * 用于处理前端发送的注册信息
@@ -35,18 +35,15 @@ public class Register_Controller {
      */
     @RequestMapping("/Regestion")
     @ResponseBody
-    public String register(@RequestParam String username, @RequestParam String password, @RequestParam String email, boolean isAdmin, @RequestParam String description) {
+    public String register(@RequestParam String username, @RequestParam String password, @RequestParam String email, boolean isAdmin, String description) {
         // 检查用户名是否已被占用
         if (userService.existsByUsername(username)) {
             return "have existed！";
         }
-
-        String userId = String.valueOf(userService.getTotalNumberOfUser() + 1);
-
-        /**
-         * 在这里原来是 userService.saveUser(userID, username, password, email, isAdmin, description);
-         * 可是由于userService.getTotalNumberOfUser() 有错误，导致主键重复，所以改用用户名作为用户ID
-         */
+/**
+ * UserID有问题，user的主键暂时使用username代替
+ */
+        String userId = String.valueOf(userService.getTotalNumberOfUser() + 1); 
         // 将用户保存到数据库（你需要在 UserService 中实现这个方法
         userService.saveUser(username, username, password, email, isAdmin, description);
         // 返回响应内容
