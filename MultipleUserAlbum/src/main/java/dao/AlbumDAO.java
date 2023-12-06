@@ -28,21 +28,25 @@ public class AlbumDAO {
     // 插入相册记录
     public void insertAlbum(Album album) {
         try {
-            String query = "INSERT INTO Album (AlbumID, AlbumName, Description, CreatedAt, IsPublic, IsDeleted, FavoritesCount, LikesCount, CreatorID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            String query = "INSERT INTO Album (AlbumName, Description, CreatedAt, IsPublic, IsDeleted, FavoritesCount, LikesCount, CreatorID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-                preparedStatement.setString(1, album.getAlbumID());
-                preparedStatement.setString(2, album.getAlbumName());
-                preparedStatement.setString(3, album.getDescription());
-                preparedStatement.setTimestamp(4, album.getCreatedAt());
-                preparedStatement.setBoolean(5, album.isPublic());
-                preparedStatement.setBoolean(6, album.isDeleted());
-                preparedStatement.setInt(7, album.getFavoritesCount());
-                preparedStatement.setInt(8, album.getLikesCount());
-                preparedStatement.setString(9, album.getCreatorID());
+                preparedStatement.setString(1, album.getAlbumName());
+                preparedStatement.setString(2, album.getDescription());
+                preparedStatement.setTimestamp(3, album.getCreatedAt());
+                preparedStatement.setBoolean(4, album.isPublic());
+                preparedStatement.setBoolean(5, album.isDeleted());
+                preparedStatement.setInt(6, album.getFavoritesCount());
+                preparedStatement.setInt(7, album.getLikesCount());
+                preparedStatement.setInt(8, album.getCreatorID());  // 使用getInt方法获取CreatorID
 
                 preparedStatement.executeUpdate();
 
+                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        album.setAlbumID(generatedKeys.getInt(1));
+                    }
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -51,52 +55,10 @@ public class AlbumDAO {
         }
     }
 
-    // 根据相册ID查询相册
-    public Album getAlbumByID(String albumID) {
-        Album album = null;
-        try {
-            String query = "SELECT * FROM Album WHERE AlbumID = ?";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                preparedStatement.setString(1, albumID);
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    if (resultSet.next()) {
-                        album = mapResultSetToAlbum(resultSet);
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            // 记录查询异常日志
-            System.err.println("根据相册ID查询相册时发生异常: " + e.getMessage());
-        }
-        return album;
-    }
-
-    // 查询所有相册
-    public List<Album> getAllAlbums() {
-        List<Album> albums = new ArrayList<>();
-        try {
-            String query = "SELECT * FROM Album";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    while (resultSet.next()) {
-                        Album album = mapResultSetToAlbum(resultSet);
-                        albums.add(album);
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            // 记录查询异常日志
-            System.err.println("查询所有相册时发生异常: " + e.getMessage());
-        }
-        return albums;
-    }
-
     // 将 ResultSet 映射到 entity.Album 对象
     private Album mapResultSetToAlbum(ResultSet resultSet) throws SQLException {
         Album album = new Album();
-        album.setAlbumID(resultSet.getString("AlbumID"));
+        album.setAlbumID(resultSet.getInt("AlbumID"));
         album.setAlbumName(resultSet.getString("AlbumName"));
         album.setDescription(resultSet.getString("Description"));
         album.setCreatedAt(resultSet.getTimestamp("CreatedAt"));
@@ -104,17 +66,17 @@ public class AlbumDAO {
         album.setDeleted(resultSet.getBoolean("IsDeleted"));
         album.setFavoritesCount(resultSet.getInt("FavoritesCount"));
         album.setLikesCount(resultSet.getInt("LikesCount"));
-        album.setCreatorID(resultSet.getString("CreatorID"));
+        album.setCreatorID(resultSet.getInt("CreatorID"));
         return album;
     }
 
     // 查询相册点赞数
-    public int getLikesCount(String albumID) {
+    public int getLikesCount(int albumID) {
         int likesCount = 0;
         try {
             String query = "SELECT LikesCount FROM Album WHERE AlbumID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                preparedStatement.setString(1, albumID);
+                preparedStatement.setInt(1, albumID);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
                         likesCount = resultSet.getInt("LikesCount");
@@ -130,12 +92,12 @@ public class AlbumDAO {
     }
 
     // 查询相册收藏数
-    public int getFavoritesCount(String albumID) {
+    public int getFavoritesCount(int albumID) {
         int favoritesCount = 0;
         try {
             String query = "SELECT FavoritesCount FROM Album WHERE AlbumID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                preparedStatement.setString(1, albumID);
+                preparedStatement.setInt(1, albumID);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
                         favoritesCount = resultSet.getInt("FavoritesCount");
@@ -151,12 +113,12 @@ public class AlbumDAO {
     }
 
     // 查询相册创建时间
-    public Timestamp getCreatedAt(String albumID) {
+    public Timestamp getCreatedAt(int albumID) {
         Timestamp createdAt = null;
         try {
             String query = "SELECT CreatedAt FROM Album WHERE AlbumID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                preparedStatement.setString(1, albumID);
+                preparedStatement.setInt(1, albumID);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
                         createdAt = resultSet.getTimestamp("CreatedAt");
@@ -193,12 +155,12 @@ public class AlbumDAO {
         return publicAlbums;
     }
     // 编辑相册名称
-    public void updateAlbumName(String albumID, String newAlbumName) {
+    public void updateAlbumName(int albumID, String newAlbumName) {
         try {
             String query = "UPDATE Album SET AlbumName = ? WHERE AlbumID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, newAlbumName);
-                preparedStatement.setString(2, albumID);
+                preparedStatement.setInt(2, albumID);
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
@@ -209,12 +171,12 @@ public class AlbumDAO {
     }
 
     // 编辑相册描述
-    public void updateAlbumDescription(String albumID, String newDescription) {
+    public void updateAlbumDescription(int albumID, String newDescription) {
         try {
             String query = "UPDATE Album SET Description = ? WHERE AlbumID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, newDescription);
-                preparedStatement.setString(2, albumID);
+                preparedStatement.setInt(2, albumID);
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
@@ -222,6 +184,28 @@ public class AlbumDAO {
             // 记录更新异常日志
             System.err.println("编辑相册描述时发生异常: " + e.getMessage());
         }
+
+    }
+
+    // 查询相册记录根据AlbumID
+    public Album getAlbumByID(int albumID) {
+        Album album = null;
+        try {
+            String query = "SELECT * FROM Album WHERE AlbumID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, albumID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        album = mapResultSetToAlbum(resultSet);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // 记录查询异常日志
+            System.err.println("根据相册ID查询相册时发生异常: " + e.getMessage());
+        }
+        return album;
     }
 
     // 关闭数据库连接
@@ -241,23 +225,23 @@ public class AlbumDAO {
         AlbumDAO albumDAO = new AlbumDAO();
 
         // 插入相册记录
-        Album newAlbum = new Album("001", "Summer Vacation", "A trip to the beach", Timestamp.valueOf("2023-01-01 12:00:00"), true, false, 0, 0, "user001");
+        Album newAlbum = new Album("Summer Vacation", "A trip to the beach", Timestamp.valueOf("2023-01-01 12:00:00"), true, false, 0, 0, 1);
         albumDAO.insertAlbum(newAlbum);
 
         // 根据相册ID查询相册
-        Album retrievedAlbum = albumDAO.getAlbumByID("001");
+        Album retrievedAlbum = albumDAO.getAlbumByID(newAlbum.getAlbumID());
         System.out.println("Retrieved entity.Album: " + retrievedAlbum);
 
         // 查询相册点赞数
-        int likesCount = albumDAO.getLikesCount("001");
+        int likesCount = albumDAO.getLikesCount(newAlbum.getAlbumID());
         System.out.println("Likes Count: " + likesCount);
 
         // 查询相册收藏数
-        int favoritesCount = albumDAO.getFavoritesCount("001");
+        int favoritesCount = albumDAO.getFavoritesCount(newAlbum.getAlbumID());
         System.out.println("Favorites Count: " + favoritesCount);
 
         // 查询相册创建时间
-        Timestamp createdAt = albumDAO.getCreatedAt("001");
+        Timestamp createdAt = albumDAO.getCreatedAt(newAlbum.getAlbumID());
         System.out.println("Created At: " + createdAt);
 
         // 通过相册名称查找公开相册
@@ -265,10 +249,10 @@ public class AlbumDAO {
         System.out.println("Public Albums: " + publicAlbums);
 
         // 编辑相册名称
-        albumDAO.updateAlbumName("001", "Vacation Memories");
+        albumDAO.updateAlbumName(newAlbum.getAlbumID(), "Vacation Memories");
 
         // 编辑相册描述
-        albumDAO.updateAlbumDescription("001", "Memories from our amazing vacation");
+        albumDAO.updateAlbumDescription(newAlbum.getAlbumID(), "Memories from our amazing vacation");
 
         // 关闭数据库连接
         albumDAO.closeConnection();
