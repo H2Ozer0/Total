@@ -7,37 +7,34 @@ import entity.User;
 
 @Service
 public class UserService {
-    private final Map<String, User> userDatabase = new HashMap<>();
+    private final Map<Integer, User> userDatabase = new HashMap<>();
+    private int userIdCounter = 1;
 
-    public void registerUser(String username, String password) {
+    public void registerUser(String username, String password, String email, boolean isAdmin, String description) {
+        // Simulate auto-increment for UserID
+        int userId = userIdCounter++;
 
-        User user = new User();
-        user.setUsername(username);
-
-        user.setPassword(password);
-
-        userDatabase.put(username, user);
+        User user = new User(username, password, email, isAdmin, description);
+        userDatabase.put(userId, user);
     }
+
     public boolean existsByUsername(String username) {
-        // Check if a user with the given username already exists
-        //return userList.stream().anyMatch(user -> user.getUsername().equals(username));
-        return userDatabase.containsKey(username);
+        return userDatabase.values().stream().anyMatch(user -> user.getUsername().equals(username));
     }
 
-    public void saveUser(String userId, String username, String password, String email, boolean isAdmin, String description) {
-        // Save the user to the in-memory list (in a real-world scenario, you would persist it to a database)
+    public void saveUser(int userId, String username, String password, String email, boolean isAdmin, String description) {
         User newUser = new User(username, password, email, isAdmin, description);
-        //userList.add(newUser);
+        userDatabase.put(userId, newUser);
     }
-    public int getTotalNumberOfUser(){ return userDatabase.size(); }
+
+    public int getTotalNumberOfUser() {
+        return userDatabase.size();
+    }
 
     public User getUserByUsername(String username) {
-        return userDatabase.get(username);
+        return userDatabase.values().stream()
+                .filter(user -> user.getUsername().equals(username))
+                .findFirst()
+                .orElse(null);
     }
-    //在UserList中检查用户名唯一，用于登录
-    //public boolean existsByUsername(String username) {
-        // Check if a user with the given username already exists
-        // Check in userList
-        // return userList.stream().anyMatch(user -> user.getUsername().equals(username));
-    //}
 }
