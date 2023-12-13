@@ -1,11 +1,14 @@
 package dao;
 
 import entity.Album;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Configuration
 public class AlbumDAO {
 
     private static final String URL = "jdbc:mysql://223.2.20.14:3306/albumdb?useSSL=false&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8";
@@ -13,6 +16,7 @@ public class AlbumDAO {
     private static final String PASSWORD = "StrongPassword123!";
 
     private Connection connection;
+
 
     public AlbumDAO() {
         try {
@@ -224,6 +228,7 @@ public class AlbumDAO {
     public static void main(String[] args) {
         AlbumDAO albumDAO = new AlbumDAO();
 
+
         // 插入相册记录
         Album newAlbum = new Album("Summer Vacation", "A trip to the beach", Timestamp.valueOf("2023-01-01 12:00:00"), true, false, 0, 0, 1);
         albumDAO.insertAlbum(newAlbum);
@@ -256,6 +261,10 @@ public class AlbumDAO {
 
         // 关闭数据库连接
         albumDAO.closeConnection();
+    }
+    @Bean
+    public AlbumDAO albumDAO() {
+        return new AlbumDAO();
     }
 }
 

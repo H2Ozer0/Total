@@ -1,47 +1,48 @@
 package controllers;
 
-
 import dao.FriendshipDAO;
 import entity.Friendship;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
-
+@Controller
+@RequestMapping("/friendship")
 public class Friendship_Controller {
 
     private final FriendshipDAO friendshipDAO;
 
-    public Friendship_Controller() {
-        this.friendshipDAO = new FriendshipDAO();
+    @Autowired
+    public Friendship_Controller(FriendshipDAO friendshipDAO) {
+        this.friendshipDAO = friendshipDAO;
     }
 
-    public void createFriendship(int userID1, int userID2, String friendshipStatus, Timestamp createdAt) {
-        Friendship newFriendship = new Friendship(userID1, userID2, friendshipStatus, createdAt);
-        friendshipDAO.insertFriendship(newFriendship);
-        System.out.println("Friendship created: " + newFriendship);
+    @GetMapping("/create")
+    public String showFriendshipForm(Model model) {
+        model.addAttribute("friendship", new Friendship());
+        return "friendship-form";
     }
 
-    public void displayFriendshipInfo(int friendshipID) {
+    @PostMapping("/create")
+    public String createFriendship(@ModelAttribute Friendship friendship) {
+        friendshipDAO.insertFriendship(friendship);
+        return "redirect:/friendship/" + friendship.getFriendshipID();
+    }
+
+    @GetMapping("/{friendshipID}")
+    public String viewFriendship(@PathVariable int friendshipID, Model model) {
         Friendship friendship = friendshipDAO.getFriendshipByID(friendshipID);
-        if (friendship != null) {
-            System.out.println("Friendship information: " + friendship);
-        } else {
-            System.out.println("Friendship not found with ID: " + friendshipID);
-        }
+        model.addAttribute("friendship", friendship);
+        return "friendship-details";
     }
 
-    public void closeConnection() {
-        friendshipDAO.closeConnection();
-        System.out.println("Database connection closed.");
-    }
+    // Other methods for updating, deleting, and listing friendships can be added here
 
-    public static void main(String[] args) {
-        Friendship_Controller friendshipController = new Friendship_Controller();
-
-        // 示例操作
-        friendshipController.createFriendship(1, 2, "Pending", Timestamp.valueOf("2023-01-01 12:00:00"));
-        friendshipController.displayFriendshipInfo(1);
-
-        // 关闭数据库连接
-        friendshipController.closeConnection();
+    // Exception handling example
+    @ExceptionHandler(Exception.class)
+    public String handleException(Exception e, Model model) {
+        model.addAttribute("error", e.getMessage());
+        return "error-page";
     }
 }
