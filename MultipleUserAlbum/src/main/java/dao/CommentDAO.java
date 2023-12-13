@@ -26,7 +26,13 @@ public class CommentDAO {
     // 插入评论记录
     public void insertComment(Comment comment) {
         try {
-            String query = "INSERT INTO Comment (AlbumID, Content, CommentTime) VALUES (?, ?, ?, ?)";
+            if (!albumExists(comment.getAlbumID())) {
+                throw new IllegalArgumentException("相册不存在，无法插入评论。AlbumID: " + comment.getAlbumID());
+            }
+            if (!userExists(comment.getCommenterID())) {
+                throw new IllegalArgumentException("评论人不存在，无法插入评论。CommenterID: " + comment.getCommenterID());
+            }
+            String query = "INSERT INTO Comment (AlbumID, Content, CommenterID,CommentTime) VALUES (?, ?, ?, ?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 preparedStatement.setInt(1, comment.getAlbumID());
                 preparedStatement.setString(2, comment.getContent());
@@ -51,6 +57,9 @@ public class CommentDAO {
     public int getCommentCount(int albumID) {
         int commentCount = 0;
         try {
+            if (!albumExists(albumID) ){
+                throw new IllegalArgumentException("相册不存在，无法查询评论。AlbumID: " + albumID);
+            }
             String query = "SELECT COUNT(*) AS CommentCount FROM Comment WHERE AlbumID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, albumID);
@@ -71,6 +80,9 @@ public class CommentDAO {
     public List<Comment> getCommentsByUser(int commenterID) {
         List<Comment> userComments = new ArrayList<>();
         try {
+            if (!userExists(commenterID)) {
+                throw new IllegalArgumentException("评论人不存在，无法查询评论。CommenterID: " + commenterID);
+            }
             String query = "SELECT * FROM Comment WHERE CommenterID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, commenterID);
@@ -92,6 +104,9 @@ public class CommentDAO {
     public List<Comment> getCommentsByAlbum(int albumID) {
         List<Comment> albumComments = new ArrayList<>();
         try {
+            if (!albumExists(albumID) ){
+                throw new IllegalArgumentException("相册不存在，无法查询评论。AlbumID: " + albumID);
+            }
             String query = "SELECT * FROM Comment WHERE AlbumID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, albumID);
@@ -154,6 +169,45 @@ public class CommentDAO {
         comment.setCommentTime(resultSet.getTimestamp("CommentTime"));
         return comment;
     }
+    // 新增方法，用于检查相册是否存在
+    private boolean albumExists(int albumID) throws SQLException {
+        String query = "SELECT COUNT(*) AS AlbumCount FROM Album WHERE AlbumID = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, albumID);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return resultSet.next() && resultSet.getInt("AlbumCount") > 0;
+            }
+        }
+    }
+
+    // 新增方法，用于检查评论人是否存在
+    private boolean userExists(int commenterID) throws SQLException {
+        String query = "SELECT COUNT(*) AS UserCount FROM User WHERE UserID = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, commenterID);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return resultSet.next() && resultSet.getInt("UserCount") > 0;
+            }
+        }
+    }
+
+    // 删除评论
+    public void deleteComment(int commentID) {
+        try {
+            String query = "DELETE FROM Comment WHERE CommentID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, commentID);
+                int rowsAffected = preparedStatement.executeUpdate();
+
+                if (rowsAffected == 0) {
+                    throw new IllegalArgumentException("评论不存在或已被删除。CommentID: " + commentID);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("删除评论时发生异常: " + e.getMessage());
+        }
+    }
 
     // 关闭数据库连接
     public void closeConnection() {
@@ -188,6 +242,8 @@ public class CommentDAO {
 
         // 更新评论内容
         commentDAO.updateCommentContent(newComment.getCommentID(), "Haha");
+//        // 删除评论
+//        commentDAO.deleteComment(newComment.getCommentID());
 
         // 关闭数据库连接
         commentDAO.closeConnection();
