@@ -1,7 +1,9 @@
 package entity;
 
 
-
+/**
+ * 用于向前端传递后端定义的用户、相册等类
+ */
 public class DataResult {
     private int status;
     private String msg = "";
