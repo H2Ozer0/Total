@@ -8,7 +8,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Configuration
 public class AlbumDAO {
 
     private static final String URL = "jdbc:mysql://223.2.20.14:3306/albumdb?useSSL=false&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8";
@@ -225,47 +224,47 @@ public class AlbumDAO {
         }
     }
 
-    public static void main(String[] args) {
-        AlbumDAO albumDAO = new AlbumDAO();
-
-
-        // 插入相册记录
-        Album newAlbum = new Album("Summer Vacation", "A trip to the beach", Timestamp.valueOf("2023-01-01 12:00:00"), true, false, 0, 0, 1);
-        albumDAO.insertAlbum(newAlbum);
-
-        // 根据相册ID查询相册
-        Album retrievedAlbum = albumDAO.getAlbumByID(newAlbum.getAlbumID());
-        System.out.println("Retrieved entity.Album: " + retrievedAlbum);
-
-        // 查询相册点赞数
-        int likesCount = albumDAO.getLikesCount(newAlbum.getAlbumID());
-        System.out.println("Likes Count: " + likesCount);
-
-        // 查询相册收藏数
-        int favoritesCount = albumDAO.getFavoritesCount(newAlbum.getAlbumID());
-        System.out.println("Favorites Count: " + favoritesCount);
-
-        // 查询相册创建时间
-        Timestamp createdAt = albumDAO.getCreatedAt(newAlbum.getAlbumID());
-        System.out.println("Created At: " + createdAt);
-
-        // 通过相册名称查找公开相册
-        List<Album> publicAlbums = albumDAO.getPublicAlbumsByName("Summer Vacation");
-        System.out.println("Public Albums: " + publicAlbums);
-
-        // 编辑相册名称
-        albumDAO.updateAlbumName(newAlbum.getAlbumID(), "Vacation Memories");
-
-        // 编辑相册描述
-        albumDAO.updateAlbumDescription(newAlbum.getAlbumID(), "Memories from our amazing vacation");
-
-        // 关闭数据库连接
-        albumDAO.closeConnection();
-    }
-    @Bean
-    public AlbumDAO albumDAO() {
-        return new AlbumDAO();
-    }
+//    public static void main(String[] args) {
+//        AlbumDAO albumDAO = new AlbumDAO();
+//
+//
+//        // 插入相册记录
+//        Album newAlbum = new Album("Summer Vacation", "A trip to the beach", Timestamp.valueOf("2023-01-01 12:00:00"), true, false, 0, 0, 1);
+//        albumDAO.insertAlbum(newAlbum);
+//
+//        // 根据相册ID查询相册
+//        Album retrievedAlbum = albumDAO.getAlbumByID(newAlbum.getAlbumID());
+//        System.out.println("Retrieved entity.Album: " + retrievedAlbum);
+//
+//        // 查询相册点赞数
+//        int likesCount = albumDAO.getLikesCount(newAlbum.getAlbumID());
+//        System.out.println("Likes Count: " + likesCount);
+//
+//        // 查询相册收藏数
+//        int favoritesCount = albumDAO.getFavoritesCount(newAlbum.getAlbumID());
+//        System.out.println("Favorites Count: " + favoritesCount);
+//
+//        // 查询相册创建时间
+//        Timestamp createdAt = albumDAO.getCreatedAt(newAlbum.getAlbumID());
+//        System.out.println("Created At: " + createdAt);
+//
+//        // 通过相册名称查找公开相册
+//        List<Album> publicAlbums = albumDAO.getPublicAlbumsByName("Summer Vacation");
+//        System.out.println("Public Albums: " + publicAlbums);
+//
+//        // 编辑相册名称
+//        albumDAO.updateAlbumName(newAlbum.getAlbumID(), "Vacation Memories");
+//
+//        // 编辑相册描述
+//        albumDAO.updateAlbumDescription(newAlbum.getAlbumID(), "Memories from our amazing vacation");
+//
+//        // 关闭数据库连接
+//        albumDAO.closeConnection();
+//    }
+//    @Bean
+//    public AlbumDAO albumDAO() {
+//        return new AlbumDAO();
+//    }
 }
 
 

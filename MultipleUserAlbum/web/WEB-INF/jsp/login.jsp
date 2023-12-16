@@ -1,10 +1,11 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html lang="en">
-
+<!DOCTYPE html>
+<html>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8" %>
 <head>
   <meta charset="UTF-8">
   <title>登录界面</title>
-  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js" ></script>
   <style>
     * {
       margin: 0;
@@ -160,9 +161,9 @@
     <!-- 添加一个 id 属性，以便在 JavaScript 中引用 -->
     <form id="loginForm">
       <div class="form-wrapper">
-        <input type="text" name="username" placeholder="用户名" class="input-item">
+        <input type="text" name="id" placeholder="用户id" class="input-item">
         <input type="password" name="password" placeholder="密码" class="input-item">
-        <button type="submit" class="btn">登录</button> <!-- 使用 button 元素作为提交按钮 -->
+        <button type="button"id="login_btn" class="btn">登录</button> <!-- 使用 button 元素作为提交按钮 -->
       </div>
     </form>
 
@@ -181,33 +182,36 @@
 
 <script>
   $(document).ready(function() {
-    // 监听表单提交事件
-    $('#loginForm').on('submit', function(event) {
-      // 阻止表单默认提交行为
-      event.preventDefault();
-
+    // 监听登录按钮点击事件
+    $('#login_btn').on('click', function() {
       // 获取用户名和密码
-      var username = $('input[name="username"]').val();
+      var id = $('input[name="id"]').val();
       var password = $('input[name="password"]').val();
 
       // 发送Ajax请求
       $.ajax({
-        type: 'POST',
+        type: 'post',
         url: '${pageContext.request.contextPath}/login', // 替换为你的后端接口地址
         data: {
-          username: username,
-          password: password
+          "id": id,
+          "pass": password
         },
-        success: function(response) {
+        dataType:"json",
+
+        success: function(result) {
           // 处理后端返回的响应
-          console.log(response);
+          console.log(result);
+
         },
         error: function(error) {
           // 处理错误
           console.log(error);
+          console.log("Sending data:", { "nameofuser": username, "pass": password });
+
         }
       });
     });
   });
 </script>
+
 </html>
