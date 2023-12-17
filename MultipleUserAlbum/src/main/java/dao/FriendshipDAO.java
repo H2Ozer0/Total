@@ -1,6 +1,8 @@
 package dao;
 
 import entity.Friendship;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -132,6 +134,7 @@ public class FriendshipDAO {
         }
     }
 
+
     public static void main(String[] args) {
         FriendshipDAO friendshipDAO = new FriendshipDAO();
 
@@ -146,4 +149,8 @@ public class FriendshipDAO {
         // 关闭数据库连接
         friendshipDAO.closeConnection();
     }
+//    @Bean
+//    public FriendshipDAO friendshipDAO() {
+//        return new FriendshipDAO();
+//    }
 }
