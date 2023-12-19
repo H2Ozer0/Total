@@ -1,14 +1,15 @@
-package controllers;
+package server;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import dao.UserDAO;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 import entity.User;
 
 @Service
-public class UserService {
+public class UserServer {
     private final Map<String, User> userDatabase = new HashMap<>();
     UserDAO userDAO = new UserDAO();
     public void registerUser(String username, String password) {

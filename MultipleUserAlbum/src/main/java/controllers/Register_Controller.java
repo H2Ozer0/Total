@@ -6,6 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import server.UserServer;
+
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +20,7 @@ public class Register_Controller {
      * @return
      */
     @Autowired
-    private UserService userService;
+    private UserServer userServer;
 
 
 
@@ -38,12 +40,12 @@ public class Register_Controller {
     @ResponseBody
     public String register(@RequestParam String username, @RequestParam String password, @RequestParam String email, boolean isAdmin, String description) {
         // 检查用户名是否已被占用
-        if (userService.existsByUsername(username)) {
+        if (userServer.existsByUsername(username)) {
             return "have existed！";
         }
 
         // 将用户保存到数据库（你需要在 UserService 中实现这个方法
-        userService.saveUser( username, password, email, isAdmin, description);
+        userServer.saveUser( username, password, email, isAdmin, description);
         // 返回响应内容
         return "Received username: " + username + ", password: " + password;
     }

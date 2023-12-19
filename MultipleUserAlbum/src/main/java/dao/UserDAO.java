@@ -3,6 +3,8 @@ package dao;
 import entity.User;
 
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserDAO {
 
