@@ -9,7 +9,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>${myInfo.name} -照片管理</title>
+    <title>${myInfo.username} -照片管理</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/layui/css/layui.css" type="text/css"/>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/st-style.css" type="text/css"/>
@@ -36,7 +36,7 @@
                 <%--选择相册的select--%>
                 <select data-type = "reload" id="album_choose" name="album_choose" lay-filter="album_choose">
                     <c:forEach var="album" items="${albumList}">
-                        <option value="${album.id}">${album.name}</option>
+                        <option value="${album.albumID}">${album.albumName}</option>
                     </c:forEach>
                 </select>
             </div>
