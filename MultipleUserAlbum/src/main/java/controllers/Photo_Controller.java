@@ -1,80 +1,68 @@
 package controllers;
 
-import dao.PhotoDAO;
 import entity.Photo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import java.sql.Timestamp;
 
+import server.PhotoServer;
 
 import java.util.List;
-
 
 @Controller
 @RequestMapping("/photos")
 public class Photo_Controller {
 
-    @Autowired
-    private PhotoDAO photoDAO;
+    private final PhotoServer photoServer;
 
-    @GetMapping("/list")
-    public String showPhotoList(Model model) {
-        List<Photo> photos = photoDAO.getAllPhotos();
+    @Autowired
+    public Photo_Controller(PhotoServer photoServer) {
+        this.photoServer = photoServer;
+    }
+
+    @GetMapping
+    public String getAllPhotos(Model model) {
+        List<Photo> photos = photoServer.getAllPhotos();
         model.addAttribute("photos", photos);
-        return "photo-list";
+        return "photo/allPhotos"; // Assuming you have a view named "allPhotos.jsp" to display all photos.
+    }
+
+    @GetMapping("/{photoID}")
+    public String getPhotoById(@PathVariable int photoID, Model model) {
+        Photo photo = photoServer.getPhotoByID(photoID);
+        model.addAttribute("photo", photo);
+        return "photo/photoDetails"; // Assuming you have a view named "photoDetails.jsp" to display photo details.
     }
 
     @GetMapping("/upload")
     public String showUploadForm(Model model) {
-        model.addAttribute("photo", new Photo(0, "", "", null, false));
-// 用于绑定上传表单的实体
-        return "upload-form";
+        // You might want to provide additional data to the view for the upload form.
+        return "photo/uploadForm"; // Assuming you have a view named "uploadForm.jsp" for photo upload.
     }
 
+    @PostMapping("/upload")
+    public String uploadPhoto(@ModelAttribute Photo photo) {
+        photoServer.uploadPhoto(photo);
+        return "redirect:/photos"; // Redirect to the page displaying all photos after upload.
+    }
 
     @GetMapping("/delete/{photoID}")
     public String deletePhoto(@PathVariable int photoID) {
-        // 处理删除逻辑
-        photoDAO.deletePhoto(photoID);
-        return "redirect:/photos/list";
+        photoServer.deletePhoto(photoID);
+        return "redirect:/photos"; // Redirect to the page displaying all photos after deletion.
     }
-@PostMapping("/upload")
-public String handleUpload(@ModelAttribute("photo") Photo photo,
-                           @RequestParam("file") MultipartFile file) {
-    // 处理上传逻辑
-    // 在这里你可以将上传的文件保存到磁盘或云存储，然后将文件路径设置到照片对象中
-    // 例如：photo.setPath("/path/to/uploaded/file.jpg");
-
-    // 设置上传时间等其他属性
-    photo.setUploadTime(new Timestamp(System.currentTimeMillis()));
-    photo.setDeleted(false);
-
-    // 保存到数据库
-    photoDAO.insertPhoto(photo);
-
-    return "redirect:/photos/list";
-}
-
-
-
 
     @GetMapping("/edit/{photoID}")
     public String showEditForm(@PathVariable int photoID, Model model) {
-        // 获取要编辑的照片信息
-        Photo photo = photoDAO.getPhotoByID(photoID);
+        Photo photo = photoServer.getPhotoByID(photoID);
         model.addAttribute("photo", photo);
-        return "edit-form";
+        return "photo/editForm"; // Assuming you have a view named "editForm.jsp" for photo editing.
     }
 
     @PostMapping("/edit")
-    public String handleEdit(@ModelAttribute("photo") Photo photo) {
-        // 处理编辑逻辑
-        photoDAO.updatePhoto(photo);
-        return "redirect:/photos/list";
+    public String editPhoto(@ModelAttribute Photo photo) {
+        photoServer.updatePhoto(photo);
+        return "redirect:/photos"; // Redirect to the page displaying all photos after editing.
     }
-
-    // 其他操作，如查看单个照片等
 }
