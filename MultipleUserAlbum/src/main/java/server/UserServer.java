@@ -13,8 +13,7 @@ import entity.User;
 public class UserServer {
     private final Map<String, User> userDatabase = new HashMap<>();
     private final UserDAO userDAO;
-
-    // 添加带参构造方法
+    
     public UserServer(UserDAO userDAO) {
         this.userDAO = userDAO;
     }
