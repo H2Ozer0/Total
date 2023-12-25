@@ -5,7 +5,10 @@
 <head>
   <meta charset="UTF-8">
   <title>登录界面</title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/layui/css/layui.css" type="text/css"/>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/st-style.css" type="text/css"/>
   <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js" ></script>
+  <script src="${pageContext.request.contextPath}/static/layui/layui.all.js" charset="UTF-8"></script>
   <style>
     * {
       margin: 0;
@@ -161,9 +164,9 @@
     <!-- 添加一个 id 属性，以便在 JavaScript 中引用 -->
     <form id="loginForm">
       <div class="form-wrapper">
-        <input type="text" name="id" placeholder="用户id" class="input-item">
+        <input type="text" name="username" placeholder="用户id" class="input-item">
         <input type="password" name="password" placeholder="密码" class="input-item">
-        <button type="button"id="login_btn" class="btn">登录</button> <!-- 使用 button 元素作为提交按钮 -->
+        <button type="button" id="login_btn" class="btn">登录</button> <!-- 使用 button 元素作为提交按钮 -->
       </div>
     </form>
 
@@ -185,7 +188,7 @@
     // 监听登录按钮点击事件
     $('#login_btn').on('click', function() {
       // 获取用户名和密码
-      var id = $('input[name="id"]').val();
+      var username = $('input[name="username"]').val();
       var password = $('input[name="password"]').val();
 
       // 发送Ajax请求
@@ -193,20 +196,31 @@
         type: 'post',
         url: '${pageContext.request.contextPath}/login', // 替换为你的后端接口地址
         data: {
-          "id": id,
+          "username": username,
           "pass": password
         },
         dataType:"json",
-
         success: function(result) {
           // 处理后端返回的响应
           console.log(result);
 
+          if (result.status == 0) {
+            layer.open({
+              title: '登录成功',
+              content: '欢迎你,'+result.data.username,
+              shade: 0.5,
+              yes: function(){
+                layer.closeAll();
+                //刷新页面
+                window.location.href = "${pageContext.request.contextPath}/userhome";
+              }
+            });
+          }
         },
         error: function(error) {
           // 处理错误
           console.log(error);
-          console.log("Sending data:", { "nameofuser": username, "pass": password });
+          console.log("Sending data:", { "id": id, "pass": password });
 
         }
       });

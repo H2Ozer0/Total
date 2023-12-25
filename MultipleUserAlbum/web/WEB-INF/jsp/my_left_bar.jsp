@@ -12,26 +12,29 @@
 <div class = "vertical" style="width: 250px">
     <div class="personal-card vertical" style="margin-bottom: 20px;padding:10px">
         <div class="me-avatar content-center">
-            <img src="/getAvatar?id=${sessionScope.myInfo.id}" width="150px" height="150px"/>
+            <img src="${pageContext.request.contextPath}/getAvatar?id=${sessionScope.myInfo.userId}" width="150px" height="150px"/>
         </div>
-        <div class = "content-center" style="font-size: 24px">${sessionScope.myInfo.name}</div>
-        <div class = "content-center" style="font-size: 14px;color: #bbbbbb">ID:${sessionScope.myInfo.id}</div>
-        <div class = "content-center" style="font-size: 14px;color: #bbbbbb">权限:${sessionScope.myInfo.type}</div>
+        <div class = "content-center" style="font-size: 24px">${sessionScope.myInfo.username}</div>
+        <div class = "content-center" style="font-size: 14px;color: #bbbbbb">ID:${sessionScope.myInfo.userId}</div>
+        <div class="content-center" style="font-size: 14px; color: #bbbbbb">
+            <c:choose>
+                <c:when test="${sessionScope.myInfo.admin}">
+                    权限: 管理员
+                </c:when>
+                <c:otherwise>
+                    权限: 用户
+                </c:otherwise>
+            </c:choose>
+        </div>
 
-        <%--封禁状态什么都不能干--%>
-        <c:if test="${sessionScope.myInfo.userState == 'banned'}">
-            <i class="layui-icon layui-icon-tips" style="margin:0 auto;font-size: 18px; color: #bbbbbb;"></i>
-            <div style="font-size: 14px;color: #bbbbbb;margin:0 auto">该用户已被封禁!</div>
-        </c:if>
 
-        <c:if test="${sessionScope.myInfo.userState != 'banned'}">
             <a href="/createAlbum" class = "content-center" target="_blank">
                 <button type="button" class=" layui-btn layui-btn-primary}">创建相册</button>
             </a>
             <a href="/uploadPhoto" style="margin: 0 auto" target="_blank">
                 <button type="button" class="layui-btn layui-btn-primary">上传照片</button>
             </a>
-        </c:if>
+
 
     </div>
     <div class="personal-menu" style="margin-bottom: 20px">
@@ -46,7 +49,7 @@
     </div>
 
     <%--管理员才有的后台菜单--%>
-    <c:if test="${sessionScope.myInfo.type == 'admin'}">
+    <c:if test="${sessionScope.myInfo.admin }">
         <div class="personal-menu" style="margin-bottom: 20px">
             <ul>
                 <li><a href="/admin/albums">管理用户相册</a></li>

@@ -11,7 +11,7 @@
 <head>
     <meta charset="UTF-8">
     <title>${userInfo.username}的主页</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/layui/css/lay7ui.css" type="text/css"/>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/layui/css/layui.css" type="text/css"/>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/st-style.css" type="text/css"/>
     <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
     <script src="${pageContext.request.contextPath}/static/layui/layui.all.js"></script>
@@ -27,7 +27,7 @@
             });
 
             $("#GUANZHU").click(function () {
-                var toId = "${userInfo.userId}"
+                var toId = "${userInfo.id}"
                 $.ajax({
                     url: "http://localhost:8080/addfow",
                     type: "post",
@@ -120,8 +120,7 @@
 <div style="background: white">
     <div class="home-information-box">
         <div class="information-headimg-box">
-            <%-- 这里通过用户的ID来展示用户头像 --%>
-            <img src="/getAvatar?id=${userInfo.userId}" width="150px" height="150px"/>
+            <img src="/getAvatar?id=${userInfo.id}" width="150px" height="150px"/>
         </div>
     </div>
 
@@ -129,7 +128,7 @@
         <div id="user_name" style="font-size: 24px">${userInfo.username}</div>
         <div id="user_id" style="font-size: 14px;color: #bbbbbb">id:${userInfo.userId}</div>
         <%--自己的主页没有关注和私信--%>
-        <c:if test="${sessionScope.myInfo.id != userInfo.userId}">
+        <c:if test="${sessionScope.myInfo.userId != userInfo.userId}">
             <div style="margin-top:10px;padding-bottom: 10px">
                 <c:if test="${empty sessionScope.myInfo}">
                 <a href="/index">
@@ -168,7 +167,7 @@
             <%--相册--%>
             <div class="layui-tab-item layui-show">
                 <%--是自己的页面才可以点创建相册--%>
-                <c:if test="${sessionScope.isLogin && sessionScope.myInfo.id == userInfo.id}">
+                <c:if test="${sessionScope.isLogin && sessionScope.myInfo.userId == userInfo.userId}">
                     <div class="" style="margin-top:20px;text-align: right">
                         <c:if test="${sessionScope.myInfo.userState!='banned'}">
                             <a href="/createAlbum">

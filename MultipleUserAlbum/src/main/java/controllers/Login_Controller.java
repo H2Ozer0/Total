@@ -48,10 +48,8 @@ import entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import server.UserServer;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,8 +58,9 @@ import javax.servlet.http.HttpSession;
 
 
 @Controller
+@SessionAttributes(value = {"isLogin","myInfo"})
 public class Login_Controller {
-    private final UserDAO  userDAO;
+    private final UserServer userServer;
     /**
      * 用于跳转到登录界面
      * @return 视图名称
@@ -72,29 +71,57 @@ public class Login_Controller {
     }
 
     @Autowired
-    public Login_Controller(UserDAO userDAO) {
-        this.userDAO= userDAO;
+    public Login_Controller(UserServer userServer) {
+        this.userServer= userServer;
     }
-    @RequestMapping ("/login")
+    @RequestMapping  ("/login")
     @ResponseBody
-    public DataResult login(@RequestParam("id") String userid, @RequestParam("pass") String password)
+    public DataResult login(@RequestParam("username") String username, @RequestParam("pass") String password,Model model)
     {
-      User user=userDAO.getUserById(userid);
-      String truepasswd=user.getPassword();
-      if(user==null)
-      {
-          return DataResult.fail("ID错误，用户不存在");
-      }
-       else if (!truepasswd.equals(password)) {
-        System.out.println("输入密码为"+password);
-        System.out.println("用户密码为"+user.getPassword());
-        return DataResult.fail("密码错误");
-        } else {
-           return DataResult.success("登录成功",user);
-        }
+        //用于测试
+        User u=new User("smj","abc123","3185513942@qq.com",false,"测试账号");
+        DataResult dataResult_test=new DataResult();
+        dataResult_test.setStatus(0);
+        dataResult_test.setMsg("登录成功");
+        dataResult_test.setData(u);
+        model.addAttribute("isLogin",true);
+        model.addAttribute("myInfo",dataResult_test.getData());
+        return   dataResult_test;
+//        //用于测试
+
+
+
+//        if(userServer.existsByUsername(username))
+//        {
+//
+//            User user=userServer.getUserByUsername(username);
+//            String truePasswd=user.getPassword();
+//            if(truePasswd.equals(password))
+//            {
+//                DataResult dataResult=new DataResult();
+//                dataResult.setStatus(0);
+//                dataResult.setMsg("登录成功");
+//                dataResult.setData(user);
+//                model.addAttribute("isLogin",true);
+//                model.addAttribute("myInfo",dataResult.getData());
+//                return   dataResult;
+//            }
+//            else
+//            {
+//                return DataResult.fail("登录失败，密码错误");
+//            }
+//        }
+//        else
+//        {
+//            return DataResult.fail("登录失败，用户不存在");
+//        }
+
     }
 
-
-
+    @RequestMapping  ("/userhome")
+    public String login(Model model)
+    {
+        return "userhome";
+    }
 }
 

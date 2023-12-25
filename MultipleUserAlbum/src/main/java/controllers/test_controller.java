@@ -19,6 +19,14 @@ public class test_controller {
         return "userHome";
     }
 
+    @RequestMapping("/test_album")
+    public String test_album(Model model,HttpServletRequest request)
+    {
+        User u=new User("smj","abc123","3185513942@qq.com",false,"测试账号");
+        model.addAttribute("userInfo",u);
+        return "my_albums";
+    }
+
 }
 
 
