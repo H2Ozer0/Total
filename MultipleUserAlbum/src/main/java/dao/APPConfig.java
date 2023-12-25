@@ -34,6 +34,6 @@ public class APPConfig {
     @Bean
     public AlbumServer albumServer(){return new AlbumServer(albumDAO());}
     @Bean
-    public UserServer UserServer(){return new UserServer();}
+    public UserServer UserServer(UserDAO userDAO){return new UserServer(userDAO);}
 
 }
