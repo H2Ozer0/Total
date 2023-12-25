@@ -39,12 +39,9 @@
     </div>
     <div class="personal-menu" style="margin-bottom: 20px">
         <ul>
-            <li><a href="/me/albums">管理相册</a></li>
-            <li><a href="/me/photos">管理照片</a></li>
-            <li><a href="/me/messages">我的私信</a></li>
-            <li><a href="/me/follow">我的关注</a></li>
-            <li><a href="/me/info">个人信息与资料</a></li>
-            <li><a href="/me/mysta">我的统计</a></li>
+            <dd><a href="${pageContext.request.contextPath}/me/albums">管理相册</a></dd>
+            <dd><a href="${pageContext.request.contextPath}/me/photos">管理照片</a></dd>
+            <dd><a href="${pageContext.request.contextPath}/me/info">个人信息</a></dd>
         </ul>
     </div>
 
