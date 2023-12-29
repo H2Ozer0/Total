@@ -37,4 +37,6 @@ public class APPConfig {
     public UserServer UserServer(UserDAO userDAO){return new UserServer(userDAO);}
     @Bean
     public PhotoServer photoServer(PhotoDAO photoDAO){return new PhotoServer(photoDAO);}
+    @Bean
+    public LikeServer likeServer(LikeDAO likeDAO){return new LikeServer(likeDAO);}
 }
