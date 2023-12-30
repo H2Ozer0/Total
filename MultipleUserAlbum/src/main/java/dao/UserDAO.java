@@ -76,7 +76,7 @@ public class UserDAO {
         }
     }
 
-    public void updateUsername(int userId, String newUsername) {
+    public boolean updateUsername(int userId, String newUsername) {
         try {
             if (isUsernameUnique(newUsername)) {
                 try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE " + TABLE_NAME + " SET " + COLUMN_USERNAME + " = ? WHERE " + COLUMN_USER_ID + " = ?")) {
@@ -84,17 +84,20 @@ public class UserDAO {
                     preparedStatement.setInt(2, userId);
 
                     preparedStatement.executeUpdate();
+                    return true;
                 }
             } else {
                 System.out.println("新用户名已存在，无法更新用户名。");
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
-    // 新增方法，检查用户名是否唯一
-    private boolean isUsernameUnique(String username) {
+    // 新增方法，检查用户名是否唯一，若用户名不存在返回1，已经存在返回0
+    public boolean isUsernameUnique(String username) {
         try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) AS count FROM " + TABLE_NAME + " WHERE " + COLUMN_USERNAME + " = ?")) {
             preparedStatement.setString(1, username);
 
@@ -112,11 +115,11 @@ public class UserDAO {
     }
 
 
-    public User getUserById(String userId) {
+    public User getUserById(int userId) {
         User user = null;
 
         try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_USER_ID + " = ?")) {
-            preparedStatement.setString(1, userId);
+            preparedStatement.setInt(1, userId);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
@@ -163,9 +166,9 @@ public class UserDAO {
         }
     }
 
-    public void deleteUser(String userId) {
+    public void deleteUser(int userId) {
         try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM " + TABLE_NAME + " WHERE " + COLUMN_USER_ID + " = ?")) {
-            preparedStatement.setString(1, userId);
+            preparedStatement.setInt(1, userId);
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -173,37 +176,44 @@ public class UserDAO {
         }
     }
 
-    public void updateUsername(String userId, String newUsername) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE " + TABLE_NAME + " SET " + COLUMN_USERNAME + " = ? WHERE " + COLUMN_USER_ID + " = ?")) {
-            preparedStatement.setString(1, newUsername);
-            preparedStatement.setString(2, userId);
 
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void updatePassword(String userId, String newPassword) {
+    public boolean updatePassword(int userId, String newPassword) {
         try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE " + TABLE_NAME + " SET " + COLUMN_PASSWORD + " = ? WHERE " + COLUMN_USER_ID + " = ?")) {
             preparedStatement.setString(1, newPassword);
-            preparedStatement.setString(2, userId);
+            preparedStatement.setInt(2, userId);
 
             preparedStatement.executeUpdate();
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
-    public void updateEmail(String userId, String newEmail) {
+    public boolean updateEmail(int userId, String newEmail) {
         try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE " + TABLE_NAME + " SET " + COLUMN_EMAIL + " = ? WHERE " + COLUMN_USER_ID + " = ?")) {
             preparedStatement.setString(1, newEmail);
-            preparedStatement.setString(2, userId);
+            preparedStatement.setInt(2, userId);
 
             preparedStatement.executeUpdate();
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
+    }
+
+    public boolean updateDescription(int userId, String newDescription) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE " + TABLE_NAME + " SET " + COLUMN_DESCRIPTION + " = ? WHERE " + COLUMN_USER_ID + " = ?")) {
+            preparedStatement.setString(1, newDescription);
+            preparedStatement.setInt(2, userId);
+
+            preparedStatement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public void closeConnection() {
@@ -228,7 +238,7 @@ public class UserDAO {
         int generatedUserID = newUser.getUserId();
 
         // 根据用户ID查询用户
-        User retrievedUser = userDAO.getUserById(String.valueOf(generatedUserID));
+        User retrievedUser = userDAO.getUserById(generatedUserID);
         System.out.println("查询到的用户：" + retrievedUser);
 
         // 通过用户名查询用户
@@ -236,20 +246,20 @@ public class UserDAO {
         System.out.println("通过用户名查询到的用户：" + retrievedUserByUsername);
 
         // 更新用户的用户名
-        userDAO.updateUsername(String.valueOf(generatedUserID), "john_doe_updated");
+        userDAO.updateUsername(generatedUserID, "john_doe_updated");
 
         // 更新用户的密码
-        userDAO.updatePassword(String.valueOf(generatedUserID), "new_password123");
+        userDAO.updatePassword(generatedUserID, "new_password123");
 
         // 更新用户的邮箱
-        userDAO.updateEmail(String.valueOf(generatedUserID), "john_updated@example.com");
+        userDAO.updateEmail(generatedUserID, "john_updated@example.com");
 
         // 查询更新后的用户信息
-        User updatedUser = userDAO.getUserById(String.valueOf(generatedUserID));
+        User updatedUser = userDAO.getUserById(generatedUserID);
         System.out.println("更新后的用户：" + updatedUser);
 
         // 删除用户
-        userDAO.deleteUser(String.valueOf(generatedUserID));
+        userDAO.deleteUser(generatedUserID);
 
         // 关闭数据库连接
         userDAO.closeConnection();

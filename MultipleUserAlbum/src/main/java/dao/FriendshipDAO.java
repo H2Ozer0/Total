@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class FriendshipDAO {
@@ -13,17 +14,11 @@ public class FriendshipDAO {
     private static final String URL = "jdbc:mysql://223.2.20.14:3306/albumdb?useSSL=false&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8";
     private static final String USER = "album";
     private static final String PASSWORD = "StrongPassword123!";
-    static {
-        try {
-            // 注册 JDBC 驱动程序
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to load MySQL JDBC driver: com.mysql.cj.jdbc.Driver");
-        }
-    }
-    private Connection connection;
 
+    private Connection connection;
+    private Timestamp getCurrentTimestamp() {
+        return new Timestamp(Calendar.getInstance().getTimeInMillis());
+    }
     public FriendshipDAO() {
         try {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -133,13 +128,222 @@ public class FriendshipDAO {
             System.err.println("关闭数据库连接时发生异常: " + e.getMessage());
         }
     }
+    public List<Integer> getAllFriendUserIDs(int userID) {
+        List<Integer> friendUserIDs = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM Friendship WHERE (UserID1 = ? OR UserID2 = ?) AND FriendshipStatus = 'Accepted'";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, userID);
+                preparedStatement.setInt(2, userID);
 
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        // 根据情况选择UserID1或UserID2
+                        int friendUserID = (resultSet.getInt("UserID1") == userID) ? resultSet.getInt("UserID2") : resultSet.getInt("UserID1");
+                        friendUserIDs.add(friendUserID);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // 记录查询异常日志
+            System.err.println("查询用户的所有好友时发生异常: " + e.getMessage());
+        }
+        return friendUserIDs;
+    }
 
+    public boolean deleteFriendship(int userID1, int userID2) {
+        try {
+            String query = "DELETE FROM Friendship WHERE " +
+                    "((UserID1 = ? AND UserID2 = ?) OR (UserID1 = ? AND UserID2 = ?)) " +
+                    "AND FriendshipStatus = 'Accepted'";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, userID1);
+                preparedStatement.setInt(2, userID2);
+                preparedStatement.setInt(3, userID2);
+                preparedStatement.setInt(4, userID1);
+
+                int rowsAffected = preparedStatement.executeUpdate();
+                return rowsAffected > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // 记录删除异常日志
+            System.err.println("删除好友关系时发生异常: " + e.getMessage());
+            return false;
+        }
+    }
+    //发送好友申请
+    public boolean sendFriendRequest(int senderID, int receiverID) {
+        try {
+            // 检查是否已存在相同的好友关系记录
+            if (!checkDuplicateFriendship(new Friendship(senderID, receiverID, "Pending", getCurrentTimestamp()))) {
+                String query = "INSERT INTO Friendship (UserID1, UserID2, FriendshipStatus, CreatedAt) VALUES (?, ?, ?, ?)";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                    preparedStatement.setInt(1, senderID);
+                    preparedStatement.setInt(2, receiverID);
+                    preparedStatement.setString(3, "Pending");
+                    preparedStatement.setTimestamp(4, getCurrentTimestamp());
+
+                    preparedStatement.executeUpdate();
+                    return true;
+                }
+            } else {
+                System.out.println("Friendship record with the same UserID1 and UserID2 already exists.");
+                // 可以选择抛出异常或进行其他处理，例如记录日志
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // 记录异常日志
+            System.err.println("发送好友请求时发生异常: " + e.getMessage());
+            return false;
+        }
+    }
+//拒绝好友申请并直接删除这条数据
+    public boolean rejectFriendRequest(int senderID,int receiverID) {
+        try {
+            String query = "DELETE FROM Friendship WHERE " +
+                    "UserID1 = ? AND UserID2 = ? AND FriendshipStatus = 'Pending'";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, senderID);
+                preparedStatement.setInt(2, receiverID);
+
+                int rowsAffected = preparedStatement.executeUpdate();
+                return rowsAffected > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // 记录异常日志
+            System.err.println("拒绝好友请求时发生异常: " + e.getMessage());
+            return false;
+        }
+    }
+//获得好友待接受列表
+    public List<Friendship> getFriendRequestsToUser(int userID) {
+        List<Friendship> friendRequests = new ArrayList<>();
+
+        try {
+            String query = "SELECT * FROM Friendship WHERE UserID2 = ? AND FriendshipStatus = 'Pending'";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, userID);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        Friendship friendship = mapResultSetToFriendship(resultSet);
+                        friendRequests.add(friendship);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("查询待接受好友请求时发生异常: " + e.getMessage());
+        }
+
+        return friendRequests;
+    }
+    // 检查是否已经是好友
+    public boolean areFriends(int userID1, int userID2) {
+        try {
+            String query = "SELECT COUNT(*) FROM Friendship WHERE (UserID1 = ? AND UserID2 = ? AND FriendshipStatus = 'Accepted') OR (UserID1 = ? AND UserID2 = ? AND FriendshipStatus = 'Accepted')";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, userID1);
+                preparedStatement.setInt(2, userID2);
+                preparedStatement.setInt(3, userID2);
+                preparedStatement.setInt(4, userID1);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        int count = resultSet.getInt(1);
+                        return count > 0;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("检查是否已经是好友时发生异常: " + e.getMessage());
+        }
+        return false;
+    }
+
+    // 检查是否已经有未处理的好友申请
+    public boolean hasPendingFriendRequest(int userID1, int userID2) {
+        try {
+            String query = "SELECT COUNT(*) FROM Friendship WHERE (UserID1 = ? AND UserID2 = ? AND FriendshipStatus = 'Pending') OR (UserID1 = ? AND UserID2 = ? AND FriendshipStatus = 'Pending')";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, userID1);
+                preparedStatement.setInt(2, userID2);
+                preparedStatement.setInt(3, userID2);
+                preparedStatement.setInt(4, userID1);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        int count = resultSet.getInt(1);
+                        return count > 0;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("检查是否已经有未处理的好友申请时发生异常: " + e.getMessage());
+        }
+        return false;
+    }
+    // 获取所有好友的用户ID
+    public List<Integer> getAllFriends(int userId) {
+        List<Integer> friendIds = new ArrayList<>();
+
+        try {
+            String query = "SELECT UserID2 FROM Friendship WHERE UserID1 = ? AND FriendshipStatus = 'Accepted' " +
+                    "UNION " +
+                    "SELECT UserID1 FROM Friendship WHERE UserID2 = ? AND FriendshipStatus = 'Accepted'";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, userId);
+                preparedStatement.setInt(2, userId);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        friendIds.add(resultSet.getInt("UserID2"));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("获取好友列表时发生异常: " + e.getMessage());
+        }
+
+        return friendIds;
+    }
     public static void main(String[] args) {
         FriendshipDAO friendshipDAO = new FriendshipDAO();
+        // 发送好友请求
+        boolean sent = friendshipDAO.sendFriendRequest(2, 1);
+        if (sent) {
+            System.out.println("好友请求已发送");
+        } else {
+            System.out.println("发送好友请求失败");
+        }
+        boolean sent2 = friendshipDAO.sendFriendRequest(2, 3);
+        if (sent) {
+            System.out.println("好友请求已发送");
+        } else {
+            System.out.println("发送好友请求失败");
+        }
+        // 假设用户ID为1，查询该用户的待接受好友请求
+        int userID = 1;
+        List<Friendship> friendRequests = friendshipDAO.getFriendRequestsToUser(userID);
+
+        // 输出当前待接受好友请求
+        System.out.println("当前待接受好友请求:");
+        for (Friendship request : friendRequests) {
+            System.out.println(request);
+        }
+
+
+
 
         // 插入好友关系记录
-        Friendship newFriendship = new Friendship(1, 2, "Pending", Timestamp.valueOf("2023-01-01 12:00:00"));
+        Friendship newFriendship = new Friendship(1, 3, "Pending", Timestamp.valueOf("2023-01-01 12:00:00"));
         friendshipDAO.insertFriendship(newFriendship);
 
         // 根据好友关系ID查询好友关系记录

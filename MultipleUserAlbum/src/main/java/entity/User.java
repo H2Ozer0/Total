@@ -11,7 +11,14 @@ public class User {
     // 默认构造函数
     public User() {
     }
-
+    public User(User user) {
+        this.userId = user.userId;  // 初始值可以是 0 或者其他默认值
+        this.username = user.username;
+        this.password = user.password;
+        this.email = user.email;
+        this.isAdmin = user.isAdmin;
+        this.description = user.description;
+    }
     // 带参数的构造函数，不再包含 userID 参数
     public User(String username, String password, String email, boolean isAdmin, String description) {
         this.userId = 0;  // 初始值可以是 0 或者其他默认值
