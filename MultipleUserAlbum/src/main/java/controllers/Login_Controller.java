@@ -79,6 +79,10 @@ public class Login_Controller {
     public DataResult login(@RequestParam("username") String username, @RequestParam("pass") String password,Model model)
     {
         DataResult dataResult=userServer.login(username,password);
+        if(dataResult.getStatus() == 0){
+            model.addAttribute("isLogin",true);
+            model.addAttribute("myInfo",dataResult.getData());
+        }
         return dataResult;
 
 

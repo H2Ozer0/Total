@@ -47,31 +47,14 @@ public class MeController {
     @RequestMapping("/getMyAlbum")
     @ResponseBody
     public DataResult getMyAlbum( HttpSession session){
-        User user = (User) session.getAttribute("myInfo");
-        List<Album> albumList = new ArrayList<>();
+        User user = (User)session.getAttribute("myInfo");
 
-        // 调用初始化方法
-        initializeAlbums(albumList);
+        DataResult dataResult;
+        dataResult=albumServer.getPublicAlbumsByName(user.getUsername());
 
-        return DataResult.success("get albumlist success",albumList);
+
+
+        return dataResult;
     }
-    private void initializeAlbums(List<Album> albumList) {
-        Random random = new Random();
 
-        // 生成几个随机的Album对象并添加到链表中
-        for (int i = 0; i < 10; i++) { // 假设初始化5个Album对象
-            Album album = new Album(
-                    "Album" + i,                        // 随机相册名
-                    "Description" + i,                  // 随机描述
-                    new Timestamp(System.currentTimeMillis()), // 当前时间戳
-                    random.nextBoolean(),               // 随机isPublic
-                    random.nextBoolean(),               // 随机isDeleted
-                    random.nextInt(100),                // 随机favoritesCount
-                    random.nextInt(100),                // 随机likesCount
-                    random.nextInt(100)                 // 随机creatorID
-            );
-
-            albumList.add(album);
-        }
-    }
 }
