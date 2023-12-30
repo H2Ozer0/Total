@@ -1,6 +1,6 @@
 package dao;
 
-import controllers.Album_Controller;
+
 import controllers.Comment_Controller;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,9 +33,9 @@ public class APPConfig {
     }
 
     @Bean
-    public AlbumServer albumServer(){return new AlbumServer(albumDAO());}
+    public AlbumServer albumServer(){return new AlbumServer();}
     @Bean
-    public UserServer UserServer(UserDAO userDAO){return new UserServer(userDAO);}
+    public UserServer UserServer(UserDAO userDAO){return new UserServer();}
     @Bean
     public PhotoServer photoServer(PhotoDAO photoDAO){return new PhotoServer(photoDAO);}
     @Bean

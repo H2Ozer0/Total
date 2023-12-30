@@ -26,12 +26,12 @@ import java.io.OutputStream;
 
 @Controller
 public class ImageController {
-    String DEAFULT_AVATAR="/DEFAULT/img.png";
+    String DEAFULT="/DEFAULT/img.png";
     public static final int AVATAR = 0;
     public static final int IMG = 1;
     public void handleRp(HttpServletResponse rp,String absolutepath,String filename,int type) {
         String filePath=absolutepath+filename;
-        String DEFAULT_PATH=absolutepath+DEAFULT_AVATAR;
+        String DEFAULT_PATH=absolutepath+DEAFULT;
         File imageFile = new File(filePath);
         if(!imageFile.exists()) {
             imageFile = new File(DEFAULT_PATH);
@@ -67,5 +67,14 @@ public class ImageController {
         String absolutepath = request.getServletContext().getRealPath("/AVATER");
         String filename=id+".png";
         handleRp(rp,absolutepath,filename,0);
+    }
+    @RequestMapping(value = "/getCover")
+    @ResponseBody
+    public void getImage(@RequestParam("url")String url,HttpServletResponse rp,HttpServletRequest request){
+        String absolutepath = request.getServletContext().getRealPath("/Image/Cover");
+        System.out.println("url为"+url);
+        String filename=url+".png";
+        handleRp(rp,absolutepath,filename, 1);
+
     }
 }
