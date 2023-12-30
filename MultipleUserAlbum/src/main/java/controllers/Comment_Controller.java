@@ -1,66 +1,56 @@
 package controllers;
 
 import entity.Comment;
+import entity.DataResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import server.CommentServer;
+import server.InteractServer;
 
-import java.util.List;
 
-@Controller
-@RequestMapping("/comments")
+@RestController
+@RequestMapping("/comment")
 public class Comment_Controller {
 
-    private final CommentServer commentServer;
+    private final InteractServer interactServer;
 
     @Autowired
-    public Comment_Controller(CommentServer commentServer) {
-        this.commentServer = commentServer;
+    public Comment_Controller(InteractServer interactServer) {
+        this.interactServer = interactServer;
     }
 
     @PostMapping("/insert")
-    public String insertComment(@ModelAttribute Comment comment) {
-        commentServer.insertComment(comment);
-        return "redirect:/albums/" + comment.getAlbumID(); // Redirect to the album details page after inserting a comment.
+    public DataResult insertComment(@RequestBody Comment comment) {
+        return interactServer.insertComment(comment);
     }
 
     @GetMapping("/count/{albumID}")
-    @ResponseBody
-    public int getCommentCount(@PathVariable int albumID) {
-        return commentServer.getCommentCount(albumID);
+    public DataResult getCommentCount(@PathVariable int albumID) {
+        return interactServer.getCommentCount(albumID);
     }
 
     @GetMapping("/user/{commenterID}")
-    @ResponseBody
-    public List<Comment> getCommentsByUser(@PathVariable int commenterID) {
-        return commentServer.getCommentsByUser(commenterID);
+    public DataResult getCommentsByUser(@PathVariable int commenterID) {
+        return interactServer.getCommentsByUser(commenterID);
     }
 
     @GetMapping("/album/{albumID}")
-    @ResponseBody
-    public List<Comment> getCommentsByAlbum(@PathVariable int albumID) {
-        return commentServer.getCommentsByAlbum(albumID);
+    public DataResult getCommentsByAlbum(@PathVariable int albumID) {
+        return interactServer.getCommentsByAlbum(albumID);
     }
 
     @GetMapping("/{commentID}")
-    public String getCommentByID(@PathVariable int commentID, Model model) {
-        Comment comment = commentServer.getCommentByID(commentID);
-        model.addAttribute("comment", comment);
-        return "commentDetails"; // Assuming you have a view named "commentDetails".
+    public DataResult getCommentByID(@PathVariable int commentID) {
+        return interactServer.getCommentByID(commentID);
     }
 
-    @PostMapping("/{commentID}/update")
-    public String updateCommentContent(@PathVariable int commentID, @RequestParam String newContent) {
-        commentServer.updateCommentContent(commentID, newContent);
-        return "redirect:/comments/" + commentID;
+    @PutMapping("/update/{commentID}")
+    public DataResult updateCommentContent(@PathVariable int commentID, @RequestBody String newContent) {
+        return interactServer.updateCommentContent(commentID, newContent);
     }
 
-    @PostMapping("/{commentID}/delete")
-    public String deleteComment(@PathVariable int commentID) {
-        commentServer.deleteComment(commentID);
-        return "redirect:/albums"; // Redirect to the albums page after deleting a comment.
+    @DeleteMapping("/delete/{commentID}")
+    public DataResult deleteComment(@PathVariable int commentID) {
+        return interactServer.deleteComment(commentID);
     }
 }

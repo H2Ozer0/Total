@@ -1,7 +1,5 @@
 package dao;
 
-
-import controllers.Comment_Controller;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import server.*;
@@ -39,7 +37,5 @@ public class APPConfig {
     @Bean
     public PhotoServer photoServer(PhotoDAO photoDAO){return new PhotoServer(photoDAO);}
     @Bean
-    public LikeServer likeServer(LikeDAO likeDAO){return new LikeServer(likeDAO);}
-    @Bean
-    public CommentServer commentServer(CommentDAO commentDAO){return new CommentServer(commentDAO);}
+    public InteractServer interactServer(LikeDAO likeDAO, CommentDAO commentDAO){return new InteractServer(likeDAO, commentDAO);}
 }
