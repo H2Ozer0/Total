@@ -1,6 +1,7 @@
 package dao;
 
 import entity.Album;
+import entity.Photo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,11 +30,10 @@ public class AlbumDAO {
     }
 
     // 插入相册记录
-    public void insertAlbum(Album album) {
+    public boolean insertAlbum(Album album) {
         try {
             String query = "INSERT INTO Album (AlbumName, Description, CreatedAt, IsPublic, IsDeleted, FavoritesCount, LikesCount, CreatorID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-
                 preparedStatement.setString(1, album.getAlbumName());
                 preparedStatement.setString(2, album.getDescription());
                 preparedStatement.setTimestamp(3, album.getCreatedAt());
@@ -41,21 +41,24 @@ public class AlbumDAO {
                 preparedStatement.setBoolean(5, album.isDeleted());
                 preparedStatement.setInt(6, album.getFavoritesCount());
                 preparedStatement.setInt(7, album.getLikesCount());
-                preparedStatement.setInt(8, album.getCreatorID());  // 使用getInt方法获取CreatorID
+                preparedStatement.setInt(8, album.getCreatorID());
 
-                preparedStatement.executeUpdate();
+                int rowsAffected = preparedStatement.executeUpdate();
 
-                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        album.setAlbumID(generatedKeys.getInt(1));
+                if (rowsAffected > 0) {
+                    try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            album.setAlbumID(generatedKeys.getInt(1));
+                            return true; // 插入成功
+                        }
                     }
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // 记录插入异常日志
             System.err.println("插入相册记录时发生异常: " + e.getMessage());
         }
+        return false; // 插入失败
     }
 
     // 将 ResultSet 映射到 entity.Album 对象
@@ -158,36 +161,41 @@ public class AlbumDAO {
         return publicAlbums;
     }
     // 编辑相册名称
-    public void updateAlbumName(int albumID, String newAlbumName) {
+    public boolean updateAlbumName(int albumID, String newAlbumName) {
         try {
             String query = "UPDATE Album SET AlbumName = ? WHERE AlbumID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, newAlbumName);
                 preparedStatement.setInt(2, albumID);
-                preparedStatement.executeUpdate();
+
+                int rowsAffected = preparedStatement.executeUpdate();
+
+                return rowsAffected > 0; // 更新成功返回true，否则返回false
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // 记录更新异常日志
             System.err.println("编辑相册名称时发生异常: " + e.getMessage());
         }
+        return false; // 更新失败
     }
 
     // 编辑相册描述
-    public void updateAlbumDescription(int albumID, String newDescription) {
+    public boolean updateAlbumDescription(int albumID, String newDescription) {
         try {
             String query = "UPDATE Album SET Description = ? WHERE AlbumID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, newDescription);
                 preparedStatement.setInt(2, albumID);
-                preparedStatement.executeUpdate();
+
+                int rowsAffected = preparedStatement.executeUpdate();
+
+                return rowsAffected > 0; // 更新成功返回true，否则返回false
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // 记录更新异常日志
             System.err.println("编辑相册描述时发生异常: " + e.getMessage());
         }
-
+        return false; // 更新失败
     }
 
     // 查询相册记录根据AlbumID
@@ -212,16 +220,63 @@ public class AlbumDAO {
     }
 
     // 关闭数据库连接
-    public void closeConnection() {
+    public boolean closeConnection() {
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
+                return true; // 关闭成功返回true
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // 记录关闭连接异常日志
             System.err.println("关闭数据库连接时发生异常: " + e.getMessage());
         }
+        return false; // 关闭失败
+    }
+
+    // 查询相册中的照片列表
+    public List<Photo> getPhotosInAlbum(int albumID) {
+        List<Photo> photosInAlbum = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM Photo WHERE AlbumID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, albumID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        Photo photo = new Photo(
+                                resultSet.getInt("AlbumID"),
+                                resultSet.getString("Title"),
+                                resultSet.getString("Path"),
+                                resultSet.getTimestamp("UploadTime"),
+                                resultSet.getBoolean("IsDeleted")
+                        );
+                        photo.setPhotoID(resultSet.getInt("PhotoID"));
+                        photosInAlbum.add(photo);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // 记录查询异常日志
+            System.err.println("查询相册中的照片列表时发生异常: " + e.getMessage());
+        }
+        return photosInAlbum;
+    }
+    // 删除相册记录
+    public boolean deleteAlbum(int albumID) {
+        try {
+            String query = "DELETE FROM Album WHERE AlbumID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, albumID);
+
+                int rowsAffected = preparedStatement.executeUpdate();
+
+                return rowsAffected > 0; // 删除成功返回true，否则返回false
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("删除相册时发生异常: " + e.getMessage());
+        }
+        return false; // 删除失败
     }
 
 //    public static void main(String[] args) {

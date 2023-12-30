@@ -1,54 +1,118 @@
 package server;
 
-
 import dao.AlbumDAO;
 import entity.Album;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import java.sql.*;
+import entity.DataResult;
+import entity.Photo;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.sql.Timestamp;
 import java.util.List;
 
-
-
-@Service
 public class AlbumServer {
 
-    private final AlbumDAO albumDAO;
-
-    @Autowired
-    public AlbumServer(AlbumDAO albumDAO) {
-        this.albumDAO = albumDAO;
+    // 获取相册中的照片列表
+    public static DataResult getPhotosInAlbum(int albumID) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        List<Photo> photosInAlbum = albumDAO.getPhotosInAlbum(albumID);
+        if (photosInAlbum != null) {
+            return DataResult.success("get photos in album success", photosInAlbum);
+        } else {
+            return DataResult.fail("failed to get photos in album");
+        }
     }
 
-    public void createAlbum(Album album) {
-        albumDAO.insertAlbum(album);
+    // 插入新相册
+    public static DataResult insertAlbum(Album album) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        if (albumDAO.insertAlbum(album)) {
+            return DataResult.success("insert album success", null);
+        } else {
+            return DataResult.fail("failed to insert album");
+        }
     }
 
-    public Album getAlbumByID(int albumID) {
-        return albumDAO.getAlbumByID(albumID);
+    // 获取相册点赞数
+    public static DataResult getLikesCount(int albumID) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        int likesCount = albumDAO.getLikesCount(albumID);
+        return DataResult.success("get likes count success", likesCount);
     }
 
-    public List<Album> getPublicAlbumsByName(String albumName) {
-        return albumDAO.getPublicAlbumsByName(albumName);
+    // 获取相册收藏数
+    public static DataResult getFavoritesCount(int albumID) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        int favoritesCount = albumDAO.getFavoritesCount(albumID);
+        return DataResult.success("get favorites count success", favoritesCount);
     }
 
-    public int getLikesCount(int albumID) {
-        return albumDAO.getLikesCount(albumID);
+    // 获取相册创建时间
+    public static DataResult getCreatedAt(int albumID) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        Timestamp createdAt = albumDAO.getCreatedAt(albumID);
+        return DataResult.success("get created at success", createdAt);
     }
 
-    public int getFavoritesCount(int albumID) {
-        return albumDAO.getFavoritesCount(albumID);
+    // 通过相册名称查找公开相册
+    public static DataResult getPublicAlbumsByName(String albumName) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        List<Album> publicAlbums = albumDAO.getPublicAlbumsByName(albumName);
+        if (publicAlbums != null) {
+            return DataResult.success("get public albums by name success", publicAlbums);
+        } else {
+            return DataResult.fail("failed to get public albums by name");
+        }
     }
 
-    public Timestamp getCreatedAt(int albumID) {
-        return albumDAO.getCreatedAt(albumID);
+    // 编辑相册名称
+    public static DataResult updateAlbumName(int albumID, String newAlbumName) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        if (albumDAO.updateAlbumName(albumID, newAlbumName)) {
+            return DataResult.success("update album name success", null);
+        } else {
+            return DataResult.fail("failed to update album name");
+        }
     }
 
-    public void updateAlbumName(int albumID, String newAlbumName) {
-        albumDAO.updateAlbumName(albumID, newAlbumName);
+    // 编辑相册描述
+    public static DataResult updateAlbumDescription(int albumID, String newDescription) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        if (albumDAO.updateAlbumDescription(albumID, newDescription)) {
+            return DataResult.success("update album description success", null);
+        } else {
+            return DataResult.fail("failed to update album description");
+        }
     }
 
-    public void updateAlbumDescription(int albumID, String newDescription) {
-        albumDAO.updateAlbumDescription(albumID, newDescription);
+    // 查询相册记录根据AlbumID
+    public static DataResult getAlbumByID(int albumID) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        Album album = albumDAO.getAlbumByID(albumID);
+        if (album != null) {
+            return DataResult.success("get album by ID success", album);
+        } else {
+            return DataResult.fail("failed to get album by ID");
+        }
+    }
+
+    // 删除相册
+    public static DataResult deleteAlbum(int albumID) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        if (albumDAO.deleteAlbum(albumID)) {
+            return DataResult.success("Delete album successful", null);
+        } else {
+            return DataResult.fail("Failed to delete album");
+        }
+    }
+
+    // 关闭数据库连接
+    public static DataResult closeConnection() {
+        AlbumDAO albumDAO = new AlbumDAO();
+        if (albumDAO.closeConnection()) {
+            return DataResult.success("close connection success", null);
+        } else {
+            return DataResult.fail("failed to close connection");
+        }
     }
 }
