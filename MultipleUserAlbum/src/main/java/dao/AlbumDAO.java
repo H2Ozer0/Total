@@ -219,19 +219,6 @@ public class AlbumDAO {
         return album;
     }
 
-    // 关闭数据库连接
-    public boolean closeConnection() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-                return true; // 关闭成功返回true
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println("关闭数据库连接时发生异常: " + e.getMessage());
-        }
-        return false; // 关闭失败
-    }
 
     // 查询相册中的照片列表
     public List<Photo> getPhotosInAlbum(int albumID) {
@@ -277,6 +264,85 @@ public class AlbumDAO {
             System.err.println("删除相册时发生异常: " + e.getMessage());
         }
         return false; // 删除失败
+    }
+    // 获取用户相册列表
+    public List<Album> getAlbumsByUserID(int userID) {
+        List<Album> userAlbums = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM Album WHERE CreatorID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, userID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        Album album = mapResultSetToAlbum(resultSet);
+                        userAlbums.add(album);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // 记录查询异常日志
+            System.err.println("根据用户ID查询相册列表时发生异常: " + e.getMessage());
+        }
+        return userAlbums;
+    }
+
+    // 分享相册
+    public boolean insertShareRecord(int albumID, int userID) {
+        try {
+            String query = "INSERT INTO ShareRecord (AlbumID, UserID) VALUES (?, ?)";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, albumID);
+                preparedStatement.setInt(2, userID);
+
+                int rowsAffected = preparedStatement.executeUpdate();
+
+                return rowsAffected > 0; // 插入成功返回true，否则返回false
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("插入分享记录时发生异常: " + e.getMessage());
+        }
+        return false; // 插入失败
+    }
+
+    // 返回用户的好友分享的相册列表
+    public List<Album> getFriendSharedAlbums(int userID) {
+        List<Album> friendSharedAlbums = new ArrayList<>();
+        try {
+            String query = "SELECT DISTINCT A.* FROM Album A " +
+                    "JOIN ShareRecord S ON A.AlbumID = S.AlbumID " +
+                    "JOIN Friendship F ON (A.CreatorID = F.UserID1 OR A.CreatorID = F.UserID2) " +
+                    "WHERE (F.UserID1 = ? OR F.UserID2 = ?) AND F.FriendshipStatus = 'Accepted' AND A.IsPublic = true";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, userID);
+                preparedStatement.setInt(2, userID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        Album album = mapResultSetToAlbum(resultSet);
+                        friendSharedAlbums.add(album);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("获取好友分享的相册列表时发生异常: " + e.getMessage());
+        }
+        return friendSharedAlbums;
+    }
+
+    // 关闭数据库连接
+    public boolean closeConnection() {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+                return true; // 关闭成功返回true
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("关闭数据库连接时发生异常: " + e.getMessage());
+        }
+        return false; // 关闭失败
     }
 
 //    public static void main(String[] args) {
