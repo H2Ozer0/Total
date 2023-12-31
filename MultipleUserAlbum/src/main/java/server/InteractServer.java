@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static server.AlbumServer.getPublicAlbumsById;
-
+import static server.AlbumServer.getPublicAlbumsByName;
 
 
 @Service
@@ -46,20 +46,6 @@ public class InteractServer {
     }
 
 
-    public DataResult getCommentInfoByAlbumName(int albumID){
-        DataResult dataResult = new DataResult();
-        if(getPublicAlbumsById(albumID).getStatus() == -1){
-            dataResult.setStatus(-1);
-            dataResult.setMsg("no such comment");
-        }else{
-            dataResult.setStatus(0);
-            dataResult.setMsg("get comment info");
-            List<Comment> commentList = CommentDAO.getCommentsByAlbum(albumID);
-            dataResult.setMsg("get comment success");
-            dataResult.setData(commentList);
-        }
-        return dataResult;
-    }
     // Comment functionality
     public DataResult insertComment(Comment comment) {
         try {
