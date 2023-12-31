@@ -6,6 +6,7 @@ import entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,10 +24,13 @@ import server.AlbumServer;
 @Controller
 @RequestMapping("/me")
 public class MeController {
-    private final AlbumServer albumServer;
+    private final UserServer userServer;
+    private  final AlbumServer albumServer;
+
     @Autowired
-    public MeController(AlbumServer albumServer) {
+    public MeController(AlbumServer albumServer,UserServer userServer) {
         this.albumServer= albumServer;
+        this.userServer= userServer;
     }
     @RequestMapping  ("/albums")
     public String albums(Model model, HttpSession session)
@@ -50,11 +54,36 @@ public class MeController {
         User user = (User)session.getAttribute("myInfo");
 
         DataResult dataResult;
-        dataResult=albumServer.getPublicAlbumsByName(user.getUsername());
-
+//        dataResult=albumServer.getAlbumsByUserID(user.getUserId());
+        dataResult=albumServer.getAlbumsByUserID(user.getUserId());
 
 
         return dataResult;
     }
 
+    @PostMapping("/updateUsername")
+    @ResponseBody
+    public DataResult updateUsername(@RequestParam String fieldValue,HttpSession session) {
+        User user = (User)session.getAttribute("myInfo");
+        DataResult dataResult;
+        return  userServer.editUsername(user.getUserId(),fieldValue);
+
+    }
+
+    @PostMapping("/updateEmail")
+    @ResponseBody
+    public DataResult updateEmail(@RequestParam String fieldValue,HttpSession session) {
+        User user = (User)session.getAttribute("myInfo");
+        DataResult dataResult;
+        return  userServer.editEmail(user.getUserId(),fieldValue);
+
+    }
+
+    @PostMapping("/updateDescription")
+    @ResponseBody
+    public DataResult updateDescription(@RequestParam String fieldValue,HttpSession session) {
+        User user = (User)session.getAttribute("myInfo");
+        DataResult dataResult;
+        return  userServer.editDes(user.getUserId(),fieldValue);
+    }
 }

@@ -164,7 +164,7 @@
     <!-- 添加一个 id 属性，以便在 JavaScript 中引用 -->
     <form id="loginForm">
       <div class="form-wrapper">
-        <input type="text" name="username" placeholder="用户id" class="input-item">
+        <input type="text" name="username" placeholder="用户名" class="input-item">
         <input type="password" name="password" placeholder="密码" class="input-item">
         <button type="button" id="login_btn" class="btn">登录</button> <!-- 使用 button 元素作为提交按钮 -->
       </div>

@@ -120,10 +120,12 @@ public class AlbumServer {
     public static DataResult getAlbumsByUserID(int userID) {
         AlbumDAO albumDAO = new AlbumDAO();
         List<Album> userAlbums = albumDAO.getAlbumsByUserID(userID);
-
+        System.out.println(userID+"userID为");
         if (!userAlbums.isEmpty()) {
+            System.out.println("找到相册");
             return DataResult.success("get albums by user ID success", userAlbums);
         } else {
+            System.out.println("没有相册");
             return DataResult.fail("no albums found for the user");
         }
     }
