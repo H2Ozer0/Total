@@ -1,17 +1,17 @@
 package server;
 
+import dao.FavoriteDAO;
 import dao.LikeDAO;
 import dao.CommentDAO;
+import entity.Favorite;
 import entity.Like;
 import entity.Comment;
 import entity.DataResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.sql.Timestamp;
 
 import java.util.List;
-
-import static server.AlbumServer.getPublicAlbumsById;
-import static server.AlbumServer.getPublicAlbumsByName;
 
 
 @Service
@@ -19,11 +19,13 @@ public class InteractServer {
 
     private final LikeDAO likeDAO;
     private final CommentDAO commentDAO;
+    private final FavoriteDAO favoriteDAO;
 
     @Autowired
-    public InteractServer(LikeDAO likeDAO, CommentDAO commentDAO) {
+    public InteractServer(LikeDAO likeDAO, CommentDAO commentDAO, FavoriteDAO favoriteDAO) {
         this.likeDAO = likeDAO;
         this.commentDAO = commentDAO;
+        this.favoriteDAO = favoriteDAO;
     }
 
     // Like functionality
@@ -108,5 +110,21 @@ public class InteractServer {
         } catch (Exception e) {
             return DataResult.fail("Failed to delete comment: " + e.getMessage());
         }
+    }
+
+    public DataResult addToFavorites(int userID, int albumID) {
+        try {
+            // Implement your logic to add the album to the user's favorites
+            Favorite newFavorite = new Favorite(albumID, userID, getCurrentTimestamp());
+            favoriteDAO.insertFavorite(newFavorite);
+
+            return DataResult.success("Album added to favorites successfully", null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return DataResult.fail("Failed to add album to favorites");
+        }
+    }
+    private Timestamp getCurrentTimestamp() {
+        return new Timestamp(System.currentTimeMillis());
     }
 }
