@@ -15,7 +15,7 @@ public class UserDAO {
 
     private Connection connection;
     private static final String TABLE_NAME = "`User`";
-    private static final String COLUMN_USER_ID = "`UserID` INT AUTO_INCREMENT PRIMARY KEY";
+    private static final String COLUMN_USER_ID = "`UserID`";
     private static final String COLUMN_USERNAME = "`Username`";
     private static final String COLUMN_PASSWORD = "`Password`";
     private static final String COLUMN_EMAIL = "`Email`";
@@ -26,7 +26,7 @@ public class UserDAO {
     public UserDAO() {
         try {
             connection = DriverManager.getConnection(JDBC_URL, USER, PASSWORD);
-            connection.setAutoCommit(false);
+            //connection.setAutoCommit(false);
             System.out.println("数据库连接已建立。");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -267,6 +267,8 @@ public class UserDAO {
 //        userDAO.closeConnection();
 
         UserServer u=new UserServer();
-        u.login("kkk","123456");
+       // u.login("kkk","123456");
+        u.editEmail(1,"njnu.com");
+        u.editPassword(2,"123123");
     }
 }
