@@ -40,7 +40,18 @@ public class User {
         this.userId = userId;
     }
 
-
+    public void updateusername(String name)
+    {
+        this.username=username;
+    }
+    public void updatedescritption(String description)
+    {
+        this.description=description;
+    }
+    public void updateemail(String email)
+    {
+        this.email=email;
+    }
     // 获取用户名
     public String getUsername() {
         return username;

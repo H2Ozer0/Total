@@ -59,48 +59,53 @@
     </div>
 </div>
 
-<div class="layui-tab layui-tab-brief" style="" lay-filter="docDemoTabBrief">
-    <ul class="layui-tab-title" style="text-align: center;background:white">
-        <li class="layui-this" style="width: 200px" id="myInfoTab">个人信息</li>
-    </ul>
-    <div class="st-main">
-        <div class="layui-tab-content">
-            <%--编辑个人信息--%>
-            <div class="layui-tab-item layui-show" id="myInfoContent">
-                <form class="layui-form" id="myInfoForm">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">用户ID</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="userId" id="userId" value="${myInfo.userId}" class="layui-input" disabled>
+    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+        <ul class="layui-tab-title" style="text-align: center; background:white">
+            <li class="layui-this" style="width: 200px" id="myInfoTab">个人信息</li>
+        </ul>
+        <div class="st-main">
+            <div class="layui-tab-content">
+                <%--编辑个人信息--%>
+                <div class="layui-tab-item layui-show" id="myInfoContent">
+                    <form class="layui-form" id="myInfoForm">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label layui-col-md2">用户ID</label>
+                            <div class="layui-input-inline layui-col-md4">
+                                <input type="text" name="userId" id="userId" value="${myInfo.userId}" class="layui-input" disabled>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">用户名</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="username" id="username" value="${myInfo.username}" class="layui-input" disabled>
-                            <button type="button" class="layui-btn layui-btn-sm" onclick="modifyInfo('username')">修改</button>
-                            <button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveUsername">保存</button>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label layui-col-md2">用户名</label>
+                            <div class="layui-input-inline layui-col-md4">
+                                <input type="text" name="username" id="username" value="${myInfo.username}" class="layui-input" disabled>
+                                <button type="button" class="layui-btn layui-btn-sm" onclick="modifyInfo('username')">修改</button>
+                                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveUsername">保存</button>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">邮箱</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="email" id="email" value="${myInfo.email}" class="layui-input" disabled>
-                            <button type="button" class="layui-btn layui-btn-sm" onclick="modifyInfo('email')">修改</button>
-                            <button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveEmail">保存</button>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label layui-col-md2">邮箱</label>
+                            <div class="layui-input-inline layui-col-md4">
+                                <input type="text" name="email" id="email" value="${myInfo.email}" class="layui-input" disabled>
+                                <button type="button" class="layui-btn layui-btn-sm" onclick="modifyInfo('email')">修改</button>
+                                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveEmail">保存</button>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">个人描述</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="description" id="description" value="${myInfo.description}" class="layui-input" disabled>
-                            <button type="button" class="layui-btn layui-btn-sm" onclick="modifyInfo('description')">修改</button>
-                            <button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveDescription">保存</button>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label layui-col-md2">个人描述</label>
+                            <div class="layui-input-inline layui-col-md4">
+                                <input type="text" name="description" id="description" value="${myInfo.description}" class="layui-input" disabled>
+                                <button type="button" class="layui-btn layui-btn-sm" onclick="modifyInfo('description')">修改</button>
+                                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveDescription">保存</button>
+                            </div>
                         </div>
-                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
                     <!-- 添加每个信息独立的保存按钮 -->
                     <!-- 例如：<button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveEmail">保存</button> -->
@@ -132,10 +137,16 @@
                 type: 'POST',
                 data: { fieldValue: fieldValue },
                 success: function (response) {
-                    // 处理来自服务器的成功响应
-                    console.log(response);
-                    // 在前端展示返回的信息
-                    layer.alert(response.msg);
+                    layer.open({
+                        title: '提示',
+                        content: response.msg,
+                        shade: 0.5,
+                        yes: function () {
+                            layer.closeAll();
+                            //刷新页面
+                            window.location.href = "${pageContext.request.contextPath}/userhome";
+                        }
+                    });
                 },
                 error: function (error) {
                     // 处理来自服务器的错误响应

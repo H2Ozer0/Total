@@ -63,7 +63,7 @@
             });
             table.on('tool(album_table)',function (obj) {
                 if(obj.event === 'check'){
-                    var url = '${pageContext.request.contextPath}/album?albumId=' + obj.data.albumID;
+                    var url = '${pageContext.request.contextPath}/CreateAlbum?albumId=' + obj.data.albumID;
                     window.open(url,"_blank");
                 }
                 else if(obj.event === 'edit'){

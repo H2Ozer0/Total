@@ -63,27 +63,47 @@ public class MeController {
 
     @PostMapping("/updateUsername")
     @ResponseBody
-    public DataResult updateUsername(@RequestParam String fieldValue,HttpSession session) {
+    public DataResult updateUsername(@RequestParam String fieldValue,HttpSession session,Model model) {
         User user = (User)session.getAttribute("myInfo");
-        DataResult dataResult;
-        return  userServer.editUsername(user.getUserId(),fieldValue);
+        DataResult dataResult=userServer.editUsername(user.getUserId(),fieldValue);;
+        int status=dataResult.getStatus();
+        if(status==0)
+        {
+            user.setUsername(fieldValue);
+        }
+        model.addAttribute("myInfo",user);
+        return  dataResult;
 
     }
 
     @PostMapping("/updateEmail")
     @ResponseBody
-    public DataResult updateEmail(@RequestParam String fieldValue,HttpSession session) {
+    public DataResult updateEmail(@RequestParam String fieldValue,HttpSession session,Model model) {
         User user = (User)session.getAttribute("myInfo");
-        DataResult dataResult;
-        return  userServer.editEmail(user.getUserId(),fieldValue);
+        DataResult dataResult=userServer.editEmail(user.getUserId(),fieldValue);;
+        int status=dataResult.getStatus();
+        if(status==0)
+        {
+            user.setEmail(fieldValue);
+        }
+        model.addAttribute("myInfo",user);
+        return  dataResult;
 
     }
 
     @PostMapping("/updateDescription")
     @ResponseBody
-    public DataResult updateDescription(@RequestParam String fieldValue,HttpSession session) {
+    public DataResult updateDescription(@RequestParam String fieldValue,HttpSession session,Model model) {
         User user = (User)session.getAttribute("myInfo");
-        DataResult dataResult;
-        return  userServer.editDes(user.getUserId(),fieldValue);
+        DataResult dataResult=userServer.editDes(user.getUserId(),fieldValue);;
+        int status=dataResult.getStatus();
+        if(status==0)
+        {
+            user.setDescription(fieldValue);
+        }
+        model.addAttribute("myInfo",user);
+        return  dataResult;
+
     }
+
 }

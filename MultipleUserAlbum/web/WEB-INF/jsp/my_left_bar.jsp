@@ -28,7 +28,7 @@
         </div>
 
 
-            <a href="/createAlbum" class = "content-center" target="_blank">
+            <a href="${pageContext.request.contextPath}/albums/CreateAlbum" class = "content-center" target="_blank">
                 <button type="button" class=" layui-btn layui-btn-primary}">创建相册</button>
             </a>
             <a href="/uploadPhoto" style="margin: 0 auto" target="_blank">
