@@ -23,4 +23,9 @@ public class Favorite_Controller {
         return interactServer.addToFavorites(userID, albumID);
     }
 
+    @PostMapping("/delete")
+    @ResponseBody
+    public DataResult deleteFavorite(@RequestParam int userID, @RequestParam int albumID) {
+        return interactServer.deleteFavorite(userID, albumID);
+    }
 }

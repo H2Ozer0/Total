@@ -124,6 +124,14 @@ public class InteractServer {
             return DataResult.fail("Failed to add album to favorites");
         }
     }
+    public DataResult deleteFavorite(int userID, int albumID) {
+        try {
+            favoriteDAO.deleteFavorite(userID, albumID);
+            return DataResult.success("Favorite deleted successfully.", null);
+        } catch (Exception e) {
+            return DataResult.fail("Failed to delete favorite: " + e.getMessage());
+        }
+    }
     private Timestamp getCurrentTimestamp() {
         return new Timestamp(System.currentTimeMillis());
     }

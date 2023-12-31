@@ -61,6 +61,28 @@ public class FavoriteDAO {
         }
     }
 
+    public void deleteFavorite(int userID, int albumID) {
+        try {
+            String query = "DELETE FROM Favorite WHERE UserID = ? AND AlbumID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, userID);
+                preparedStatement.setInt(2, albumID);
+
+                int rowsAffected = preparedStatement.executeUpdate();
+
+                if (rowsAffected == 0) {
+                    System.out.println("No matching Favorite record found for deletion.");
+                    // You can choose to throw an exception or handle it as needed.
+                    // For simplicity, I'm printing a message here.
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("删除收藏记录时发生异常: " + e.getMessage());
+        }
+    }
+
+
     // 检查是否已存在相同的收藏记录
     private boolean checkDuplicateFavorite(Favorite favorite) {
         boolean duplicateExists = false;
