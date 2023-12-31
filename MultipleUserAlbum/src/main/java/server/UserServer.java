@@ -83,6 +83,7 @@ public class UserServer implements ServletContextAware {
             User user = new User(userDAO.getUserByUsername(username));
             if(user.getPassword().equals(password)){
                 //密码正确
+//                System.out.println(user.getUserId());
                 dataResult.setStatus(0);
                 dataResult.setMsg("登录成功");
                 dataResult.setData(user);

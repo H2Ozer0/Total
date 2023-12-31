@@ -1,6 +1,7 @@
 package dao;
 
 import entity.User;
+import server.UserServer;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ public class UserDAO {
 
     private User mapResultSetToUser(ResultSet resultSet) throws SQLException {
         User user = new User();
+        user.setUserId(resultSet.getInt("UserID"));
         user.setUsername(resultSet.getString("Username"));
         user.setPassword(resultSet.getString("Password"));
         user.setEmail(resultSet.getString("Email"));
@@ -228,40 +230,43 @@ public class UserDAO {
     }
 
     public static void main(String[] args) {
-        UserDAO userDAO = new UserDAO();
+//        UserDAO userDAO = new UserDAO();
+//
+//        // 插入用户记录
+//        User newUser = new User("john111", "password123", "john@example.com", false, "normal user");
+//        userDAO.insertUser(newUser);
+//
+//        // 获取生成的自增主键值，如果需要
+//        int generatedUserID = newUser.getUserId();
+//
+//        // 根据用户ID查询用户
+//        User retrievedUser = userDAO.getUserById(generatedUserID);
+//        System.out.println("查询到的用户：" + retrievedUser);
+//
+//        // 通过用户名查询用户
+//        User retrievedUserByUsername = userDAO.getUserByUsername("john_doe");
+//        System.out.println("通过用户名查询到的用户：" + retrievedUserByUsername);
+//
+//        // 更新用户的用户名
+//        userDAO.updateUsername(generatedUserID, "john_doe_updated");
+//
+//        // 更新用户的密码
+//        userDAO.updatePassword(generatedUserID, "new_password123");
+//
+//        // 更新用户的邮箱
+//        userDAO.updateEmail(generatedUserID, "john_updated@example.com");
+//
+//        // 查询更新后的用户信息
+//        User updatedUser = userDAO.getUserById(generatedUserID);
+//        System.out.println("更新后的用户：" + updatedUser);
+//
+//        // 删除用户
+//        userDAO.deleteUser(generatedUserID);
+//
+//        // 关闭数据库连接
+//        userDAO.closeConnection();
 
-        // 插入用户记录
-        User newUser = new User("john111", "password123", "john@example.com", false, "normal user");
-        userDAO.insertUser(newUser);
-
-        // 获取生成的自增主键值，如果需要
-        int generatedUserID = newUser.getUserId();
-
-        // 根据用户ID查询用户
-        User retrievedUser = userDAO.getUserById(generatedUserID);
-        System.out.println("查询到的用户：" + retrievedUser);
-
-        // 通过用户名查询用户
-        User retrievedUserByUsername = userDAO.getUserByUsername("john_doe");
-        System.out.println("通过用户名查询到的用户：" + retrievedUserByUsername);
-
-        // 更新用户的用户名
-        userDAO.updateUsername(generatedUserID, "john_doe_updated");
-
-        // 更新用户的密码
-        userDAO.updatePassword(generatedUserID, "new_password123");
-
-        // 更新用户的邮箱
-        userDAO.updateEmail(generatedUserID, "john_updated@example.com");
-
-        // 查询更新后的用户信息
-        User updatedUser = userDAO.getUserById(generatedUserID);
-        System.out.println("更新后的用户：" + updatedUser);
-
-        // 删除用户
-        userDAO.deleteUser(generatedUserID);
-
-        // 关闭数据库连接
-        userDAO.closeConnection();
+        UserServer u=new UserServer();
+        u.login("kkk","123456");
     }
 }
