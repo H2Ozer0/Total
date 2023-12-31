@@ -12,7 +12,7 @@ public class CommentDAO {
     private static final String USER = "album";
     private static final String PASSWORD = "StrongPassword123!";
 
-    private Connection connection;
+    private static Connection connection;
 
     public CommentDAO() {
         try {
@@ -101,7 +101,7 @@ public class CommentDAO {
     }
 
     // 查询某相册的所有评论
-    public List<Comment> getCommentsByAlbum(int albumID) {
+    public static List<Comment> getCommentsByAlbum(int albumID) {
         List<Comment> albumComments = new ArrayList<>();
         try {
             if (!albumExists(albumID) ){
@@ -160,7 +160,7 @@ public class CommentDAO {
     }
 
     // 将 ResultSet 映射到 Comment 对象
-    private Comment mapResultSetToComment(ResultSet resultSet) throws SQLException {
+    private static Comment mapResultSetToComment(ResultSet resultSet) throws SQLException {
         Comment comment = new Comment();
         comment.setCommentID(resultSet.getInt("CommentID"));
         comment.setAlbumID(resultSet.getInt("AlbumID"));
@@ -170,7 +170,7 @@ public class CommentDAO {
         return comment;
     }
     // 新增方法，用于检查相册是否存在
-    private boolean albumExists(int albumID) throws SQLException {
+    private static boolean albumExists(int albumID) throws SQLException {
         String query = "SELECT COUNT(*) AS AlbumCount FROM Album WHERE AlbumID = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, albumID);

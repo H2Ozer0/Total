@@ -65,6 +65,16 @@ public class AlbumServer {
         }
     }
 
+    public static DataResult getPublicAlbumsById(int albumID) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        Album publicAlbum = albumDAO.getAlbumByID(albumID);
+        if (publicAlbum != null) {
+            return DataResult.success("get public albums by ID success", publicAlbum);
+        } else {
+            return DataResult.fail("failed to get public albums by ID");
+        }
+    }
+
     // 编辑相册名称
     public static DataResult updateAlbumName(int albumID, String newAlbumName) {
         AlbumDAO albumDAO = new AlbumDAO();

@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
 
-import static server.AlbumServer.getPublicAlbumsByName;
+import static server.AlbumServer.getPublicAlbumsById;
+
+
 
 @Service
 public class InteractServer {
@@ -46,19 +46,15 @@ public class InteractServer {
     }
 
 
-    public static DataResult getCommentInfoByAlbumId(String albumName){
+    public DataResult getCommentInfoByAlbumName(int albumID){
         DataResult dataResult = new DataResult();
-        if(!getPublicAlbumsByName(albumName)){
+        if(getPublicAlbumsById(albumID).getStatus() == -1){
             dataResult.setStatus(-1);
             dataResult.setMsg("no such comment");
         }else{
             dataResult.setStatus(0);
             dataResult.setMsg("get comment info");
-            List<Comment> commentList = new ArrayList<>();
-            List<Map<String,Object>> maps = CommentDAO.getCommentInfoListByAlbumId(albumName);
-            for(Map<String,Object>map:maps){
-                commentList.add(new Comment(map));
-            }
+            List<Comment> commentList = CommentDAO.getCommentsByAlbum(albumID);
             dataResult.setMsg("get comment success");
             dataResult.setData(commentList);
         }
