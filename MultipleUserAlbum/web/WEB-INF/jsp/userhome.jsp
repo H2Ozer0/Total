@@ -15,101 +15,29 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/st-style.css" type="text/css"/>
     <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
     <script src="${pageContext.request.contextPath}/static/layui/layui.all.js"></script>
-    <script type="text/javascript">
-        <%--设置相册div的鼠标划入划出显示编辑删除--%>
-        $(function () {
-            $('.card-box.corner-img-div').mouseenter(function () {
-                $(this).find(".corner-img-item.layui-btn-group").show();
-            });
-
-            $('.card-box.corner-img-div').mouseleave(function () {
-                $(this).find(".corner-img-item.layui-btn-group").hide();
-            });
-
-            $("#GUANZHU").click(function () {
-                var toId = "${userInfo.id}"
-                $.ajax({
-                    url: "http://localhost:8080/addfow",
-                    type: "post",
-                    data: {"TID":toId},
-                    dataType: "json",
-                    success: function (result) {
-                        console.log(result.data);
-                        if (result.status == 0) {
-                            window.location.reload();
-                        } else {
-                            layer.open({
-                                offset:'250px',
-                                title: '关注失败 请登录！',
-                                content: '关注失败',
-                                shade: 0.5,
-                                yes: function(){
-                                    window.location.href = "http://localhost:8080/";
-                                }
-                            });
-
-                        }
-                    },
-                    error: function () {
-                        alert("关注异常");
-                    }
-                });
-            });
-
-            $("#QUGUAN").click(function () {
-                var toId = "${userInfo.userId}"
-                layer.confirm('确定取消关注吗?', {icon: 3, title:'提示',offset:'250px'}, function(index){
-                    $.ajax({
-                        url: "http://localhost:8080/delfow",
-                        type: "post",
-                        data: {"TID":toId},
-                        dataType: "json",
-                        success: function (result) {
-                            console.log(result.status);
-                            console.log(result.data);
-                            //如果删除成功
-                            if (result.status == 0) {
-                                layer.msg('取消关注成功!', {icon: 6});
-                                window.location.reload();
-                            } else {
-                                window.location.reload();
-                            }
-                        },
-                        error: function () {
-                            alert("取消关注发生异常");
-                        }
-                    });
-                    layer.close(index);
-                });
-            });
-        });
-
-        function clickDel(e) {
-            var albumId = $(e).attr("data-id");
-            var albumName = $(e).attr("data-name");
-            layer.confirm('确定删除该相册「' + albumName +'」吗?该相册下的照片也会一并删除。', {icon: 3, title:'提示'}, function(index){
-                $.ajax({
-                    url: "http://localhost:8080/delAlbum",
-                    type: "post",
-                    data: {"albumId": albumId},
-                    dataType: "json",
-                    success: function (result) {
-                        //如果删除成功
-                        if (result.status == 0) {
-                            layer.msg('删除成功!', {icon: 6});
-                            window.location.reload();
-                        } else {
-                            window.location.reload();
-                        }
-                    },
-                    error: function () {
-                        alert("删除相册发生异常");
-                    }
-                });
-                layer.close(index);
-            });
+    <style>
+        .layui-tab-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* 使容器充满整个视口高度 */
         }
-    </script>
+
+        #myInfoContent {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+    <style>
+        .st-main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* 使容器充满整个视口高度 */
+        }
+    </style>
+
 </head>
 <body class="bg-gray">
 
@@ -120,114 +48,129 @@
 <div style="background: white">
     <div class="home-information-box">
         <div class="information-headimg-box">
-            <img src="/getAvatar?id=${userInfo.id}" width="150px" height="150px"/>
+            <img src="/getAvatar?id=${myInfo.userId}" width="150px" height="150px"/>
         </div>
     </div>
 
     <div class="text-center" style="margin-top: 80px">
-        <div id="user_name" style="font-size: 24px">${userInfo.username}</div>
-        <div id="user_id" style="font-size: 14px;color: #bbbbbb">id:${userInfo.userId}</div>
-        <%--自己的主页没有关注和私信--%>
-        <c:if test="${sessionScope.myInfo.userId != userInfo.userId}">
-            <div style="margin-top:10px;padding-bottom: 10px">
-                <c:if test="${empty sessionScope.myInfo}">
-                <a href="/index">
-                    <button id = "GUANZHU1" type="button" class="layui-btn">登录后关注</button>
-                    </c:if>
+        <div id="user_name" style="font-size: 24px">${myInfo.username}</div>
+        <div id="user_id" style="font-size: 14px;color: #bbbbbb">id:${myInfo.userId}</div>
 
-                    <c:if test="${not empty sessionScope.myInfo}">
-                    <c:if test="${isFollow == 1}">
-                    <button id = "QUGUAN" type="button" class="layui-btn layui-btn-primary">取消关注</button>
-                    </c:if>
-                    <c:if test="${isFollow == 0}">
-                    <button id = "GUANZHU" type="button" class="layui-btn">关注</button>
-                    </c:if>
-                    </c:if>
-
-                    <a href="/sendMessage?id=${albumInfo.userId}">
-                        <button type="button" class="layui-btn">私信</button>
-                    </a>
-            </div>
-        </c:if>
-        <c:if test="${userInfo.userState=='banned'}">
-            <i class="layui-icon layui-icon-tips" style="font-size: 18px; color: #bbbbbb;"></i>
-            <div style="font-size: 18px;color: #bbbbbb;">该用户已被封禁!</div>
-        </c:if>
     </div>
 </div>
-
 
 <div class="layui-tab layui-tab-brief" style="" lay-filter="docDemoTabBrief">
     <ul class="layui-tab-title" style="text-align: center;background:white">
-        <li class="layui-this" style="width: 200px">相册</li>
-        <li style="width: 200px">动态</li>
+        <li class="layui-this" style="width: 200px" id="myInfoTab">个人信息</li>
     </ul>
     <div class="st-main">
         <div class="layui-tab-content">
-            <%--相册--%>
-            <div class="layui-tab-item layui-show">
-                <%--是自己的页面才可以点创建相册--%>
-                <c:if test="${sessionScope.isLogin && sessionScope.myInfo.userId == userInfo.userId}">
-                    <div class="" style="margin-top:20px;text-align: right">
-                        <c:if test="${sessionScope.myInfo.userState!='banned'}">
-                            <a href="/createAlbum">
-                                <button type="button" class="layui-btn layui-btn-radius">创建相册</button>
-                            </a>
-                            <a href="/uploadPhoto"><button type="button" class="layui-btn layui-btn-radius">上传照片</button></a>
-                        </c:if>
-                        <c:if test="${sessionScope.myInfo.userState=='banned'}">
-                            <a title="您已被封禁!">
-                                <button type="button" class="layui-btn layui-btn-disabled" >创建相册</button>
-                            </a>
-                            <a title="您已被封禁!">
-                                <button type="button" class="layui-btn layui-btn-disabled">上传照片</button>
-                            </a>
-                        </c:if>
+            <%--编辑个人信息--%>
+            <div class="layui-tab-item layui-show" id="myInfoContent">
+                <form class="layui-form" id="myInfoForm">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">用户ID</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="userId" id="userId" value="${myInfo.userId}" class="layui-input" disabled>
+                        </div>
                     </div>
-                </c:if>
-                <div id="albums" style="margin-top: 20px">
-                    <c:if test="${albumList.size() == 0}">
-                        <div>
-                            TA暂时还没有上传相册哦!
-                        </div>
-                    </c:if>
-                    <c:forEach var="album" items="${albumList}">
 
-                        <div class="card-box corner-img-div">
-                                <%--编辑删除的图标，仅当为自己主页时才有--%>
-                            <c:if test="${sessionScope.myInfo.id == userInfo.id}">
-                                <div class="corner-img-item layui-btn-group" style="display: none;">
-                                    <a href="/editAlbum?albumId=${album.id}">
-                                        <button type="button" class="layui-btn layui-btn-primary layui-btn-sm">
-                                            <i class="layui-icon">&#xe642;</i>
-                                        </button>
-                                    </a>
-                                    <button type="button" onclick = "clickDel(this)" data-id = '${album.id}' data-name = '${album.name}' class="layui-btn layui-btn-primary layui-btn-sm">
-                                        <i class="layui-icon">&#xe640;</i>
-                                    </button>
-                                </div>
-                            </c:if>
-                            <div class="card-image">
-                                    <%--到底传id还是直接传url好呢--%>
-                                <a href="/album?albumId=${album.id}"><img class="fill-box" src="/getImage?url=${album.coverId}"></a>
-                            </div>
-                            <div class="card-info">
-                                <div class="card-info-title">${album.name}[${album.category}]</div>
-                                <div class="card-info-type">${album.descp}</div>
-                            </div>
-                            <div class="card-item">
-                                <div class="card-info-type">${album.createTime}</div>
-                            </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="username" id="username" value="${myInfo.username}" class="layui-input" disabled>
+                            <button type="button" class="layui-btn layui-btn-sm" onclick="modifyInfo('username')">修改</button>
+                            <button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveUsername">保存</button>
                         </div>
-                    </c:forEach>
+                    </div>
 
-                </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">邮箱</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="email" id="email" value="${myInfo.email}" class="layui-input" disabled>
+                            <button type="button" class="layui-btn layui-btn-sm" onclick="modifyInfo('email')">修改</button>
+                            <button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveEmail">保存</button>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">个人描述</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="description" id="description" value="${myInfo.description}" class="layui-input" disabled>
+                            <button type="button" class="layui-btn layui-btn-sm" onclick="modifyInfo('description')">修改</button>
+                            <button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveDescription">保存</button>
+                        </div>
+                    </div>
+
+                    <!-- 添加每个信息独立的保存按钮 -->
+                    <!-- 例如：<button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveEmail">保存</button> -->
+
+                </form>
             </div>
-            <%--动态--%>
-            <div class="layui-tab-item">敬请期待</div>
         </div>
     </div>
 </div>
+<script>
+    layui.use(['form', 'layer', 'element'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+        var element = layui.element;
+        // 处理信息修改的函数
+        window.modifyInfo = function (fieldName) {
+            // 启用输入框以便编辑
+            $('#' + fieldName).removeAttr('disabled');
+            // 将焦点设置到输入框
+            $('#' + fieldName).focus();
+            // 显示保存按钮
+            $('#saveBtn-' + fieldName).show();
+        };
+        // 提交表单数据到服务器的通用函数
+        function submitForm(fieldValue, url) {
+            // 发送 AJAX 请求到服务器
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: { fieldValue: fieldValue },
+                success: function (response) {
+                    // 处理来自服务器的成功响应
+                    console.log(response);
+                    // 在前端展示返回的信息
+                    layer.alert(response.msg);
+                },
+                error: function (error) {
+                    // 处理来自服务器的错误响应
+                    console.error(error);
+                }
+            });
+        }
+
+        // 提交用户名表单数据到服务器
+        form.on('submit(saveUsername)', function (data) {
+            var fieldValue = data.field.username;
+            var url = '${pageContext.request.contextPath}/me/updateUsername';
+            submitForm(fieldValue, url);
+            return false;
+        });
+
+        // 提交邮箱表单数据到服务器
+        form.on('submit(saveEmail)', function (data) {
+            var fieldValue = data.field.email;
+            var url = '${pageContext.request.contextPath}/me/updateEmail';
+            submitForm(fieldValue, url);
+            return false;
+        });
+
+        // 提交个人描述表单数据到服务器
+        form.on('submit(saveDescription)', function (data) {
+            var fieldValue = data.field.description;
+            var url = '${pageContext.request.contextPath}/me/updateDescription';
+            submitForm(fieldValue, url);
+            return false;
+        });
+    });
+</script>
+
+
 
 
 </body>

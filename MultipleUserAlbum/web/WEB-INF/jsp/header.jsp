@@ -24,14 +24,14 @@
         <!--TODO:iconfont-->
     </li>
     <li class="layui-nav-item right" lay-unselect="" style="display:${sessionScope.isLogin?"block":"none"};margin-right: 20px">
-        <a href="/user?id=${sessionScope.myInfo. userId}"><%--<i class="layui-icon layui-icon-username"style="color: white"></i>--%>
+        <a href="${pageContext.request.contextPath}/userhome"><%--<i class="layui-icon layui-icon-username"style="color: white"></i>--%>
          <div class="st-white-font">当前账户:${sessionScope.myInfo.username}</div>
         </a>
         <dl class="layui-nav-child">
             <dd><a href="${pageContext.request.contextPath}/me/albums">管理相册</a></dd>
-            <dd><a href="${pageContext.request.contextPath}/me/photos">管理照片</a></dd>
-            <dd><a href="${pageContext.request.contextPath}/me/info">个人信息</a></dd>
-            <dd id="logout"><a href="">退出</a></dd>
+            <dd><a href="${pageContext.request.contextPath}/me/photos">好友界面</a></dd>
+            <dd><a href="${pageContext.request.contextPath}/login_page">退出</a></dd>
+
         </dl>
     </li>
 
