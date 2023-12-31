@@ -12,7 +12,7 @@ public class CommentDAO {
     private static final String USER = "album";
     private static final String PASSWORD = "StrongPassword123!";
 
-    private Connection connection;
+    private static Connection connection;
 
     public CommentDAO() {
         try {
@@ -123,6 +123,7 @@ public class CommentDAO {
         }
         return albumComments;
     }
+
 
     // 根据评论ID查询评论
     public Comment getCommentByID(int commentID) {

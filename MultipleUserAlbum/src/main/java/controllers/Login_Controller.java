@@ -78,43 +78,13 @@ public class Login_Controller {
     @ResponseBody
     public DataResult login(@RequestParam("username") String username, @RequestParam("pass") String password,Model model)
     {
-        //用于测试
-        User u=new User("smj","abc123","3185513942@qq.com",false,"测试账号");
-        DataResult dataResult_test=new DataResult();
-        dataResult_test.setStatus(0);
-        dataResult_test.setMsg("登录成功");
-        dataResult_test.setData(u);
-        model.addAttribute("isLogin",true);
-        model.addAttribute("myInfo",dataResult_test.getData());
-        return   dataResult_test;
-//        //用于测试
+        DataResult dataResult=userServer.login(username,password);
+        if(dataResult.getStatus() == 0){
+            model.addAttribute("isLogin",true);
+            model.addAttribute("myInfo",dataResult.getData());
+        }
+        return dataResult;
 
-
-
-//        if(userServer.existsByUsername(username))
-//        {
-//
-//            User user=userServer.getUserByUsername(username);
-//            String truePasswd=user.getPassword();
-//            if(truePasswd.equals(password))
-//            {
-//                DataResult dataResult=new DataResult();
-//                dataResult.setStatus(0);
-//                dataResult.setMsg("登录成功");
-//                dataResult.setData(user);
-//                model.addAttribute("isLogin",true);
-//                model.addAttribute("myInfo",dataResult.getData());
-//                return   dataResult;
-//            }
-//            else
-//            {
-//                return DataResult.fail("登录失败，密码错误");
-//            }
-//        }
-//        else
-//        {
-//            return DataResult.fail("登录失败，用户不存在");
-//        }
 
     }
 

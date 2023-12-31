@@ -1,33 +1,30 @@
 package controllers;
 
 import entity.Like;
+import entity.DataResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import server.LikeServer;
+import server.InteractServer;
 
-@Controller
-@RequestMapping("/likes")
+@RestController
+@RequestMapping("/like")
 public class Like_Controller {
 
-    private final LikeServer likeServer;
+    private final InteractServer interactServer;
 
     @Autowired
-    public Like_Controller(LikeServer likeServer) {
-        this.likeServer = likeServer;
+    public Like_Controller(InteractServer interactServer) {
+        this.interactServer = interactServer;
     }
 
     @PostMapping("/insert")
-    public String insertLike(@ModelAttribute Like like) {
-        likeServer.insertLike(like);
-        return "redirect:/albums/" + like.getAlbumID(); // Redirect to the album details page after inserting a like.
+    public DataResult insertLike(@RequestBody Like like) {
+        return interactServer.insertLike(like);
     }
 
     @GetMapping("/count/{albumID}")
-    @ResponseBody
-    public int getLikeCountByAlbum(@PathVariable int albumID) {
-        return likeServer.getLikeCountByAlbum(albumID);
+    public DataResult getLikeCountByAlbum(@PathVariable int albumID) {
+        return interactServer.getLikeCountByAlbum(albumID);
     }
 }

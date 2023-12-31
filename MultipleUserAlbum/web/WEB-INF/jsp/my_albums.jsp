@@ -36,21 +36,19 @@
 
             table.render({
                 elem: '#test'
-                ,url:'http://localhost:8080/zme/getMyAlbum'
+                ,url:'${pageContext.request.contextPath}/me/getMyAlbum'
                 ,cols: [[
-                    {field:'id',  title: '相册ID', sort: true}
-                    ,{field:'name',  title: '相册名',sort:true}
-                    ,{field:'category',  title: '分类',sort:true}
-                    ,{field:'descp',  title: '相册描述'}
-                    ,{field:'praiseCount',  title: '点赞', width:80, sort: true}
+                    {field:'albumID',  title: '相册ID', sort: true}
+                    ,{field:'albumName',  title: '相册名',sort:true}
+                    ,{field:'likesCount',  title: '点赞数',sort:true}
+                    ,{field:'description',  title: '相册描述'}
+                    ,{field:'favoritesCount',  title: '收藏数', width:80, sort: true}
                     ,{field: 'url', title: '封面',
                         templet: function(d){
-                            var url = '/getImage?url=' + d.coverId;
+                            var url = '${pageContext.request.contextPath}/getCover?url=0' ;
                             return '<div><img  src= "'+url+'" alt="" width="50px" height="50px"></a></div>';
                         },width:80,event :'preview'
                     }
-                    ,{field:'createTime',  title: '创建日期', sort: true}
-                    ,{field:'albumState',  title: '相册状态', sort: true}
                     ,{fixed: 'right', width:178, align:'center', toolbar: '#barDemo'}
                 ]]
                 ,page: true
@@ -65,18 +63,18 @@
             });
             table.on('tool(album_table)',function (obj) {
                 if(obj.event === 'check'){
-                    var url = '/album?albumId=' + obj.data.id;
+                    var url = '${pageContext.request.contextPath}/album?albumId=' + obj.data.albumID;
                     window.open(url,"_blank");
                 }
                 else if(obj.event === 'edit'){
-                    var url = '/editAlbum?albumId=' + obj.data.id;
+                    var url = '${pageContext.request.contextPath}/editAlbum?albumId=' + obj.data.albumID;
                     window.open(url,"_blank");
                 }else if(obj.event === 'del'){
                     var albumName = obj.data.name;
                     var albumId = obj.data.id;
                     layer.confirm('确定删除该相册「' + albumName +'」吗?该相册下的照片也会一并删除。', {icon: 3, title:'提示'}, function(index){
                         $.ajax({
-                            url: "http://localhost:8080/delAlbum",
+                            url: "${pageContext.request.contextPath}/delAlbum",
                             type: "post",
                             data: {"albumId": albumId},
                             dataType: "json",
@@ -96,7 +94,7 @@
                         layer.close(index);
                     });
                 } else if (obj.event === 'preview'){
-                    var url = "/getImage?url=" + obj.data.coverId;
+                    var url = "${pageContext.request.contextPath}/getCover?url=" + obj.data.albumID;
                     var width = 800;
                     var height = 800;
                     // 创建对象

@@ -65,6 +65,16 @@ public class AlbumServer {
         }
     }
 
+    public static DataResult getPublicAlbumsById(int albumID) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        Album publicAlbum = albumDAO.getAlbumByID(albumID);
+        if (publicAlbum != null) {
+            return DataResult.success("get public albums by ID success", publicAlbum);
+        } else {
+            return DataResult.fail("failed to get public albums by ID");
+        }
+    }
+
     // 编辑相册名称
     public static DataResult updateAlbumName(int albumID, String newAlbumName) {
         AlbumDAO albumDAO = new AlbumDAO();
@@ -104,6 +114,35 @@ public class AlbumServer {
         } else {
             return DataResult.fail("Failed to delete album");
         }
+    }
+
+    // 获取用户相册列表
+    public static DataResult getAlbumsByUserID(int userID) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        List<Album> userAlbums = albumDAO.getAlbumsByUserID(userID);
+
+        if (!userAlbums.isEmpty()) {
+            return DataResult.success("get albums by user ID success", userAlbums);
+        } else {
+            return DataResult.fail("no albums found for the user");
+        }
+    }
+
+    // 分享相册
+    public static DataResult shareAlbum(int albumID, int userID) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        if (albumDAO.insertShareRecord(albumID, userID)) {
+            return DataResult.success("share album success", null);
+        } else {
+            return DataResult.fail("failed to share album");
+        }
+    }
+
+    // 返回用户的好友分享的相册
+    public static DataResult getFriendSharedAlbums(int userID) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        List<Album> friendSharedAlbums = albumDAO.getFriendSharedAlbums(userID);
+        return DataResult.success("get friend shared albums success", friendSharedAlbums);
     }
 
     // 关闭数据库连接

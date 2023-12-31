@@ -5,6 +5,10 @@
   <meta charset="UTF-8">
   <title>注册界面</title>
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/layui/css/layui.css" type="text/css"/>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/st-style.css" type="text/css"/>
+  <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js" ></script>
+  <script src="${pageContext.request.contextPath}/static/layui/layui.all.js" charset="UTF-8"></script>
   <style>
     * {
       margin: 0;
@@ -173,9 +177,30 @@
         type: 'POST',
         url: '${pageContext.request.contextPath}/Regestion',
         data: formData,
-        success: function(response) {
-          // 处理后端返回的响应
-          console.log(response);
+        success: function(result) {
+        console.log(result);
+        if(result.status==0)
+        {
+          layer.open({
+            title: '注册成功',
+
+            shade: 0.5,
+            yes: function () {
+              layer.closeAll();
+              //刷新页面
+              window.location.href = "${pageContext.request.contextPath}/login_page";
+            }
+          });
+        }else if (result.status == -1) {
+          layer.open({
+            title: '用户名已存在',
+            yes: function () {
+              layer.closeAll();
+              window.location.href = "${pageContext.request.contextPath}/register_page";
+
+            }
+          });
+        }
         },
         error: function(error) {
           // 处理错误

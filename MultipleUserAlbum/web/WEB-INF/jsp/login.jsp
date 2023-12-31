@@ -207,15 +207,26 @@
           if (result.status == 0) {
             layer.open({
               title: '登录成功',
-              content: '欢迎你,'+result.data.username,
+              content: '欢迎你,' + result.data.username,
               shade: 0.5,
-              yes: function(){
+              yes: function () {
                 layer.closeAll();
                 //刷新页面
                 window.location.href = "${pageContext.request.contextPath}/userhome";
               }
             });
+          } else if (result.status == -1) {
+            layer.open({
+              title: '登录失败',
+              content:result.msg,
+              yes: function () {
+                layer.closeAll();
+                window.location.href = "${pageContext.request.contextPath}/login_page";
+
+              }
+            });
           }
+
         },
         error: function(error) {
           // 处理错误
