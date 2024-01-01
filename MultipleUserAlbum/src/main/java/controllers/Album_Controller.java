@@ -1,8 +1,7 @@
 
 package controllers;
 
-import dao.PhotoDAO;
-import dao.UserDAO;
+import dao.*;
 import entity.*;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -97,30 +97,50 @@ public class Album_Controller {
     }
 
     @RequestMapping("/album_content")
-    public String enterAlbum(@RequestParam("albumId") int albumID,Model model) {
+    public String enterAlbum(Model model, HttpSession session) {
+        User user = (User)session.getAttribute("myInfo");
         InteractServer interactServer =new InteractServer();
         AlbumServer albumServer=new AlbumServer();
+        AlbumDAO albumDAO =new AlbumDAO();
         UserDAO userDAO=new UserDAO();
         try {
             List<Comment> albumCommentList = (List<Comment>) interactServer.getCommentsByAlbum(1).getData();
             System.out.println(albumCommentList);
+            model.addAttribute("creatorName",userDAO.getUserById(albumDAO.getCreatorIDByAlbumID(1)).getUsername());
             model.addAttribute("commentInfo",albumCommentList);
         }catch (Exception e){
             e.printStackTrace();
         }
-        Album album=(Album) albumServer.getAlbumByID(albumID).getData();
-        User user= userDAO.getUserById(1);
+        Album album=(Album) albumServer.getAlbumByID(1).getData();
         PhotoDAO photoDAO =new PhotoDAO();
+        FavoriteDAO favoriteDAO=new FavoriteDAO();
         int res = 0;
-
+        if(user!= null){
+            if(favoriteDAO.isAlbumFavoritedByUser(user.getUserId(),album.getAlbumID())){
+                res = 1;//已经收藏过
+            }else{
+                res=0;
+            }
+        }
         List<Photo> photoList=photoDAO.getPhotosInAlbum(1);
         System.out.println("ALBUM FOLLOW:" + res);
-        model.addAttribute("photoList",photoList);
-               model.addAttribute("albumInfo",album);
-        model.addAttribute("isFollow",10);
+//        model.addAttribute("photoList",photoList);
+        model.addAttribute("albumInfo",album);
+        model.addAttribute("isFollow",res);
         return "album_content";
     }
-
+    @RequestMapping("/showphotos")
+    public String showphotos(@RequestParam("albumId")int albumId, Model model) {
+        model.addAttribute("albumId",albumId);
+        return "showphotos";
+    }
+@RequestMapping("/getPhotos")
+@ResponseBody
+public DataResult getphotos(@RequestParam("albumId")int albumId)
+{
+    DataResult dataResult=AlbumServer.getPhotosInAlbum(albumId);
+    return dataResult;
+}
 
 
 
@@ -159,7 +179,6 @@ public class Album_Controller {
     }
 
 
-
     @RequestMapping("/delAlbum")
     @ResponseBody
     public DataResult delAlbum(@RequestParam("albumId") String albumId, HttpSession session) {
@@ -168,27 +187,33 @@ public class Album_Controller {
         return AlbumServer.deleteAlbum(Integer.parseInt(albumId));
     }
 
-
     @RequestMapping("/addComment")
     @ResponseBody
     public DataResult addNewComment(@RequestParam("TEXT")String commentText, @RequestParam("AID")int aId,HttpSession session){
-        User user= (User) session.getAttribute("myInfo");
-        InteractServer interactServer=new InteractServer();
-        UserDAO userDAO=new UserDAO();
-        if(user!= null){
-            System.out.println("AddComment添加评论");
-            int uId = user.getUserId();
-            long currentTimeMillis = System.currentTimeMillis();
-            Timestamp currentTimestamp = new Timestamp(currentTimeMillis);
-            Comment comment=new Comment(aId, commentText, uId,userDAO.getUserById(uId).getUsername() ,currentTimestamp);
-            return interactServer.insertComment(comment);
-        }else{
-            System.out.println("AddComment 未登录");
-            DataResult dataResult = new DataResult();
-            dataResult.setStatus(2);
-            dataResult.setMsg("没有登录");
-            return dataResult;
+
+        try {
+            UserDAO userDAO=new UserDAO();
+            User user= (User) session.getAttribute("myInfo");
+            InteractServer interactServer=new InteractServer();
+            if(user!= null){
+                System.out.println("AddComment添加评论");
+                int uId = user.getUserId();
+                long currentTimeMillis = System.currentTimeMillis();
+                Timestamp currentTimestamp = new Timestamp(currentTimeMillis);
+                Comment comment=new Comment(aId, commentText, uId,userDAO.getUserById(uId).getUsername() ,currentTimestamp);
+                return interactServer.insertComment(comment);
+            }else{
+                System.out.println("AddComment 未登录");
+                DataResult dataResult = new DataResult();
+                dataResult.setStatus(2);
+                dataResult.setMsg("没有登录");
+                return dataResult;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("添加评论时发生异常: " + e.getMessage());
         }
+        return null;
     }
 
     @RequestMapping("/delcomment")
@@ -209,15 +234,27 @@ public class Album_Controller {
         }
     }
 
+
     @RequestMapping("/addLike")
     @ResponseBody
-    public DataResult addLike(@RequestParam("albumId") int albumId, @RequestParam("userId") int userId){
+    public DataResult addLike(@RequestParam("albumId") int albumId, @RequestParam("userId") int userId) throws SQLException {
         InteractServer interactServer =new InteractServer();
         long currentTimeMillis = System.currentTimeMillis();
         Timestamp currentTimestamp = new Timestamp(currentTimeMillis);
         Like like=new Like(albumId,userId,currentTimestamp);
-        System.out.println(2222222);
-        return interactServer.insertLike(like);
+        AlbumDAO albumDAO=new AlbumDAO();
+        LikeDAO likeDAO=new LikeDAO();
+        DataResult dataResult=new DataResult();
+        if(likeDAO.userLikedAlbum(userId,albumId)){
+            System.out.println("已经点过赞了");
+            dataResult.setStatus(-1);
+        }else{
+            System.out.println("还没点赞");
+            dataResult.setStatus(0);
+        }
+        interactServer.insertLike(like);
+        albumDAO.updateAlbumLikesCount(albumId);
+        return dataResult;
     }
 //    @GetMapping("/{albumID}")
 //    public String viewAlbum(@PathVariable int albumID, Model model) {

@@ -28,6 +28,7 @@ public class PhotoServer {
         try {
             String userUploadPath = UPLOAD_PATH + "\\" + userId + "\\albums\\" + albumId;
             String fileName = generateFileName(file.getOriginalFilename());
+            String path=userUploadPath+'\\'+fileName;
             String filePath = absolutepath+'\\'+userUploadPath + "\\" + fileName;
 
             // 确保用户和相册目录存在
@@ -43,7 +44,7 @@ public class PhotoServer {
             // 获取当前时间
             Timestamp uploadTime = new Timestamp(System.currentTimeMillis());
             // 创建照片对象
-            Photo photo = new Photo(albumId, title,filePath, uploadTime, false);
+            Photo photo = new Photo(albumId, title,path, uploadTime, false);
             photoDAO.insertPhoto(photo);
 
             return DataResult.success("照片上传成功", photo);
@@ -129,14 +130,14 @@ public class PhotoServer {
     }
 
     // 根据照片ID删除照片
-    public DataResult deletePhoto(int photoId) {
+    public DataResult deletePhoto(int photoId,String filepath) {
         Photo photo = photoDAO.getPhotoByID(photoId);
         if (photo != null) {
             // 在数据库中软删除照片记录
             photoDAO.deletePhoto(photoId);
 
             // 删除照片文件
-            File photoFile = new File(photo.getPath());
+            File photoFile = new File(filepath);
             if (photoFile.exists()) {
                 photoFile.delete();
             }

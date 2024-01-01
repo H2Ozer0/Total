@@ -71,9 +71,7 @@ public class FavoriteDAO {
                 int rowsAffected = preparedStatement.executeUpdate();
 
                 if (rowsAffected == 0) {
-                    System.out.println("No matching Favorite record found for deletion.");
-                    // You can choose to throw an exception or handle it as needed.
-                    // For simplicity, I'm printing a message here.
+                    //System.out.println("No matching Favorite record found for deletion.");
                 }
             }
         } catch (SQLException e) {
@@ -81,7 +79,29 @@ public class FavoriteDAO {
             System.err.println("删除收藏记录时发生异常: " + e.getMessage());
         }
     }
+    // 根据用户ID和相册ID判断是否已经收藏该相册
+    public boolean isAlbumFavoritedByUser(int userID, int albumID) {
+        boolean isFavorited = false;
+        try {
+            String query = "SELECT COUNT(*) FROM Favorite WHERE AlbumID = ? AND UserID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, albumID);
+                preparedStatement.setInt(2, userID);
 
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        int count = resultSet.getInt(1);
+                        isFavorited = count > 0;
+                        System.out.println("userID:"+userID+"  albumID:"+albumID+"isFavourite:"+count);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("判断相册是否已被用户收藏时发生异常: " + e.getMessage());
+        }
+        return isFavorited;
+    }
 
     // 检查是否已存在相同的收藏记录
     private boolean checkDuplicateFavorite(Favorite favorite) {
