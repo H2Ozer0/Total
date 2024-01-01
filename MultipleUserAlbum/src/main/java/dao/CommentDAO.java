@@ -179,6 +179,30 @@ public class CommentDAO {
         }
     }
 
+    // 查询某用户的所有评论（根据评论者姓名）
+    public List<Comment> getCommentsByUserName(String commenterName) {
+        List<Comment> userComments = new ArrayList<>();
+        try {
+            if (!userNameExists(commenterName)) {
+                throw new IllegalArgumentException("评论人不存在，无法查询评论。CommenterName: " + commenterName);
+            }
+            String query = "SELECT * FROM Comment WHERE CommenterName = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, commenterName);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        Comment comment = mapResultSetToComment(resultSet);
+                        userComments.add(comment);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("查询某用户的所有评论时发生异常: " + e.getMessage());
+        }
+        return userComments;
+    }
+
     // 将 ResultSet 映射到 Comment 对象
     private Comment mapResultSetToComment(ResultSet resultSet) throws SQLException {
         Comment comment = new Comment();
@@ -206,6 +230,17 @@ public class CommentDAO {
         String query = "SELECT COUNT(*) AS UserCount FROM User WHERE UserID = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, commenterID);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return resultSet.next() && resultSet.getInt("UserCount") > 0;
+            }
+        }
+    }
+
+    // 新增方法，用于检查评论人是否存在（根据用户名）
+    private boolean userNameExists(String commenterName) throws SQLException {
+        String query = "SELECT COUNT(*) AS UserCount FROM User WHERE Username = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, commenterName);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return resultSet.next() && resultSet.getInt("UserCount") > 0;
             }
