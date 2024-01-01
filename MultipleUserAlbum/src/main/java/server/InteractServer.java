@@ -1,12 +1,10 @@
 package server;
 
+import dao.AlbumDAO;
 import dao.FavoriteDAO;
 import dao.LikeDAO;
 import dao.CommentDAO;
-import entity.Favorite;
-import entity.Like;
-import entity.Comment;
-import entity.DataResult;
+import entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
@@ -17,20 +15,17 @@ import java.util.List;
 @Service
 public class InteractServer {
 
-    private final LikeDAO likeDAO;
-    private final CommentDAO commentDAO;
-    private final FavoriteDAO favoriteDAO;
+    public  InteractServer(){
 
-    @Autowired
-    public InteractServer(LikeDAO likeDAO, CommentDAO commentDAO, FavoriteDAO favoriteDAO) {
-        this.likeDAO = likeDAO;
-        this.commentDAO = commentDAO;
-        this.favoriteDAO = favoriteDAO;
+
+
     }
+
 
     // Like functionality
     public DataResult insertLike(Like like) {
         try {
+            LikeDAO likeDAO=new LikeDAO();
             likeDAO.insertLike(like);
             return DataResult.success("Like inserted successfully", null);
         } catch (Exception e) {
@@ -40,6 +35,7 @@ public class InteractServer {
 
     public DataResult getLikeCountByAlbum(int albumID) {
         try {
+            LikeDAO likeDAO=new LikeDAO();
             int likeCount = likeDAO.getLikeCountByAlbum(albumID);
             return DataResult.success("Like count retrieved successfully", likeCount);
         } catch (Exception e) {
@@ -51,6 +47,7 @@ public class InteractServer {
     // Comment functionality
     public DataResult insertComment(Comment comment) {
         try {
+            CommentDAO commentDAO=new CommentDAO();
             commentDAO.insertComment(comment);
             return DataResult.success("Comment inserted successfully", null);
         } catch (Exception e) {
@@ -60,6 +57,7 @@ public class InteractServer {
 
     public DataResult getCommentCount(int albumID) {
         try {
+            CommentDAO commentDAO=new CommentDAO();
             int commentCount = commentDAO.getCommentCount(albumID);
             return DataResult.success("Comment count retrieved successfully", commentCount);
         } catch (Exception e) {
@@ -69,6 +67,7 @@ public class InteractServer {
 
     public DataResult getCommentsByUser(int commenterID) {
         try {
+            CommentDAO commentDAO=new CommentDAO();
             List<Comment> userComments = commentDAO.getCommentsByUser(commenterID);
             return DataResult.success("User comments retrieved successfully", userComments);
         } catch (Exception e) {
@@ -78,6 +77,7 @@ public class InteractServer {
 
     public DataResult getCommentsByAlbum(int albumID) {
         try {
+            CommentDAO commentDAO=new CommentDAO();
             List<Comment> albumComments = commentDAO.getCommentsByAlbum(albumID);
             return DataResult.success("Album comments retrieved successfully", albumComments);
         } catch (Exception e) {
@@ -87,6 +87,7 @@ public class InteractServer {
 
     public DataResult getCommentByID(int commentID) {
         try {
+            CommentDAO commentDAO=new CommentDAO();
             Comment comment = commentDAO.getCommentByID(commentID);
             return DataResult.success("Comment retrieved successfully", comment);
         } catch (Exception e) {
@@ -96,6 +97,7 @@ public class InteractServer {
 
     public DataResult updateCommentContent(int commentID, String newContent) {
         try {
+            CommentDAO commentDAO=new CommentDAO();
             commentDAO.updateCommentContent(commentID, newContent);
             return DataResult.success("Comment content updated successfully", null);
         } catch (Exception e) {
@@ -105,6 +107,7 @@ public class InteractServer {
 
     public DataResult deleteComment(int commentID) {
         try {
+            CommentDAO commentDAO=new CommentDAO();
             commentDAO.deleteComment(commentID);
             return DataResult.success("Comment deleted successfully", null);
         } catch (Exception e) {
@@ -114,6 +117,7 @@ public class InteractServer {
 
     public DataResult addToFavorites(int userID, int albumID) {
         try {
+            FavoriteDAO favoriteDAO=new FavoriteDAO();
             // Implement your logic to add the album to the user's favorites
             Favorite newFavorite = new Favorite(albumID, userID, getCurrentTimestamp());
             favoriteDAO.insertFavorite(newFavorite);
@@ -126,6 +130,7 @@ public class InteractServer {
     }
     public DataResult deleteFavorite(int userID, int albumID) {
         try {
+            FavoriteDAO favoriteDAO=new FavoriteDAO();
             favoriteDAO.deleteFavorite(userID, albumID);
             return DataResult.success("Favorite deleted successfully.", null);
         } catch (Exception e) {
