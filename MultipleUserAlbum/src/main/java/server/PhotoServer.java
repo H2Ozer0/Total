@@ -146,6 +146,12 @@ public class PhotoServer {
         }
     }
 
+    // 获取一个相册的所有照片路径
+    public DataResult getAlbumPhotoPaths(int albumId) {
+        List<String> photoPaths = photoDAO.getAllPhotoPathsInAlbum(albumId);
+        return DataResult.success("获取相册照片路径成功", photoPaths);
+    }
+
     // 生成照片文件名
     private String generateFileName(String originalFileName) {
         // 省略具体的文件名生成逻辑
