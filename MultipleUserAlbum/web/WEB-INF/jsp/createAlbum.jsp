@@ -111,7 +111,7 @@
       url: '${pageContext.request.contextPath}/me/uploadPhotos',
       accept: 'images',
       multiple: true,
-      number: 5, // 限制上传的照片数量
+      number: 10, // 限制上传的照片数量
       done: function (res) {
         console.log(res);
         // 处理上传成功的回调

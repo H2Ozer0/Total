@@ -1,20 +1,29 @@
 package controllers;
-
+import java.io.File;
 import entity.Album;
 import entity.DataResult;
 import entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import server.AlbumServer;
 import server.UserServer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,5 +114,38 @@ public class MeController {
         return  dataResult;
 
     }
+
+    @PostMapping("/uploadAvatar")
+    @ResponseBody
+    public DataResult handleFileUpload(@RequestParam("avatarFile") MultipartFile file,HttpServletRequest request,HttpSession session) throws IOException {
+            File avater= new File(file.getOriginalFilename());
+            System.out.println("介绍到了文件");
+            String absolutepath = request.getServletContext().getRealPath("/AVATER");
+            User user = (User)session.getAttribute("myInfo");
+            String username=user.getUsername();
+            String filepath=absolutepath+"/"+username+".png";
+            deleteFile(filepath);
+            System.out.println("文件删除了");
+            // 将上传的文件保存到指定路径
+            saveFile(file, filepath);
+            DataResult successResult = DataResult.success("File uploaded successfully!", null);
+            return successResult;
+
+    }
+    public static boolean deleteFile(String filePath) {
+        File file = new File(filePath);
+
+        if (file.exists() && file.isFile()) {
+            return file.delete();
+        }
+
+        return false;
+    }
+    private void saveFile(MultipartFile file, String destinationPath) throws IOException {
+        // 使用Spring的FileCopyUtils类进行文件复制
+        FileCopyUtils.copy(file.getBytes(), new File(destinationPath));
+        System.out.println("文件保存成功：" + destinationPath);
+    }
+
 
 }
