@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public class PhotoServer {
 
-    private final String UPLOAD_PATH = "/upload/photos";  // 上传照片的基础目录
+    private final String UPLOAD_PATH = "\\upload\\photos";  // 上传照片的基础目录
     private final String AVATAR_PATH = "/upload/avatar";  // 用户头像的基础目录
     private final String ALBUM_COVER_PATH = "/upload/album_covers";  // 相册封面的基础目录
 
@@ -24,20 +24,21 @@ public class PhotoServer {
     }
 
     // 上传照片
-    public DataResult uploadPhoto(MultipartFile file, int userId, int albumId, String title) {
+    public DataResult uploadPhoto(MultipartFile file, int userId, int albumId,String absolutepath, String title) {
         try {
-            String userUploadPath = UPLOAD_PATH + "/" + userId + "/albums/" + albumId;
+            String userUploadPath = UPLOAD_PATH + "\\" + userId + "\\albums\\" + albumId;
             String fileName = generateFileName(file.getOriginalFilename());
-            String filePath = userUploadPath + "/" + fileName;
+            String filePath = absolutepath+'\\'+userUploadPath + "\\" + fileName;
 
             // 确保用户和相册目录存在
-            File userUploadDir = new File(userUploadPath);
+            File userUploadDir = new File(absolutepath+userUploadPath);
             if (!userUploadDir.exists()) {
                 userUploadDir.mkdirs();
             }
 
             // 保存文件
             File photoFile = new File(filePath);
+            System.out.println("路径为"+filePath);
             file.transferTo(photoFile);
             // 获取当前时间
             Timestamp uploadTime = new Timestamp(System.currentTimeMillis());
