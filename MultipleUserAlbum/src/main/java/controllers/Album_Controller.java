@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import server.AlbumServer;
 import server.InteractServer;
+import server.PhotoServer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -25,19 +26,53 @@ import java.util.List;
 @Controller
 @RequestMapping("/albums")
 public class Album_Controller {
-
+    private final PhotoServer photoServer;
     private final AlbumServer albumServer;
 
+
     @Autowired
-    public Album_Controller(AlbumServer albumServer) {
+    public Album_Controller(AlbumServer albumServer,PhotoServer photoServer) {
         this.albumServer = albumServer;
+        this.photoServer=photoServer;
     }
     @RequestMapping("/createalbum_page")
     public String createpate()
     {
         return "createAlbum";
     };
+    @RequestMapping("/upload_photo")
+    public String upload(HttpSession session,Model model)
+    {
+        User user = (User)session.getAttribute("myInfo");
+        int userId = user.getUserId();
+        DataResult dataResult=AlbumServer.getAlbumsByUserID(userId);
 
+        List<Album> albumList = (List<Album>)dataResult.getData();
+        model.addAttribute("albumList",albumList);
+        model.addAttribute("userId",userId);
+        return "photo_upload";
+    };
+    @RequestMapping("/upload")
+    @ResponseBody
+    public DataResult upload(@RequestParam("file") MultipartFile[] files,
+                             @RequestParam("albumId") int albumId,
+                             HttpSession session,HttpServletRequest request) throws Exception {
+        String absolutepath = request.getServletContext().getRealPath("");
+        User user = (User) session.getAttribute("myInfo");
+        int userId = user.getUserId();  // Assuming userId is a String, modify as needed
+
+        // Iterate through each file in the array and process
+        for (MultipartFile file : files) {
+            String filename=file.getOriginalFilename();
+            // You can access file information such as file.getOriginalFilename(), file.getSize(), etc.
+            // Call your uploadPhoto method for each file
+            DataResult result = photoServer.uploadPhoto(file,userId,albumId,absolutepath,filename);
+            // Process result if needed
+        }
+
+        // You can return an overall result if needed
+        return DataResult.success("All files uploaded successfully",null);
+    }
 
     @PostMapping("/createAlbum")
     public String createAlbum(
@@ -94,6 +129,7 @@ public class Album_Controller {
         model.addAttribute("isFollow",res);
         return "album_content";
     }
+
 
 
 
