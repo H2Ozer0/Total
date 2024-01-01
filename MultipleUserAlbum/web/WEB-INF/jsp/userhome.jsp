@@ -15,6 +15,8 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/st-style.css" type="text/css"/>
     <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
     <script src="${pageContext.request.contextPath}/static/layui/layui.all.js"></script>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/dropzone/5.9.2/min/dropzone.min.css">
+    <script src="https://cdn.staticfile.org/dropzone/5.9.2/min/dropzone.min.js"></script>
     <style>
         .layui-tab-item {
             display: flex;
@@ -48,7 +50,7 @@
 <div style="background: white">
     <div class="home-information-box">
         <div class="information-headimg-box">
-            <img src="/getAvatar?id=${myInfo.userId}" width="150px" height="150px"/>
+            <img src="${pageContext.request.contextPath}/getAvatar?username=${myInfo.username}" width="150px" height="150px"/>
         </div>
     </div>
 
@@ -59,48 +61,63 @@
     </div>
 </div>
 
-<div class="layui-tab layui-tab-brief" style="" lay-filter="docDemoTabBrief">
-    <ul class="layui-tab-title" style="text-align: center;background:white">
-        <li class="layui-this" style="width: 200px" id="myInfoTab">个人信息</li>
-    </ul>
-    <div class="st-main">
-        <div class="layui-tab-content">
-            <%--编辑个人信息--%>
-            <div class="layui-tab-item layui-show" id="myInfoContent">
-                <form class="layui-form" id="myInfoForm">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">用户ID</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="userId" id="userId" value="${myInfo.userId}" class="layui-input" disabled>
+    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+        <ul class="layui-tab-title" style="text-align: center; background:white">
+            <li class="layui-this" style="width: 300px" id="myInfoTab">个人信息</li>
+        </ul>
+        <div class="st-main">
+            <div class="layui-tab-content">
+                <%--编辑个人信息--%>
+                <div class="layui-tab-item layui-show" id="myInfoContent">
+                    <form class="layui-form" id="myInfoForm">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label layui-col-md2">用户ID</label>
+                            <div class="layui-input-inline layui-col-md4">
+                                <input type="text" name="userId" id="userId" value="${myInfo.userId}" class="layui-input" disabled>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">用户名</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="username" id="username" value="${myInfo.username}" class="layui-input" disabled>
-                            <button type="button" class="layui-btn layui-btn-sm" onclick="modifyInfo('username')">修改</button>
-                            <button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveUsername">保存</button>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label layui-col-md2">用户名</label>
+                            <div class="layui-input-inline layui-col-md4">
+                                <input type="text" name="username" id="username" value="${myInfo.username}" class="layui-input" disabled>
+                                <button type="button" class="layui-btn layui-btn-sm" onclick="modifyInfo('username')">修改</button>
+                                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveUsername">保存</button>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">邮箱</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="email" id="email" value="${myInfo.email}" class="layui-input" disabled>
-                            <button type="button" class="layui-btn layui-btn-sm" onclick="modifyInfo('email')">修改</button>
-                            <button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveEmail">保存</button>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label layui-col-md2">邮箱</label>
+                            <div class="layui-input-inline layui-col-md4">
+                                <input type="text" name="email" id="email" value="${myInfo.email}" class="layui-input" disabled>
+                                <button type="button" class="layui-btn layui-btn-sm" onclick="modifyInfo('email')">修改</button>
+                                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveEmail">保存</button>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">个人描述</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="description" id="description" value="${myInfo.description}" class="layui-input" disabled>
-                            <button type="button" class="layui-btn layui-btn-sm" onclick="modifyInfo('description')">修改</button>
-                            <button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveDescription">保存</button>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">头像上传</label>
+                            <div class="layui-input-block">
+                                <button type="button" class="layui-btn" id="avatarUploadBtn">选择头像</button>
+                                <input type="file" name="avatarFile" id="avatarFile" style="display: none;" accept="image/*">
+                                <div class="layui-upload-list" id="avatarPreview"></div>
+                            </div>
                         </div>
-                    </div>
+
+                        <button type="button" id="btn_submit_avatar" class="layui-btn">上传头像</button>
+
+                        <script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+                        <script src="https://cdn.staticfile.org/layui/2.5.7/layui.min.js"></script>
+                        <script src="your-dropzone-library.js"></script>
+                        <script src="your-avatar-upload-script.js"></script>
+
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
                     <!-- 添加每个信息独立的保存按钮 -->
                     <!-- 例如：<button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveEmail">保存</button> -->
@@ -132,10 +149,16 @@
                 type: 'POST',
                 data: { fieldValue: fieldValue },
                 success: function (response) {
-                    // 处理来自服务器的成功响应
-                    console.log(response);
-                    // 在前端展示返回的信息
-                    layer.alert(response.msg);
+                    layer.open({
+                        title: '提示',
+                        content: response.msg,
+                        shade: 0.5,
+                        yes: function () {
+                            layer.closeAll();
+                            //刷新页面
+                            window.location.href = "${pageContext.request.contextPath}/userhome";
+                        }
+                    });
                 },
                 error: function (error) {
                     // 处理来自服务器的错误响应
@@ -167,6 +190,70 @@
             submitForm(fieldValue, url);
             return false;
         });
+
+
+
+        // 头像上传按钮点击事件
+        $('#avatarUploadBtn').on('click', function () {
+            // 触发文件选择
+            $('#avatarFile').click();
+        });
+
+        // 文件选择发生变化时
+        $('#avatarFile').on('change', function () {
+            var fileInput = this;
+            var file = fileInput.files[0];
+
+            // 预览头像
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#avatarPreview').html('<img src="' + e.target.result + '" alt="' + file.name + '" class="upload-img">');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 提交头像上传
+        $('#btn_submit_avatar').on('click', function () {
+            var fileInput = document.getElementById('avatarFile');
+            var file = fileInput.files[0];
+
+            if (!file) {
+                layer.msg('请选择头像文件');
+                return;
+            }
+
+            // 使用 FormData 对象进行异步文件上传
+            var formData = new FormData();
+            formData.append('avatarFile', file);
+
+            // 使用 AJAX 提交 FormData 对象
+            $.ajax({
+                url: '${pageContext.request.contextPath}/me/uploadAvatar', // 上传接口，替换为实际处理头像上传的URL
+                type: 'POST',
+                data: formData,
+                processData: false,  // 告诉 jQuery 不要去处理发送的数据
+                contentType: false,  // 告诉 jQuery 不要去设置 Content-Type 请求头
+                success: function (res) {
+                    // 头像上传完毕
+                    if (res.status === 0) {
+                        layer.msg("上传成功！");
+                        window.location.href = "${pageContext.request.contextPath}/userhome";
+                        // 如果有需要，可以在这里处理上传成功后的逻辑
+                    } else {
+                        layer.msg("上传失败！");
+                        // 如果有需要，可以在这里处理上传失败后的逻辑
+                    }
+                },
+                error: function () {
+                    layer.msg("上传失败！");
+                }
+            });
+        });
+
+
+
     });
 </script>
 

@@ -30,7 +30,7 @@ public class ImageController {
     public static final int AVATAR = 0;
     public static final int IMG = 1;
     public void handleRp(HttpServletResponse rp,String absolutepath,String filename,int type) {
-        String filePath=absolutepath+filename;
+        String filePath=absolutepath+'/'+filename;
         String DEFAULT_PATH=absolutepath+DEAFULT;
         File imageFile = new File(filePath);
         if(!imageFile.exists()) {
@@ -63,9 +63,10 @@ public class ImageController {
     }
     @RequestMapping(value = "/getAvatar")
     @ResponseBody
-    public void getAvatar(@RequestParam("id")String id, HttpServletResponse rp, HttpServletRequest request){
+    public void getAvatar(@RequestParam("username")String username, HttpServletResponse rp, HttpServletRequest request){
         String absolutepath = request.getServletContext().getRealPath("/AVATER");
-        String filename=id+".png";
+        String filename=username+".png";
+        System.out.println("头像路径"+absolutepath+'/'+filename);
         handleRp(rp,absolutepath,filename,0);
     }
     @RequestMapping(value = "/getCover")

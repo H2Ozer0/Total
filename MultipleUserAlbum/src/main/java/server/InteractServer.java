@@ -44,9 +44,10 @@ public class InteractServer {
     }
 
 
+    // Comment functionality
     public DataResult insertComment(Comment comment) {
         try {
-            CommentDAO commentDAO = new CommentDAO();
+            CommentDAO commentDAO=new CommentDAO();
             commentDAO.insertComment(comment);
             return DataResult.success("Comment inserted successfully", null);
         } catch (Exception e) {
@@ -56,7 +57,7 @@ public class InteractServer {
 
     public DataResult getCommentCount(int albumID) {
         try {
-            CommentDAO commentDAO = new CommentDAO();
+            CommentDAO commentDAO=new CommentDAO();
             int commentCount = commentDAO.getCommentCount(albumID);
             return DataResult.success("Comment count retrieved successfully", commentCount);
         } catch (Exception e) {
@@ -66,7 +67,7 @@ public class InteractServer {
 
     public DataResult getCommentsByUser(int commenterID) {
         try {
-            CommentDAO commentDAO = new CommentDAO();
+            CommentDAO commentDAO=new CommentDAO();
             List<Comment> userComments = commentDAO.getCommentsByUser(commenterID);
             return DataResult.success("User comments retrieved successfully", userComments);
         } catch (Exception e) {
@@ -76,7 +77,7 @@ public class InteractServer {
 
     public DataResult getCommentsByAlbum(int albumID) {
         try {
-            CommentDAO commentDAO = new CommentDAO();
+            CommentDAO commentDAO=new CommentDAO();
             List<Comment> albumComments = commentDAO.getCommentsByAlbum(albumID);
             return DataResult.success("Album comments retrieved successfully", albumComments);
         } catch (Exception e) {
@@ -86,7 +87,7 @@ public class InteractServer {
 
     public DataResult getCommentByID(int commentID) {
         try {
-            CommentDAO commentDAO = new CommentDAO();
+            CommentDAO commentDAO=new CommentDAO();
             Comment comment = commentDAO.getCommentByID(commentID);
             return DataResult.success("Comment retrieved successfully", comment);
         } catch (Exception e) {
@@ -96,7 +97,7 @@ public class InteractServer {
 
     public DataResult updateCommentContent(int commentID, String newContent) {
         try {
-            CommentDAO commentDAO = new CommentDAO();
+            CommentDAO commentDAO=new CommentDAO();
             commentDAO.updateCommentContent(commentID, newContent);
             return DataResult.success("Comment content updated successfully", null);
         } catch (Exception e) {
@@ -106,14 +107,13 @@ public class InteractServer {
 
     public DataResult deleteComment(int commentID) {
         try {
-            CommentDAO commentDAO = new CommentDAO();
+            CommentDAO commentDAO=new CommentDAO();
             commentDAO.deleteComment(commentID);
             return DataResult.success("Comment deleted successfully", null);
         } catch (Exception e) {
             return DataResult.fail("Failed to delete comment: " + e.getMessage());
         }
     }
-
 
     public DataResult addToFavorites(int userID, int albumID) {
         try {

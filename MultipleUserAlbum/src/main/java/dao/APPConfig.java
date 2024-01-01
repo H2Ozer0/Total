@@ -38,5 +38,5 @@ public class APPConfig {
     public PhotoServer photoServer(PhotoDAO photoDAO){return new PhotoServer(photoDAO);}
     @Bean
     public InteractServer interactServer(LikeDAO likeDAO, CommentDAO commentDAO, FavoriteDAO favoriteDAO)
-    {return new InteractServer();}
+    {return new InteractServer(likeDAO, commentDAO, favoriteDAO);}
 }
