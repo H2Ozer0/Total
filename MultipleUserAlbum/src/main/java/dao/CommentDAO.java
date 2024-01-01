@@ -32,12 +32,17 @@ public class CommentDAO {
             if (!userExists(comment.getCommenterID())) {
                 throw new IllegalArgumentException("评论人不存在，无法插入评论。CommenterID: " + comment.getCommenterID());
             }
-            String query = "INSERT INTO Comment (AlbumID, Content, CommenterID,CommentTime) VALUES (?, ?, ?, ?)";
+
+            // 获取评论者的用户名
+            String commenterName = getUsernameByUserID(comment.getCommenterID());
+
+            String query = "INSERT INTO Comment (AlbumID, Content, CommenterID, CommenterName, CommentTime) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 preparedStatement.setInt(1, comment.getAlbumID());
                 preparedStatement.setString(2, comment.getContent());
                 preparedStatement.setInt(3, comment.getCommenterID());
-                preparedStatement.setTimestamp(4, comment.getCommentTime());
+                preparedStatement.setString(4, commenterName); // 使用评论者的用户名
+                preparedStatement.setTimestamp(5, comment.getCommentTime());
 
                 preparedStatement.executeUpdate();
 
@@ -51,6 +56,20 @@ public class CommentDAO {
             e.printStackTrace();
             System.err.println("插入评论记录时发生异常: " + e.getMessage());
         }
+    }
+
+    // 新增方法，根据UserID获取Username
+    private String getUsernameByUserID(int userID) throws SQLException {
+        String query = "SELECT Username FROM User WHERE UserID = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, userID);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getString("Username");
+                }
+            }
+        }
+        throw new IllegalArgumentException("无法获取UserID为 " + userID + " 的Username。");
     }
 
     // 查询相册评论数
@@ -167,6 +186,7 @@ public class CommentDAO {
         comment.setAlbumID(resultSet.getInt("AlbumID"));
         comment.setContent(resultSet.getString("Content"));
         comment.setCommenterID(resultSet.getInt("CommenterID"));
+        comment.setCommenterName(resultSet.getString("CommenterName")); // 获取评论者姓名
         comment.setCommentTime(resultSet.getTimestamp("CommentTime"));
         return comment;
     }
@@ -226,7 +246,7 @@ public class CommentDAO {
         CommentDAO commentDAO = new CommentDAO();
 
         // 插入评论记录
-        Comment newComment = new Comment(1, "Great photo!", 2, Timestamp.valueOf("2023-01-02 14:30:00"));
+        Comment newComment = new Comment(1, "Great photo!", 14, null, Timestamp.valueOf("2023-01-02 14:30:00"));
         commentDAO.insertComment(newComment);
 
         // 根据评论ID查询评论
