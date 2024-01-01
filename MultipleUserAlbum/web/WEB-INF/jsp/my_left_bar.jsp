@@ -12,7 +12,7 @@
 <div class = "vertical" style="width: 250px">
     <div class="personal-card vertical" style="margin-bottom: 20px;padding:10px">
         <div class="me-avatar content-center">
-            <img src="${pageContext.request.contextPath}/getAvatar?id=${sessionScope.myInfo.userId}" width="150px" height="150px"/>
+            <img src="${pageContext.request.contextPath}/getAvatar?username=${sessionScope.myInfo.username}" width="150px" height="150px"/>
         </div>
         <div class = "content-center" style="font-size: 24px">${sessionScope.myInfo.username}</div>
         <div class = "content-center" style="font-size: 14px;color: #bbbbbb">ID:${sessionScope.myInfo.userId}</div>
@@ -28,7 +28,7 @@
         </div>
 
 
-            <a href="/createAlbum" class = "content-center" target="_blank">
+            <a href="${pageContext.request.contextPath}/albums/createalbum_page" class = "content-center" target="_blank">
                 <button type="button" class=" layui-btn layui-btn-primary}">创建相册</button>
             </a>
             <a href="/uploadPhoto" style="margin: 0 auto" target="_blank">

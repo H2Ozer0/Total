@@ -95,6 +95,17 @@ public class InteractServer {
         }
     }
 
+    // Comment functionality
+    public DataResult getCommentsByUserName(String commenterName) {
+        try {
+            CommentDAO commentDAO = new CommentDAO();
+            List<Comment> comments = commentDAO.getCommentsByUserName(commenterName);
+            return DataResult.success("Comments retrieved successfully", comments);
+        } catch (Exception e) {
+            return DataResult.fail("Failed to retrieve comments by username: " + e.getMessage());
+        }
+    }
+
     public DataResult updateCommentContent(int commentID, String newContent) {
         try {
             CommentDAO commentDAO=new CommentDAO();

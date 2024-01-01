@@ -1,136 +1,181 @@
+//package controllers;
+//
+//import entity.Album;
+//import dao.AlbumDAO;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.web.bind.annotation.*;
+//
+//import java.util.List;
+//
+//@RestController
+//@RequestMapping("/albums")
+//public class Album_Controller {
+//
+//    private final AlbumDAO albumDAO;
+//
+//    @Autowired
+//    public Album_Controller(AlbumDAO albumDAO) {
+//        this.albumDAO = albumDAO;
+//    }
+//
+//    @PostMapping("/create")
+//    public String createAlbum(@RequestParam String albumName,
+//                              @RequestParam String description,
+//                              @RequestParam boolean isPublic,
+//                              @RequestParam int creatorID) {
+//        Album newAlbum = new Album(albumName, description, null, isPublic, false, 0, 0, creatorID);
+//        albumDAO.insertAlbum(newAlbum);
+//        return "Album created successfully. ID: " + newAlbum.getAlbumID();
+//    }
+//
+//    @GetMapping("/{albumID}")
+//    public Album getAlbumById(@PathVariable int albumID) {
+//        return albumDAO.getAlbumByID(albumID);
+//    }
+//
+//    @GetMapping("/likesCount")
+//    public int getLikesCount(@RequestParam int albumID) {
+//        return albumDAO.getLikesCount(albumID);
+//    }
+//
+//    @GetMapping("/favoritesCount")
+//    public int getFavoritesCount(@RequestParam int albumID) {
+//        return albumDAO.getFavoritesCount(albumID);
+//    }
+//
+//    @GetMapping("/createdAt")
+//    public String getCreatedAt(@RequestParam int albumID) {
+//        return albumDAO.getCreatedAt(albumID).toString();
+//    }
+//
+//    @GetMapping("/publicAlbums")
+//    public List<Album> getPublicAlbumsByName(@RequestParam String albumName) {
+//        return albumDAO.getPublicAlbumsByName(albumName);
+//    }
+//
+//    @PutMapping("/updateName/{albumID}")
+//    public String updateAlbumName(@PathVariable int albumID,
+//                                  @RequestParam String newAlbumName) {
+//        albumDAO.updateAlbumName(albumID, newAlbumName);
+//        return "Album name updated successfully.";
+//    }
+//
+//    @PutMapping("/updateDescription/{albumID}")
+//    public String updateAlbumDescription(@PathVariable int albumID,
+//                                         @RequestParam String newDescription) {
+//        albumDAO.updateAlbumDescription(albumID, newDescription);
+//        return "Album description updated successfully.";
+//    }
+//}
+//
+//
+//
 package controllers;
 
-import dao.PhotoDAO;
-import dao.UserDAO;
-import entity.Album;
 import entity.DataResult;
-import entity.Photo;
-import entity.Comment;
 import entity.User;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import entity.Album;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-import server.AlbumServer;
-import server.InteractServer;
-import server.UserServer;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.multipart.MultipartFile;
+import server.AlbumServer;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 
 @Controller
+@RequestMapping("/albums")
 public class Album_Controller {
 
-    // 在 AlbumController 中的 submitNewAlbum 方法中修改
-    @RequestMapping("/submitNewAlbum")
-    @ResponseBody
-    public DataResult submitNewAlbum(@RequestParam("title") String title,
-                                     @RequestParam("desc") String desc,
-                                     @RequestParam("userId") String userId,
-                                     @RequestParam("type") String category) {
-        Timestamp createdAt = new Timestamp(System.currentTimeMillis());  // 使用当前时间作为创建时间
-        boolean isPublic = true;  // 假设默认是公开的
-        boolean isDeleted = false;  // 假设默认未删除
-        int favoritesCount = 0;  // 初始收藏数为0
-        int likesCount = 0;  // 初始点赞数为0
-        int creatorID = Integer.parseInt(userId);
+    private final AlbumServer albumServer;
 
-        Album album = new Album(title, desc, createdAt, isPublic, isDeleted, favoritesCount, likesCount, creatorID);
-        return AlbumServer.insertAlbum(album);
+    @Autowired
+    public Album_Controller(AlbumServer albumServer) {
+        this.albumServer = albumServer;
     }
+    @RequestMapping("/createalbum_page")
+    public String createpate()
+    {
+        return "createAlbum";
+    };
 
-    @RequestMapping("/album_content")
-    public String enterAlbum(Model model) {
-        InteractServer interactServer =new InteractServer();
-        AlbumServer albumServer=new AlbumServer();
-        UserDAO userDAO=new UserDAO();
-        try {
-            List<Comment> albumCommentList = (List<Comment>) interactServer.getCommentsByAlbum(1).getData();
-            model.addAttribute("commentInfo",albumCommentList);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        Album album=(Album) albumServer.getAlbumByID(1).getData();
-        User user= userDAO.getUserById(1);
-        PhotoDAO photoDAO =new PhotoDAO();
-        int res = 0;
-//        if(user!= null){
-//            if(interactServer.checkFollow(user.getId(),album.getUserId()).getStatus() == 0){
-//                res = 1;
-//            }
-//        }
-        List<Photo> photoList=photoDAO.getPhotosInAlbum(1);
-        System.out.println("ALBUM FOLLOW:" + res);
-        model.addAttribute("photoList",photoList);
-        model.addAttribute("albumInfo",album);
-        model.addAttribute("isFollow",10);
-        return "album_content";
+
+    @PostMapping("/createAlbum")
+    public String createAlbum(
+            @RequestParam("title") String title,
+            @RequestParam("desc") String description,
+            @RequestParam("auth") boolean isShared,
+            @RequestParam("coverImage") MultipartFile coverImage,
+            @RequestParam("coverImageBase64") String coverImageBase64, HttpSession session, HttpServletRequest request,Model model) throws IOException {
+        File cover=new File(coverImage.getOriginalFilename());
+        System.out.println(cover.getName()+"这是图片名字");
+        User user = (User)session.getAttribute("myInfo");
+        int CreatorID=user.getUserId();
+        Album album=new Album(title, description,new Timestamp(System.currentTimeMillis()), isShared, false, 0, 0,CreatorID);
+        albumServer.insertAlbum(album);
+        String absolutepath = request.getServletContext().getRealPath("\\Image\\Cover");
+        String filepath=absolutepath+'\\'+title+".png";
+        FileUtil.deleteFile(filepath);
+        FileUtil.saveFile(coverImage,filepath);
+        model.addAttribute("message", "相册创建成功!");
+        return "my_albums";
+
     }
 
 
-
-//    @RequestMapping("/album")
-//    public ModelAndView enterAlbum(@RequestParam("albumId") int albumId, Model model, HttpSession session) {
-//        List<Photo> photoList = (List<Photo>) AlbumServer.getPhotosInAlbum(albumId).getData();
-//        albumId=1;
-//        Album album = (Album) AlbumServer.getAlbumByID(albumId).getData();
-//
-//        try {
-//            List<Comment> albumCommentList = (List<Comment>) InteractServer.getCommentsByAlbum(albumId).getData();
-//            model.addAttribute("commentInfo", albumCommentList);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        User user = (User) session.getAttribute("myInfo");
-////        int res = 0;
-////        if (user != null) {
-////            if (InteractServer.checkFollow(user.getId(), album.getUserId()).getStatus() == 0) {
-////                res = 1;
-////            }
-////        }
-////        System.out.println("ALBUM FOLLOW:" + res);
-////        model.addAttribute("photoList", photoList);
-//        model.addAttribute("albumInfo", album);
-////        model.addAttribute("isFollow", res);
-//        return new ModelAndView("album_content");
+//    @GetMapping("/{albumID}")
+//    public String viewAlbum(@PathVariable int albumID, Model model) {
+//        Album album = albumServer.getAlbumByID(albumID);
+//        model.addAttribute("album", album);
+//        return "albumDetails";
 //    }
-
-    @RequestMapping("/editAlbum")
-    public String editAlbum(@RequestParam("albumId") String albumId, Model model) {
-        Album album = (Album) AlbumServer.getAlbumByID(Integer.parseInt(albumId)).getData();
-        model.addAttribute("album", album);
-        return "album_edit";
-    }
-
-    // 在 AlbumController 中的 submitEditAlbum 方法中修改
-    @RequestMapping("/submitEditAlbum")
-    @ResponseBody
-    public DataResult submitEditAlbum(@RequestParam("title") String title,
-                                      @RequestParam("desc") String desc,
-                                      @RequestParam("userId") String userId,
-                                      @RequestParam("albumId") String albumId,
-                                      @RequestParam("type") String category) {
-        Album existingAlbum = (Album) AlbumServer.getAlbumByID(Integer.parseInt(albumId)).getData();
-
-        // 保留原有属性，修改 title 和 desc
-        existingAlbum.setAlbumName(title);
-        existingAlbum.setDescription(desc);
-
-        return AlbumServer.updateAlbum(existingAlbum);
-    }
-
-    @RequestMapping("/delAlbum")
-    @ResponseBody
-    public DataResult delAlbum(@RequestParam("albumId") String albumId, HttpSession session) {
-        User user = (User) session.getAttribute("myInfo");
-        System.out.println("session myInfo:" + user.getUserId());
-        return AlbumServer.deleteAlbum(Integer.parseInt(albumId));
-    }
-
-    // ... 其他方法的修改
+//
+//    @GetMapping("/search")
+//    public String searchPublicAlbums(@RequestParam String albumName, Model model) {
+//        List<Album> publicAlbums = albumServer.getPublicAlbumsByName(albumName);
+//        model.addAttribute("publicAlbums", publicAlbums);
+//        return "searchResults";
+//    }
+//
+//    @GetMapping("/{albumID}/likesCount")
+//    @ResponseBody
+//    public int getLikesCount(@PathVariable int albumID) {
+//        return albumServer.getLikesCount(albumID);
+//    }
+//
+//    @GetMapping("/{albumID}/favoritesCount")
+//    @ResponseBody
+//    public int getFavoritesCount(@PathVariable int albumID) {
+//        return albumServer.getFavoritesCount(albumID);
+//    }
+//
+//    @GetMapping("/{albumID}/createdAt")
+//    @ResponseBody
+//    public Timestamp getCreatedAt(@PathVariable int albumID) {
+//        return albumServer.getCreatedAt(albumID);
+//    }
+//
+//    @PostMapping("/{albumID}/updateName")
+//    @ResponseBody
+//    public String updateAlbumName(@PathVariable int albumID, @RequestParam String newAlbumName) {
+//        albumServer.updateAlbumName(albumID, newAlbumName);
+//        return "Album name updated successfully!";
+//    }
+//
+//    @PostMapping("/{albumID}/updateDescription")
+//    @ResponseBody
+//    public String updateAlbumDescription(@PathVariable int albumID, @RequestParam String newDescription) {
+//        albumServer.updateAlbumDescription(albumID, newDescription);
+//        return "Album description updated successfully!";
+//    }
 
 }

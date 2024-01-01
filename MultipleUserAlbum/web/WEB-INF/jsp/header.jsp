@@ -12,7 +12,7 @@
 <div class="layui-nav layui-bg-green st-header">
     <div class="left" style="padding: 10px;margin-left: 60px;">
         <a href="/home" class="horizentol">
-            <img width="30px" height="30px" src="${pageContext.request.contextPath}/static/image/album-banner.png">
+            <img width="30px" height="30px" src="${pageContext.request.contextPath}/getAvatar?username=${myInfo.username}">
             <div class="st-white-font" style="padding: 10px 5px">电子相册</div>
         </a>
     </div>
