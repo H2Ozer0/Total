@@ -102,6 +102,11 @@
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
         </dependency>
+
+        <!-- 其他依赖... -->
+
+        <!-- 其他依赖... -->
+
         <!-- Spring Boot Starter Data JPA includes Hibernate -->
 
     </dependencies>

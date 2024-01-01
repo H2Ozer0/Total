@@ -94,7 +94,15 @@ public class AlbumServer {
             return DataResult.fail("failed to update album description");
         }
     }
-
+    // 更新相册信息
+    public static DataResult updateAlbum(Album updatedAlbum) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        if (albumDAO.updateAlbum(updatedAlbum)) {
+            return DataResult.success("update album success", null);
+        } else {
+            return DataResult.fail("failed to update album");
+        }
+    }
     // 查询相册记录根据AlbumID
     public static DataResult getAlbumByID(int albumID) {
         AlbumDAO albumDAO = new AlbumDAO();

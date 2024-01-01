@@ -21,9 +21,7 @@ public class DataResult {
         return msg;
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
+    public void setMsg(String msg) {  this.msg = msg;  }
 
     public Object getData() {
         return data;
