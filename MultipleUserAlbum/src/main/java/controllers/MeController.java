@@ -70,6 +70,26 @@ public class MeController {
         return dataResult;
     }
 
+    @PostMapping("/getMyFriendship")
+    @ResponseBody
+    public DataResult getMyFriendship(HttpSession session) {
+        try {
+            User user = (User) session.getAttribute("myInfo");
+            if (user == null) {
+                return DataResult.fail("User not authenticated");
+            }
+
+            // Assuming you have a method in your UserServer to retrieve friendships for the user
+            // Modify the following line according to your actual method in UserServer
+            DataResult result = userServer.getAllFriends(user.getUserId());
+
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return DataResult.fail("An error occurred while retrieving friendships");
+        }
+    }
+
     @PostMapping("/updateUsername")
     @ResponseBody
     public DataResult updateUsername(@RequestParam String fieldValue,HttpSession session,Model model) {
