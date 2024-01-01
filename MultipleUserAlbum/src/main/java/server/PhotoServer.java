@@ -4,7 +4,9 @@ import dao.PhotoDAO;
 import entity.Photo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -17,6 +19,26 @@ public class PhotoServer {
         this.photoDAO = photoDAO;
     }
 
+    public void uploadPhoto(Photo photo, MultipartFile file) {
+        try {
+            if (!file.isEmpty()) {
+                // 获取文件的字节数组
+                byte[] fileBytes = file.getBytes();
+
+                // 设置 Photo 对象的图片数据
+                photo.setPhotoData(fileBytes);
+
+                // 保存 Photo 对象到数据库
+                photoDAO.insertPhoto(photo);
+            } else {
+                throw new EmptyFileException("上传的文件为空");
+            }
+        } catch (IOException e) {
+            // 处理文件读取错误
+            e.printStackTrace();
+            // 在实际应用中可能需要抛出自定义异常或其他处理方式
+        }
+    }
     public void uploadPhoto(Photo photo) {
         photoDAO.insertPhoto(photo);
     }
@@ -55,5 +77,11 @@ public class PhotoServer {
 
     public void undoDeletePhoto(int photoID) {
         photoDAO.undoDeletePhoto(photoID);
+    }
+}
+
+class EmptyFileException extends RuntimeException {
+    public EmptyFileException(String message) {
+        super(message);
     }
 }

@@ -9,6 +9,7 @@ public class Photo {
     private String path;
     private Timestamp uploadTime;
     private boolean isDeleted;
+    private byte[] photoData;
 
     // 构造函数
     public Photo(int albumID, String title, String path, Timestamp uploadTime, boolean isDeleted) {
@@ -66,5 +67,9 @@ public class Photo {
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
     }
+
+    public byte[] getPhotoData() { return photoData; }
+
+    public void setPhotoData(byte[] photoData) { this.photoData = photoData; }
 }
 
