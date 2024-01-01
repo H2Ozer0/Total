@@ -1,15 +1,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%--
-  Created by IntelliJ IDEA.
-  User: 52491
-  Date: 2019/12/11
-  Time: 20:39
-  To change this template use File | Settings | File Templates.
---%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-<%--    <title>${albumInfo.albumName}</title>--%>
+    <title>${albumInfo.albumName}</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/layui/css/layui.css" type="text/css"/>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/st-style.css" type="text/css"/>
     <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
@@ -18,9 +12,9 @@
         $(function(){
             $("#icon_praise").click(function () {
                 $.ajax({
-                    url: "http://localhost:8080/addPraise",
+                    url: '${pageContext.request.contextPath}/addLike',
                     type: "post",
-                    data: {"albumId":'${albumInfo.albumID}'},
+                    data: {"albumId":'${albumInfo.albumID}',"userId":'${sessionScope.myInfo.userId}'},
                     dataType: "json",
                     success: function (result) {
                         console.log(result.data);
@@ -54,7 +48,7 @@
                 }
                 else{
                     $.ajax({
-                        url: "http://localhost:8080/addComment",
+                        url: '${pageContext.request.contextPath}/addComment',
                         type: "post",
                         data: {"TEXT": commentText,"AID":aId},
                         dataType: "json",
@@ -68,7 +62,7 @@
                                     content: '请登录',
                                     shade: 0.5,
                                     yes: function(){
-                                        window.location.href = "http://localhost:8080/";
+                                        window.location.href = "${pageContext.request.contextPath}/login";
                                     }
                                 });
 
@@ -82,13 +76,13 @@
             });
 
             $("#COMMENT1").click(function () {
-                window.location.href = "http://localhost:8080/";
+                window.location.href = "${pageContext.request.contextPath}/";
             });
 
             $("#GUANZHU").click(function () {
                 var toId = "${albumInfo.creatorID}"
                 $.ajax({
-                    url: "http://localhost:8080/addfow",
+                    url: "${pageContext.request.contextPath}/addfow",
                     type: "post",
                     data: {"TID":toId},
                     dataType: "json",
@@ -103,7 +97,7 @@
                                 content: '关注失败',
                                 shade: 0.5,
                                 yes: function(){
-                                    window.location.href = "http://localhost:8080/";
+                                    window.location.href = "${pageContext.request.contextPath}/";
                                 }
                             });
 
@@ -119,7 +113,7 @@
                 var toId = "${albumInfo.creatorID}"
                 layer.confirm('确定取消关注吗?', {icon: 3, title:'提示',offset:'250px'}, function(index){
                     $.ajax({
-                        url: "http://localhost:8080/delfow",
+                        url: "${pageContext.request.contextPath}/delfow",
                         type: "post",
                         data: {"TID":toId},
                         dataType: "json",
@@ -150,7 +144,7 @@
 
             layer.confirm('确定删除该评论吗?', {icon: 3, title:'提示',offset:'250px'}, function(index){
                 $.ajax({
-                    url: "http://localhost:8080/delcomment",
+                    url: "${pageContext.request.contextPath}/delcomment",
                     type: "post",
                     data: {"CID": commentId,"UID":userName},
                     dataType: "json",
@@ -181,6 +175,7 @@
 <div class="album-box horizentol border-bottom border-top">
     <div class="album-info-box vertical">
         <div style="font-size: 33px">${albumInfo.albumName}</div>
+        <c:out value="${albumInfo}" />
         <div class="gray-color" style="font-size: 16px;margin-top: 10px">上传时间:${albumInfo.createTime}</div>
         <div class="gray-color" style="font-size: 18px;margin-top: 10px">${albumInfo.albumName}</div>
 
@@ -192,7 +187,7 @@
         <div class="vertical" style="margin-left: 10px">
             <div style="font-size: 16px">上传者：${albumInfo.creatorID}</div>
             <div>
-                <c:if test="${sessionScope.myInfo.id != albumInfo.creatorID}">
+                <c:if test="${sessionScope.myInfo.userId != albumInfo.creatorID}">
                     <div style="margin-top:10px">
                         <c:if test="${empty sessionScope.myInfo}">
                             <a href="/index">
@@ -271,11 +266,11 @@
         </div>
         <div class="conmment_details">
             <div style="float:left;">
-                <span class="comment_name">${Info.commenterID} </span>
+                <span class="comment_name">${Info.commenterName} </span>
                 <span>${Info.commentTime}</span>
             </div>
 
-            <c:if  test="${Info.commenterID ==sessionScope.myInfo.id}">
+            <c:if  test="${Info.commenterID ==sessionScope.myInfo.userId}">
                 <div class="del" id="delCom" onclick = "clickDel(this)" data-id = '${Info.commentID}' data-name = '${Info.commenterID}'>
                     <a class="del_comment" data-id="1"> <i id = "del" class="icon layui-icon button-font" > 删除</i> </a>
                 </div>

@@ -27,6 +27,7 @@ public class InteractServer {
         try {
             LikeDAO likeDAO=new LikeDAO();
             likeDAO.insertLike(like);
+            System.out.println(1);
             return DataResult.success("Like inserted successfully", null);
         } catch (Exception e) {
             return DataResult.fail("Failed to insert like: " + e.getMessage());
