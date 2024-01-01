@@ -331,6 +331,26 @@ public class AlbumDAO {
         return friendSharedAlbums;
     }
 
+    // 在 AlbumDAO 中添加方法
+    public String getCreatorName(int creatorID) {
+        String creatorName = null;
+        try {
+            String query = "SELECT UserName FROM User WHERE UserID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, creatorID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        creatorName = resultSet.getString("UserName");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("获取相册创建者名字时发生异常: " + e.getMessage());
+        }
+        return creatorName;
+    }
+
     // 关闭数据库连接
     public boolean closeConnection() {
         try {
@@ -386,6 +406,26 @@ public class AlbumDAO {
 //    public AlbumDAO albumDAO() {
 //        return new AlbumDAO();
 //    }
+public static void main(String[] args) {
+    AlbumDAO albumDAO = new AlbumDAO();
+
+    // 假设有一个相册的 CreatorID 为 1
+    int creatorID = 1;
+
+    // 调用获取相册创建者名字的方法
+    String creatorName = albumDAO.getCreatorName(creatorID);
+
+    // 打印结果
+    if (creatorName != null) {
+        System.out.println("Creator Name: " + creatorName);
+    } else {
+        System.out.println("Failed to get creator name.");
+    }
+
+    // 关闭数据库连接
+    albumDAO.closeConnection();
+}
+
 }
 
 

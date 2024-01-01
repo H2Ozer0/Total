@@ -147,6 +147,13 @@ public class AlbumServer {
         return DataResult.success("get friend shared albums success", friendSharedAlbums);
     }
 
+    // 在 AlbumServer 中添加方法
+    public static DataResult getCreatorName(int creatorID) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        String creatorName = albumDAO.getCreatorName(creatorID);
+        return DataResult.success("get creator name success", creatorName);
+    }
+
     // 关闭数据库连接
     public static DataResult closeConnection() {
         AlbumDAO albumDAO = new AlbumDAO();

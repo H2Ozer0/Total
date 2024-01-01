@@ -43,6 +43,23 @@ public class InteractServer {
         }
     }
 
+    // 新增的方法：检查用户是否点赞了相册
+    public DataResult hasUserLikedAlbum(int userID, int albumID) {
+        try {
+            LikeDAO likeDAO = new LikeDAO();
+            boolean hasLiked = likeDAO.hasUserLikedAlbum(userID, albumID);
+            likeDAO.closeConnection();  // 记得关闭数据库连接
+
+            if (hasLiked) {
+                return DataResult.success("User has liked the album", true);
+            } else {
+                return DataResult.success("User has not liked the album", false);
+            }
+        } catch (Exception e) {
+            return DataResult.fail("Failed to check if user has liked the album: " + e.getMessage());
+        }
+    }
+
 
     // Comment functionality
     public DataResult insertComment(Comment comment) {
