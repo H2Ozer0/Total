@@ -34,10 +34,12 @@ public class PhotoServer {
                 throw new EmptyFileException("上传的文件为空");
             }
         } catch (IOException e) {
-            // 处理文件读取错误
             e.printStackTrace();
-            // 在实际应用中可能需要抛出自定义异常或其他处理方式
         }
+    }
+
+    public List<byte[]> 获取相册中所有照片(int AlbumID) {
+        return photoDAO.getAllPhotoFilesInAlbum(AlbumID);
     }
     public void uploadPhoto(Photo photo) {
         photoDAO.insertPhoto(photo);

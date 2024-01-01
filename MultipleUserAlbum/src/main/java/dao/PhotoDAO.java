@@ -5,6 +5,10 @@ import entity.Photo;
 
 
 import org.springframework.stereotype.Repository;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -104,7 +108,30 @@ public class PhotoDAO {
         }
         return photosInAlbum;
     }
+    public List<byte[]> getAllPhotoFilesInAlbum(int albumID) {
+        List<byte[]> photoFiles = new ArrayList<>();
+        try {
+            // 根据相册ID从数据库中获取所有文件路径
+            String filePathQuery = "SELECT FilePath FROM Photo WHERE AlbumID = ?";
+            try (PreparedStatement pathStatement = connection.prepareStatement(filePathQuery)) {
+                pathStatement.setInt(1, albumID);
+                try (ResultSet pathResultSet = pathStatement.executeQuery()) {
+                    while (pathResultSet.next()) {
+                        // 获取文件路径
+                        String filePath = pathResultSet.getString("FilePath");
 
+                        // 根据文件路径读取文件数据并添加到列表中
+                        byte[] fileData = Files.readAllBytes(Paths.get(filePath));
+                        photoFiles.add(fileData);
+                    }
+                }
+            }
+        } catch (IOException | SQLException e) {
+            e.printStackTrace();
+            System.err.println("获取相册中所有图片文件失败，发生异常: " + e.getMessage());
+        }
+        return photoFiles;
+    }
     // 更新照片记录
     public void updatePhoto(Photo photo) {
         try {
