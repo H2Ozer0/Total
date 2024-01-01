@@ -124,27 +124,13 @@ public class MeController {
             User user = (User)session.getAttribute("myInfo");
             String username=user.getUsername();
             String filepath=absolutepath+"/"+username+".png";
-            deleteFile(filepath);
+            FileUtil.deleteFile(filepath);
             System.out.println("文件删除了");
             // 将上传的文件保存到指定路径
-            saveFile(file, filepath);
+            FileUtil.saveFile(file, filepath);
             DataResult successResult = DataResult.success("File uploaded successfully!", null);
             return successResult;
 
-    }
-    public static boolean deleteFile(String filePath) {
-        File file = new File(filePath);
-
-        if (file.exists() && file.isFile()) {
-            return file.delete();
-        }
-
-        return false;
-    }
-    private void saveFile(MultipartFile file, String destinationPath) throws IOException {
-        // 使用Spring的FileCopyUtils类进行文件复制
-        FileCopyUtils.copy(file.getBytes(), new File(destinationPath));
-        System.out.println("文件保存成功：" + destinationPath);
     }
 
 

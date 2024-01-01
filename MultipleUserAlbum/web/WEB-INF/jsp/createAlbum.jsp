@@ -1,133 +1,142 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-  <title>${myInfo.username} - 创建相册</title>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/layui/css/layui.css" type="text/css"/>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/st-style.css" type="text/css"/>
-  <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
-  <script src="${pageContext.request.contextPath}/static/layui/layui.all.js"></script>
+  <title>创建相册</title>
+  <style>
+    body {
+      font: 14px/1.5 "PingFang SC","Lantinghei SC","Microsoft YaHei","HanHei SC","Helvetica Neue","Open Sans",Arial,"Hiragino Sans GB","微软雅黑",STHeiti,"WenQuanYi Micro Hei",SimSun,sans-serif;
+      min-height: 1200px;
+      background-color: #009688;
+      color: white;
+    }
+
+    .st-main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+    }
+
+    div {
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+    }
+
+    label {
+      background-color: #009688;
+      padding: 8px;
+      border-radius: 4px;
+      color: white;
+      margin-right: 10px;
+    }
+
+    textarea, input {
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+      border: 1px solid #009688;
+      border-radius: 4px;
+      color: black; /* 修改文字颜色为黑色 */
+    }
+
+    #coverImage {
+      display: block;
+    }
+
+    button {
+      background-color: #009688;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #previewContainer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #authCheckboxContainer {
+      flex-direction: row;
+      margin-right: 10px;
+    }
+  </style>
 </head>
-<body class="bg-gray">
-<%@ include file="header.jsp" %>
-<div class="st-main horizentol" style="margin-top: 15px">
-  <%@ include file="my_left_bar.jsp" %>
-  <div class="personal-content">
-    <form class="layui-form" id="createAlbumForm" lay-filter="createAlbumForm">
-      <div class="layui-form-item">
-        <label class="layui-form-label">相册名称</label>
-        <div class="layui-input-inline">
-          <input type="text" name="albumName" id="albumName" class="layui-input" required>
-        </div>
-      </div>
+<body>
 
-      <div class="layui-form-item">
-        <label class="layui-form-label">相册封面</label>
-        <div class="layui-input-inline">
-          <button type="button" class="layui-btn" id="uploadCover">上传封面</button>
-          <div class="layui-upload-list">
-            <img class="layui-upload-img" id="coverImg" style="width: 100px; height: 100px;">
-            <p id="coverText"></p>
-          </div>
-          <input type="hidden" name="coverPath" id="coverPath">
-        </div>
-      </div>
+<div class="st-main">
+  <form id="albumForm" action="${pageContext.request.contextPath}/albums/createAlbum" method="post" enctype="multipart/form-data">
+    <div>
+      <label>相册名</label>
+      <input id="title" type="text" name="title" required placeholder="请输入相册名" autocomplete="off">
+    </div>
 
-      <div class="layui-form-item">
-        <label class="layui-form-label">上传照片</label>
-        <div class="layui-input-inline">
-          <button type="button" class="layui-btn" id="uploadPhotos">上传照片</button>
-          <div class="layui-upload-list" id="photosList"></div>
-          <input type="hidden" name="photoPaths" id="photoPaths">
-        </div>
-      </div>
+    <div>
+      <label>相册描述</label>
+      <textarea name="desc" placeholder="请输入描述"></textarea>
+    </div>
 
-      <div class="layui-form-item">
-        <div class="layui-input-block">
-          <button class="layui-btn" lay-submit lay-filter="createAlbum">创建相册</button>
-        </div>
+    <div id="authCheckboxContainer">
+      <label>是否分享</label>
+      <div>
+        <input type="checkbox" name="auth" id="authCheckbox">
+        <input type="hidden" name="auth" id="authValue" value="">
       </div>
-    </form>
-  </div>
+    </div>
+
+    <div>
+      <label>上传封面</label>
+      <input type="file" name="coverImage" id="coverImage" accept="image/*" onchange="previewImage(this)">
+      <div id="previewContainer"></div>
+      <input type="hidden" name="coverImageBase64" id="coverImageBase64" value="">
+    </div>
+
+    <div>
+      <button type="submit">立即提交</button>
+      <button type="reset">重置</button>
+    </div>
+  </form>
 </div>
 
 <script>
-  layui.use(['form', 'upload', 'layer'], function () {
-    var form = layui.form;
-    var upload = layui.upload;
-    var layer = layui.layer;
+  function previewImage(input) {
+    var previewContainer = document.getElementById('previewContainer');
+    previewContainer.innerHTML = '';
 
-    // 创建相册表单提交
-    form.on('submit(createAlbum)', function (data) {
-      // 执行相册创建的 AJAX 请求
-      $.ajax({
-        url: '${pageContext.request.contextPath}/me/createAlbum',
-        type: 'POST',
-        data: data.field,
-        success: function (response) {
-          // 处理来自服务器的成功响应
-          console.log(response);
-          // 在前端展示返回的信息
-          layer.alert(response.msg, {icon: response.status === 0 ? 1 : 2}, function () {
-            if (response.status === 0) {
-              // 创建成功，跳转到相册列表页
-              window.location.href = '${pageContext.request.contextPath}/me/albums';
-            }
-          });
-        },
-        error: function (error) {
-          // 处理来自服务器的错误响应
-          console.error(error);
-        }
-      });
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
 
-      return false; // 阻止表单跳转
-    });
+      reader.onload = function (e) {
+        var imgElem = document.createElement('img');
+        imgElem.src = e.target.result;
+        imgElem.style.width = '150px';
+        imgElem.style.height = '150px';
+        previewContainer.appendChild(imgElem);
 
-    // 相册封面上传
-    upload.render({
-      elem: '#uploadCover',
-      url: '${pageContext.request.contextPath}/me/uploadCover',
-      accept: 'images',
-      done: function (res) {
-        console.log(res);
-        // 处理上传成功的回调
-        $('#coverImg').attr('src', res.data.src);
-        $('#coverPath').val(res.data.path);
-        $('#coverText').html(''); // 清空提示
-        layer.msg('封面上传成功');
-      },
-      error: function (index, upload) {
-        console.error(index, upload);
-        // 处理上传失败的回调
-        $('#coverText').html('<span style="color: #FF5722;">上传失败</span>');
-        layer.msg('封面上传失败');
-      }
-    });
+        document.getElementById('coverImageBase64').value = e.target.result;
+      };
 
-    // 照片上传
-    upload.render({
-      elem: '#uploadPhotos',
-      url: '${pageContext.request.contextPath}/me/uploadPhotos',
-      accept: 'images',
-      multiple: true,
-      number: 10, // 限制上传的照片数量
-      done: function (res) {
-        console.log(res);
-        // 处理上传成功的回调
-        var imgHtml = '<img class="layui-upload-img" src="' + res.data.src + '" style="width: 100px; height: 100px;">';
-        $('#photosList').append(imgHtml);
-        var photoPaths = $('#photoPaths').val() || '';
-        photoPaths += res.data.path + ';';
-        $('#photoPaths').val(photoPaths);
-        layer.msg('照片上传成功');
-      },
-      error: function (index, upload) {
-        console.error(index, upload);
-        // 处理上传失败的回调
-        layer.msg('照片上传失败');
-      }
-    });
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  document.getElementById('authCheckbox').addEventListener('change', function () {
+    document.getElementById('authValue').value = this.checked ? 'true' : 'false';
   });
 </script>
 </body>

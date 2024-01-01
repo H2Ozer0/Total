@@ -28,26 +28,7 @@ public class AlbumDAO {
             System.err.println("无法连接到数据库: " + e.getMessage());
         }
     }
-    // 更新相册信息
-    public boolean updateAlbum(Album updatedAlbum) {
-        Connection connection = null;
-        PreparedStatement statement = null;
 
-        try {
-            String query = "UPDATE albums SET albumName=?, description=? WHERE albumID=?";
-            statement = connection.prepareStatement(query);
-
-            statement.setString(1, updatedAlbum.getAlbumName());
-            statement.setString(2, updatedAlbum.getDescription());
-            statement.setInt(3, updatedAlbum.getAlbumID());
-
-            int rowsAffected = statement.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
     // 插入相册记录
     public boolean insertAlbum(Album album) {
         try {
