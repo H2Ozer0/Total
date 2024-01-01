@@ -38,7 +38,7 @@ public class PhotoServer {
         }
     }
 
-    public List<byte[]> 获取相册中所有照片(int AlbumID) {
+    public List<byte[]> getAllPhotoOfAlbum(int AlbumID) {
         return photoDAO.getAllPhotoFilesInAlbum(AlbumID);
     }
     public void uploadPhoto(Photo photo) {
