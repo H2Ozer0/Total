@@ -204,7 +204,7 @@
     </div>
     <div class="album-author-box horizentol border-left">
         <div class="album-info-avatar">
-            <a href="/user?id=${albumInfo.creatorID}"><img src="/getAvatar?id=${albumInfo.creatorID}"></a>
+            <a href="/user?id=${albumInfo.creatorID}"><img src="${pageContext.request.contextPath}/getAvatar?username=${Info.commenterID}"></a>
         </div>
         <div class="vertical" style="margin-left: 10px">
             <div style="font-size: 16px">上传者：${creatorName}</div>
@@ -239,7 +239,7 @@
     </div>
 </div>
 <!-- 分享按钮 -->
-<div>
+<div style="right: 20px">
     <button id="shareButton" class="layui-btn layui-btn-lg layui-btn-radius">分享</button>
 </div>
 <%--点赞按钮--%>
@@ -280,7 +280,7 @@
     <c:forEach var="Info" items="${commentInfo}">
     <div class="comment">
         <div class="imgdiv">
-            <img class="imgcss" src="/getAvatar?id=${Info.commenterID}"/>
+            <img class="imgcss" src="${pageContext.request.contextPath}/getAvatar?username=${Info.commenterID}"/>
         </div>
         <div class="conmment_details">
             <div style="float:left;">
