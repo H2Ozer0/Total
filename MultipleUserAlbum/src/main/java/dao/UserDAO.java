@@ -170,8 +170,78 @@ public class UserDAO {
         }
     }
 
-    //删除用户
-    public boolean deleteUser(int userId) {
+    public boolean deleteUserWithRelatedData(int userId) {
+        try {
+            // 开启事务
+            connection.setAutoCommit(false);
+
+            // 删除用户的喜欢记录
+            deleteLikesByUserId(userId);
+
+            // 删除用户的收藏记录
+            deleteFavoritesByUserId(userId);
+
+            // 删除用户的评论记录
+            deleteCommentsByUserId(userId);
+
+            // 删除用户创建的相册及相关数据
+            deleteAlbumsByCreatorId(userId);
+
+            // 删除用户的好友关系
+            deleteFriendshipsByUserId(userId);
+
+            // 最后删除用户本身
+            if (deleteUser(userId)) {
+                // 提交事务
+                connection.commit();
+                return true;
+            } else {
+                // 回滚事务
+                connection.rollback();
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                // 出现异常时回滚事务
+                connection.rollback();
+            } catch (SQLException rollbackException) {
+                rollbackException.printStackTrace();
+            }
+            return false;
+        } finally {
+            try {
+                // 恢复自动提交状态
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // 删除用户创建的相册及相关数据
+    private void deleteAlbumsByCreatorId(int userId) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT AlbumID FROM Album WHERE CreatorID = ?")) {
+            preparedStatement.setInt(1, userId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    int albumId = resultSet.getInt("AlbumID");
+                    // 删除相册的喜欢记录
+                    deleteLikesByAlbumId(albumId);
+                    // 删除相册的收藏记录
+                    deleteFavoritesByAlbumId(albumId);
+                    // 删除相册的评论记录
+                    deleteCommentsByAlbumId(albumId);
+                    // 最后删除相册本身
+                    deleteAlbum(albumId);
+                }
+            }
+        }
+    }
+
+    // 删除用户
+    private boolean deleteUser(int userId) {
         try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM " + TABLE_NAME + " WHERE " + COLUMN_USER_ID + " = ?")) {
             preparedStatement.setInt(1, userId);
 
@@ -179,9 +249,75 @@ public class UserDAO {
             return rowsAffected > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            return false; // 删除失败时返回 false
+            return false;
         }
     }
+
+    // 删除用户的喜欢记录
+    private void deleteLikesByUserId(int userId) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM LikeTable WHERE UserID = ?")) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    // 删除用户的收藏记录
+    private void deleteFavoritesByUserId(int userId) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Favorite WHERE UserID = ?")) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    // 删除用户的评论记录
+    private void deleteCommentsByUserId(int userId) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Comment WHERE CommenterID = ?")) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    // 删除用户的好友关系
+    private void deleteFriendshipsByUserId(int userId) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Friendship WHERE UserID1 = ? OR UserID2 = ?")) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, userId);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    // 删除相册
+    private void deleteAlbum(int albumId) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Album WHERE AlbumID = ?")) {
+            preparedStatement.setInt(1, albumId);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    // 删除相册的喜欢记录
+    private void deleteLikesByAlbumId(int albumId) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM LikeTable WHERE AlbumID = ?")) {
+            preparedStatement.setInt(1, albumId);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    // 删除相册的收藏记录
+    private void deleteFavoritesByAlbumId(int albumId) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Favorite WHERE AlbumID = ?")) {
+            preparedStatement.setInt(1, albumId);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    // 删除相册的评论记录
+    private void deleteCommentsByAlbumId(int albumId) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Comment WHERE AlbumID = ?")) {
+            preparedStatement.setInt(1, albumId);
+            preparedStatement.executeUpdate();
+        }
+    }
+
 
     public boolean updatePassword(int userId, String newPassword) {
         try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE " + TABLE_NAME + " SET " + COLUMN_PASSWORD + " = ? WHERE " + COLUMN_USER_ID + " = ?")) {

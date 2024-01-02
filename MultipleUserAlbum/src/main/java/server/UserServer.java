@@ -154,13 +154,14 @@ public class UserServer implements ServletContextAware {
     }
 
     // 删除用户
-    public DataResult deleteUser(int userId) {
+    public void deleteUserWithRelatedData(int userId) {
         UserDAO userDAO=new UserDAO();
-        boolean isDeleted = userDAO.deleteUser(userId);
-        if (isDeleted) {
-            return DataResult.success("用户删除成功",null);
+        boolean success = userDAO.deleteUserWithRelatedData(userId);
+
+        if (success) {
+            System.out.println("用户及相关数据删除成功！");
         } else {
-            return DataResult.fail("用户删除失败");
+            System.out.println("用户及相关数据删除失败！");
         }
     }
     //编辑用户名
