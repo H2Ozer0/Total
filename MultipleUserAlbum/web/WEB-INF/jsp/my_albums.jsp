@@ -14,7 +14,17 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/st-style.css" type="text/css"/>
     <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
     <script src="${pageContext.request.contextPath}/static/layui/layui.all.js"></script>
+    <style>
+        .layui-table-view .layui-table {
+            margin-top: 20px; /* 调整行间距的大小，可以根据需要进行调整 */
+        }
 
+        .layui-table-cell {
+            height: 60px; /* 调整每行的高度，可以根据需要进行调整 */
+            line-height: 40px; /* 使文本垂直居中，可以根据需要进行调整 */
+        }
+
+    </style>
 </head>
 <body class="bg-gray">
 <jsp:include page="header.jsp"></jsp:include>
@@ -32,8 +42,9 @@
     </script>
 
     <script>
-        layui.use('table', function(){
+        layui.use(['table', 'form'], function(){
             var table = layui.table;
+            var form = layui.form;
 
             table.render({
                 elem: '#test'
@@ -69,7 +80,56 @@
                 }
                 else if(obj.event === 'edit'){
                     var url = '${pageContext.request.contextPath}/editAlbum?albumId=' + obj.data.albumID;
-                    window.open(url,"_blank");
+                    var albumId = obj.data.albumID;
+
+                    // 弹出编辑表单
+                    layer.open({
+                        type: 1,
+                        title: '编辑相册信息',
+                        area: ['500px', '400px'],
+                        content: $('#editForm'), // 引入表单
+                        success: function (layero, index) {
+                            // 初始化表单数据
+                            form.val('editAlbumForm', {
+                                'albumName': obj.data.albumName,
+                                'description': obj.data.description,
+                                // 其他字段...
+                            });
+
+                            // 监听表单提交
+                            form.on('submit(editAlbumForm)', function (data) {
+                                var formData = data.field;
+
+                                // TODO: 发送请求更新相册信息
+                                $.ajax({
+                                    url: "${pageContext.request.contextPath}/albums/editAlbum",
+                                    type: "post",
+                                    data: {
+                                        "albumId": albumId, // 从上下文获取相册ID
+                                        "albumName": formData.albumName,
+                                        "description": formData.description,
+                                        // 其他字段...
+                                    },
+                                    dataType: "json",
+                                    success: function (result) {
+                                        if (result.status == 0) {
+                                            layer.msg('相册信息更新成功', {icon: 1});
+                                            window.location.reload();
+                                        } else {
+                                            layer.msg('相册信息更新失败', {icon: 2});
+                                        }
+                                    },
+                                    error: function () {
+                                        window.location.reload();
+                                    }
+                                });
+
+                                // 关闭弹窗
+                                layer.closeAll();
+                                return false; // 阻止表单跳转
+                            });
+                        }
+                    });
                 }else if(obj.event === 'del'){
                     var albumName = obj.data.albumName;
                     var albumId = obj.data.albumID;
@@ -139,5 +199,27 @@
             })
         });
     </script>
+        <form class="layui-form" id="editForm" style="display:none;">
+            <div class="layui-form-item">
+                <label class="layui-form-label">相册名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="albumName" lay-verify="required" placeholder="请输入相册名" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">相册描述</label>
+                <div class="layui-input-block">
+                    <textarea name="description" placeholder="请输入相册描述" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <!-- 其他表单项... -->
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="editAlbumForm">确认</button>
+                    <button type="button" class="layui-btn layui-btn-primary" onclick="layer.closeAll()">取消</button>
+                </div>
+            </div>
+        </form>
 </body>
 </html>

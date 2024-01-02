@@ -217,4 +217,23 @@ public DataResult addFriend(@RequestParam("friendInputValue")int senderid,HttpSe
 
         return dataResult;
     }
+    @RequestMapping("/accept_application")
+    @ResponseBody
+    public DataResult accept_application(@RequestParam("receverid")int receverid, HttpSession session)
+    {
+        User user = (User)session.getAttribute("myInfo");
+        DataResult dataResult;
+        dataResult=userServer.acceptFriendRequest(receverid,user.getUserId());
+        return dataResult;
+    }
+    @RequestMapping("/reject_application")
+    @ResponseBody
+    public DataResult reject_application(@RequestParam("receverid")int receverid, HttpSession session)
+    {
+        User user = (User)session.getAttribute("myInfo");
+        DataResult dataResult;
+        dataResult=userServer.rejectFriendRequest(receverid,user.getUserId());
+        return dataResult;
+    }
+
 }

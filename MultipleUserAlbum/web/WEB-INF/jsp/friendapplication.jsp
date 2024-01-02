@@ -50,18 +50,54 @@
         table.on('tool(friendshipTable)', function (obj) {
             var data = obj.data;
             var layEvent = obj.event;
-
+            var receverid=obj.data.userID2;
             // 如果点击了接受按钮
             if (layEvent === 'accept') {
-                layer.msg('已接受好友申请，执行接受逻辑');
-                // 这里执行接受好友申请的逻辑，可以发起后端请求，处理相应的业务
-                // 例如：$.ajax({url: '接口地址', type: 'post', data: {参数}, success: function(result){}});
+                layer.msg('已接受好友申请');
+// 向 accept_application 发送请求
+                $.ajax({
+                    url: "${pageContext.request.contextPath}/me/accept_application",
+                    type: "post",
+                    data: {
+                        "receverid": receverid
+                    },
+                    dataType: "json",
+                    success: function (result) {
+                        // 处理成功响应
+                        if (result.status == 0) {
+                            console.log("接受申请成功");
+                        } else {
+                            console.error("接受申请失败: " + result.msg);
+                        }
+                    },
+                    error: function () {
+                        console.error("接受申请发生异常");
+                    }
+                });
             }
             // 如果点击了拒绝按钮
             else if (layEvent === 'reject') {
-                layer.msg('已拒绝好友申请，执行拒绝逻辑');
-                // 这里执行拒绝好友申请的逻辑，可以发起后端请求，处理相应的业务
-                // 例如：$.ajax({url: '接口地址', type: 'post', data: {参数}, success: function(result){}});
+                layer.msg('已拒绝好友申请');
+                // 向 reject_application 发送请求
+                $.ajax({
+                    url: "${pageContext.request.contextPath}/me/reject_application",
+                    type: "post",
+                    data: {
+                        "receverid": receverid
+                    },
+                    dataType: "json",
+                    success: function (result) {
+                        // 处理成功响应
+                        if (result.status == 0) {
+                            console.log("拒绝申请成功");
+                        } else {
+                            console.error("拒绝申请失败: " + result.msg);
+                        }
+                    },
+                    error: function () {
+                        console.error("拒绝申请发生异常");
+                    }
+                });
             }
         });
     });

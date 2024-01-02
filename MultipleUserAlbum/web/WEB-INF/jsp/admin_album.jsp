@@ -30,7 +30,6 @@
 
     <script type="text/html" id="barDemo">
         <a class="layui-btn layui-btn-xs" lay-event="check">查看</a>
-        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
     </script>
 
@@ -68,10 +67,6 @@
             table.on('tool(album_table)',function (obj) {
                 if(obj.event === 'check'){
                     var url = '${pageContext.request.contextPath}/albums/showphotos?albumId=' + obj.data.albumID;
-                    window.open(url,"_blank");
-                }
-                else if(obj.event === 'edit'){
-                    var url = '${pageContext.request.contextPath}/albums/editAlbum?albumId=' + obj.data.albumID;
                     window.open(url,"_blank");
                 }else if(obj.event === 'del'){
                     var albumName = obj.data.albumName;

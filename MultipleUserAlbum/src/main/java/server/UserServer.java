@@ -264,8 +264,9 @@ public class UserServer implements ServletContextAware {
         FriendshipDAO friendShipDAO=new FriendshipDAO();
         // 检查是否存在未处理的好友申请
         if (friendShipDAO.hasPendingFriendRequest(senderId, receiverId)) {
+            System.out.println("1为"+senderId+"2为"+receiverId);
             // 拒绝好友申请
-            friendShipDAO.rejectFriendRequest(senderId, receiverId);
+            friendShipDAO.rejectFriendRequest( receiverId,senderId);
             dataResult.setStatus(0);
             dataResult.setMsg("已拒绝好友申请");
         } else {

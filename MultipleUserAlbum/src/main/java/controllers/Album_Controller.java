@@ -172,10 +172,17 @@ public DataResult getphotos(@RequestParam("albumId")int albumId)
 //    }
 
     @RequestMapping("/editAlbum")
-    public String editAlbum(@RequestParam("albumId") String albumId, Model model) {
-        Album album = (Album) AlbumServer.getAlbumByID(Integer.parseInt(albumId)).getData();
-        model.addAttribute("album", album);
-        return "album_edit";
+    public DataResult editAlbum(@RequestParam("albumId") int albumId,
+            @RequestParam("albumName") String albumName,
+            @RequestParam("description") String description) {
+        AlbumDAO albumDAO=new AlbumDAO();
+        boolean updateResult = albumDAO.updateAlbumInfo(albumId, albumName, description);
+        if(updateResult==true){
+            return DataResult.success("成功更新相册信息",null);
+        }
+        else{
+            return DataResult.fail("更新相册信息失败");
+        }
     }
 
 

@@ -49,8 +49,8 @@
     <c:if test="${sessionScope.myInfo.admin}">
         <div class="personal-menu" style="margin-bottom: 20px">
             <ul>
-                <li><a href="${pageContext.request.contextPath}/admin/viewAllAlbums">管理用户相册</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/viewAllUsers">管理用户状态</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/viewAllAlbums">审核用户相册</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/viewAllUsers">审核用户状态</a></li>
 
             </ul>
         </div>
