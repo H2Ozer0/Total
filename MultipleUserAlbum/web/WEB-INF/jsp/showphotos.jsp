@@ -197,8 +197,11 @@
             success: function(result) {
               // Handle the result after the deletion
               if (result.status == 0) {
-                layer.msg('删除成功!', {icon: 6, offset: 250});
-                table.reload('test'); // Reload the table to reflect the changes
+                layer.msg('删除成功!', { icon: 6, offset: 250 }, function(){
+                  layer.closeAll(); // 关闭所有layer弹窗
+                  table.reload('test'); // Reload the table to reflect the changes
+                });
+
               } else {
                 layer.msg('删除失败: ' + result.msg, {icon: 5, offset: 250});
               }
