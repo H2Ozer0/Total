@@ -14,7 +14,17 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/st-style.css" type="text/css"/>
     <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
     <script src="${pageContext.request.contextPath}/static/layui/layui.all.js"></script>
+    <style>
+        .layui-table-view .layui-table {
+            margin-top: 20px; /* 调整行间距的大小，可以根据需要进行调整 */
+        }
 
+        .layui-table-cell {
+            height: 60px; /* 调整每行的高度，可以根据需要进行调整 */
+            line-height: 40px; /* 使文本垂直居中，可以根据需要进行调整 */
+        }
+
+    </style>
 </head>
 <body class="bg-gray">
 <jsp:include page="header.jsp"></jsp:include>
