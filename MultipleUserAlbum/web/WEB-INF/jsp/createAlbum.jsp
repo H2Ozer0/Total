@@ -4,10 +4,16 @@
   <meta charset="UTF-8">
   <title>创建相册</title>
   <style>
+
+    .custom-btn {
+      background-color: #336699; /* 自定义颜色的背景色 */
+      color: white; /* 文字颜色 */
+    }
+
     body {
       font: 14px/1.5 "PingFang SC","Lantinghei SC","Microsoft YaHei","HanHei SC","Helvetica Neue","Open Sans",Arial,"Hiragino Sans GB","微软雅黑",STHeiti,"WenQuanYi Micro Hei",SimSun,sans-serif;
       min-height: 1200px;
-      background-color: #009688;
+      background-color: #666699;
       color: white;
     }
 
@@ -35,7 +41,7 @@
     }
 
     label {
-      background-color: #009688;
+      background-color: #336699;
       padding: 8px;
       border-radius: 4px;
       color: white;
@@ -47,7 +53,7 @@
       padding: 10px;
       box-sizing: border-box;
       margin-bottom: 10px;
-      border: 1px solid #009688;
+      border: 1px solid #336699;
       border-radius: 4px;
       color: black; /* 修改文字颜色为黑色 */
     }
@@ -57,7 +63,7 @@
     }
 
     button {
-      background-color: #009688;
+      background-color: #336699;
       color: white;
       padding: 10px 20px;
       border: none;

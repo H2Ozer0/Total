@@ -17,7 +17,14 @@
             height: 60px; /* 调整每行的高度，可以根据需要进行调整 */
             line-height: 40px; /* 使文本垂直居中，可以根据需要进行调整 */
         }
-
+        .custom-btn {
+            background-color: #336699; /* 自定义颜色的背景色 */
+            color: white; /* 文字颜色 */
+        }
+        .custom-btn2 {
+            background-color: #990033; /* 自定义颜色的背景色 */
+            color: white; /* 文字颜色 */
+        }
     </style>
 </head>
 <body class="bg-gray">
@@ -29,8 +36,8 @@
     </div>
 
     <script type="text/html" id="favoritesBarDemo">
-        <a class="layui-btn layui-btn-xs" lay-event="check">查看</a>
-        <a class="layui-btn layui-btn-xs" lay-event="remove">取消收藏</a>
+        <a class="layui-btn custom-btn layui-btn-xs" lay-event="check">查看</a>
+        <a class="layui-btn custom-btn layui-btn-xs" lay-event="remove">取消收藏</a>
     </script>
 
     <script>

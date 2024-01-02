@@ -9,6 +9,16 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/st-style.css" type="text/css"/>
     <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
     <script src="${pageContext.request.contextPath}/static/layui/layui.all.js"></script>
+    <style>
+        .custom-btn {
+            background-color: #336699; /* 自定义颜色的背景色 */
+            color: white; /* 文字颜色 */
+        }
+        .custom-btn2 {
+            background-color: #990033; /* 自定义颜色的背景色 */
+            color: white; /* 文字颜色 */
+        }
+    </style>
     <script>
         $(function () {
             <%--if(${choose}){--%>
@@ -41,8 +51,8 @@
 </div>
 
 <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-xs" lay-event="cover">封面</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn custom-btn layui-btn-xs" lay-event="cover">封面</a>
+    <a class="layui-btn custom-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 
 <script>

@@ -38,6 +38,17 @@
             left: 0;
             right: 0;
         }
+        .custom-btn {
+            background-color: #336699; /* 自定义颜色的背景色 */
+            color: white; /* 文字颜色 */
+        }
+        .custom-btn2 {
+            background-color: #990033; /* 自定义颜色的背景色 */
+            color: white; /* 文字颜色 */
+        }
+        .bg-blue {
+            background-color: #666699;
+        }
     </style>
     <style>
         .st-main {
@@ -53,7 +64,7 @@
 
 <jsp:include page="header.jsp"></jsp:include>
 
-<div class="st-banner layui-bg-blue" style="height: 150px"></div>
+<div class="st-banner bg-blue" style="height: 150px"></div>
 
 <div style="background: white">
     <div class="home-information-box">
@@ -89,7 +100,7 @@
                             <label class="layui-form-label layui-col-md2">用户名</label>
                             <div class="layui-input-inline layui-col-md4">
                                 <input type="text" name="username" id="username" value="${myInfo.username}" class="layui-input">
-                                <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="saveEmail">保存</button>
+                                <button class="layui-btn custom-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="saveEmail">保存</button>
 
                             </div>
                         </div>
@@ -98,7 +109,7 @@
                             <label class="layui-form-label layui-col-md2 layui-col-md-offset3">邮箱</label>
                             <div class="layui-input-inline layui-col-md4 ">
                                 <input type="text" name="email" id="email" value="${myInfo.email}" class="layui-input" >
-                                <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="saveEmail">保存</button>
+                                <button class="layui-btn custom-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="saveEmail">保存</button>
 
                             </div>
                         </div>
@@ -106,14 +117,14 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label layui-col-md-offset3">头像上传</label>
                             <div class="layui-input-block">
-                                <button type="button" class="layui-btn" id="avatarUploadBtn">选择头像</button>
+                                <button type="button" class="layui-btn custom-btn" id="avatarUploadBtn">选择头像</button>
                                 <input type="file" name="avatarFile" id="avatarFile" style="display: none;" accept="image/*">
                                 <div class="layui-upload-list" id="avatarPreview"></div>
 
                             </div>
                         </div>
                         <div class="layui-form-item layui-col-md-offset5">
-                              <button type="button" id="btn_submit_avatar" class="layui-btn">上传头像</button>
+                              <button type="button" id="btn_submit_avatar" class="layui-btn custom-btn">上传头像</button>
                         </div>
                         <script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
                         <script src="https://cdn.staticfile.org/layui/2.5.7/layui.min.js"></script>

@@ -1,15 +1,17 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%--
-  Created by IntelliJ IDEA.
-  User: 52491
-  Date: 2019/12/11
-  Time: 18:31
-  To change this template use File | Settings | File Templates.
---%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
+<head>
+    <style>
+
+        .bg-blue {
+            background-color: #666699;
+        }
+    </style>
+</head>
 <body>
-<div class="layui-nav layui-bg-blue st-header">
+<div class="layui-nav st-header bg-blue">
     <div class="left" style="padding: 10px;margin-left: 60px;">
         <a href="/home" class="horizentol">
             <img width="30px" height="30px" src="${pageContext.request.contextPath}/getAvatar?username=${myInfo.username}">

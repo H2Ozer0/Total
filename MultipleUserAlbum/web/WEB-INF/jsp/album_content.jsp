@@ -8,6 +8,16 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/st-style.css" type="text/css"/>
     <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
     <script src="${pageContext.request.contextPath}/static/layui/layui.all.js"></script>
+    <style>
+        .custom-btn {
+            background-color: #336699; /* 自定义颜色的背景色 */
+            color: white; /* 文字颜色 */
+        }
+        .custom-btn2 {
+            background-color: #990033; /* 自定义颜色的背景色 */
+            color: white; /* 文字颜色 */
+        }
+    </style>
     <script type="text/javascript">
         $(function(){
             $("#icon_praise").click(function () {
@@ -213,14 +223,14 @@
                     <div style="margin-top:10px">
                         <c:if test="${empty sessionScope.myInfo}">
                             <a href="/index">
-                            <button id = "GUANZHU1" type="button" class="layui-btn">登录后收藏</button>
+                            <button id = "GUANZHU1" type="button" class="layui-btn custom-btn">登录后收藏</button>
                         </c:if>
                         <c:if test="${not empty sessionScope.myInfo}">
                             <c:if test="${isFollow == 1}">
-                            <button id = "QUGUAN" type="button" class="layui-btn layui-btn-primary">取消收藏</button>
+                            <button id = "QUGUAN" type="button" class="layui-btn custom-btn layui-btn-primary">取消收藏</button>
                             </c:if>
                             <c:if test="${isFollow == 0}">
-                            <button id = "GUANZHU" type="button" class="layui-btn">收藏</button>
+                            <button id = "GUANZHU" type="button" class="layui-btn custom-btn">收藏</button>
                             </c:if>
                         </c:if>
 
@@ -240,7 +250,7 @@
 </div>
 <!-- 分享按钮 -->
 <div style="right: 20px">
-    <button id="shareButton" class="layui-btn layui-btn-lg layui-btn-radius">分享</button>
+    <button id="shareButton" class="layui-btn layui-btn-lg custom-btn layui-btn-radius">分享</button>
 </div>
 <%--点赞按钮--%>
 <div style="width: 100%">
@@ -260,7 +270,7 @@
     <c:if test="${empty sessionScope.myInfo}">
     <div id="addComment_WithoutId" class="ADDCOM_withoutId">
         <div class="ADDBottom_withoutId">
-            <button id="COMMENT1" type="button" class="WithoutID  layui-btn layui-btn-lg layui-btn-radius layui-btn-primary">登录后评论</button>
+            <button id="COMMENT1" type="button" class="WithoutID  layui-btn custom-btn layui-btn-lg layui-btn-radius layui-btn-primary">登录后评论</button>
         </div>
     </div>
     </c:if>
@@ -268,7 +278,7 @@
     <div id="addComment" class="ADDCOM">
         <textarea  id = "CommentText" name="" required lay-verify="required" placeholder="说点什么吧" class="layui-textarea"></textarea>
         <div class="ADDBottom">
-            <button id="COMMENT" type="button" class="layui-btn layui-btn-lg layui-btn-radius">发表评论 </button>
+            <button id="COMMENT" type="button" class="layui-btn custom-btn layui-btn-lg layui-btn-radius">发表评论 </button>
         </div>
 
     </div>

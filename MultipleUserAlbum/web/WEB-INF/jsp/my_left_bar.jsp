@@ -49,6 +49,14 @@
         text-decoration: none;
         color: #333;
     }
+    .custom-btn {
+        background-color: #336699; /* 自定义颜色的背景色 */
+        color: white; /* 文字颜色 */
+    }
+    .custom-btn2 {
+        background-color: #990033; /* 自定义颜色的背景色 */
+        color: white; /* 文字颜色 */
+    }
 </style>
 <body>
 <div class = "vertical" style="width: 250px">
@@ -71,10 +79,10 @@
 
 
             <a href="${pageContext.request.contextPath}/albums/createalbum_page" class = "content-center" target="_blank">
-                <button type="button" class=" layui-btn layui-btn-primary}">创建相册</button>
+                <button type="button" class=" layui-btn custom-btn layui-btn-primary}">创建相册</button>
             </a>
             <a href="/uploadPhoto" style="margin: 0 auto" target="_blank">
-                <button type="button" class="layui-btn layui-btn-primary">上传照片</button>
+                <button type="button" class="layui-btn custom-btn layui-btn-primary">上传照片</button>
             </a>
 
 

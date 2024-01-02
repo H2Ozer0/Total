@@ -15,34 +15,6 @@
     <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
     <script src="${pageContext.request.contextPath}/static/layui/layui.all.js"></script>
     <style>
-
-        body.bg-gray{
-            overflow: hidden; /* 禁用所有滚动条 */
-            background-image: url('${pageContext.request.contextPath}/static/no2.jpg');
-            background-size: cover;
-            background-position: center;
-        }
-
-        .personal-content {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
-            border: 1px solid #ccc; /* 添加边框线 */
-            padding: 10px; /* 可选：为内容添加一些内边距 */
-        }
-
-        .personal-content ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .personal-content dd {
-            margin-bottom: 10px;
-        }
-
-        .personal-content a {
-            text-decoration: none;
-            color: #333;
-        }
         .layui-table-view .layui-table {
             margin-top: 20px; /* 调整行间距的大小，可以根据需要进行调整 */
         }
@@ -51,8 +23,16 @@
             height: 60px; /* 调整每行的高度，可以根据需要进行调整 */
             line-height: 40px; /* 使文本垂直居中，可以根据需要进行调整 */
         }
-
+        .custom-btn {
+            background-color: #336699; /* 自定义颜色的背景色 */
+            color: white; /* 文字颜色 */
+        }
+        .custom-btn2 {
+            background-color: #990033; /* 自定义颜色的背景色 */
+            color: white; /* 文字颜色 */
+        }
     </style>
+
 </head>
 <body class="bg-gray">
 <jsp:include page="header.jsp"></jsp:include>
@@ -63,10 +43,10 @@
     </div>
 
     <script type="text/html" id="barDemo">
-        <a class="layui-btn layui-btn-xs" lay-event="check">查看照片</a>
-        <a class="layui-btn layui-btn-xs" lay-event="content">点赞评论</a>
-        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        <a class="layui-btn custom-btn layui-btn-xs" lay-event="check">查看照片</a>
+        <a class="layui-btn custom-btn layui-btn-xs" lay-event="content">点赞评论</a>
+        <a class="layui-btn custom-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn custom-btn2 layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
     </script>
 
     <script>
@@ -226,27 +206,26 @@
             })
         });
     </script>
-        <form class="layui-form" id="editForm" style="display:none;">
-            <div class="layui-form-item">
-                <label class="layui-form-label">相册名</label>
-                <div class="layui-input-block">
-                    <input type="text" name="albumName" lay-verify="required" placeholder="请输入相册名" autocomplete="off" class="layui-input">
-                </div>
+    <form class="layui-form" id="editForm" style="display:none;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">相册名</label>
+            <div class="layui-input-block">
+                <input type="text" name="albumName" lay-verify="required" placeholder="请输入相册名" autocomplete="off" class="layui-input">
             </div>
-            <div class="layui-form-item layui-form-text">
-                <label class="layui-form-label">相册描述</label>
-                <div class="layui-input-block">
-                    <textarea name="description" placeholder="请输入相册描述" class="layui-textarea"></textarea>
-                </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">相册描述</label>
+            <div class="layui-input-block">
+                <textarea name="description" placeholder="请输入相册描述" class="layui-textarea"></textarea>
             </div>
-            <!-- 其他表单项... -->
+        </div>
 
-            <div class="layui-form-item">
-                <div class="layui-input-block">
-                    <button class="layui-btn" lay-submit lay-filter="editAlbumForm">确认</button>
-                    <button type="button" class="layui-btn layui-btn-primary" onclick="layer.closeAll()">取消</button>
-                </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn custom-btn" lay-submit lay-filter="editAlbumForm">确认</button>
+                <button type="button" class="layui-btn custom-btn layui-btn-primary" onclick="layer.closeAll()">取消</button>
             </div>
-        </form>
+        </div>
+    </form>
 </body>
 </html>

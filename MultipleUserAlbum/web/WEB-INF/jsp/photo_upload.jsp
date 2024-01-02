@@ -11,7 +11,20 @@
     <script type="text/javascript">
 
     </script>
+
     <style>
+
+    .custom-btn {
+        background-color: #336699; /* 自定义颜色的背景色 */
+        color: white; /* 文字颜色 */
+    }
+    .custom-btn2 {
+        background-color: #990033; /* 自定义颜色的背景色 */
+        color: white; /* 文字颜色 */
+    }
+    .bg-blue {
+        background-color: #666699;
+    }
     body{
     overflow: hidden; /* 禁用所有滚动条 */
     background-image: url('${pageContext.request.contextPath}/static/no2.jpg');
@@ -23,7 +36,7 @@
 <body>
 <jsp:include page="header.jsp"></jsp:include>
 
-<div class="st-banner layui-bg-blue" style="height: 150px"></div>
+<div class="st-banner bg-blue" style="height: 150px"></div>
 <div class="home-information-box">
     <div class="information-headimg-box">
         <img src="/getAvatar?id=${sessionScope.myInfo.userId}" width="150px"/>
@@ -48,7 +61,7 @@
         </div>
         <label class="layui-form-label">图片上传</label>
         <div class="layui-upload" style="margin-left: 110px;">
-            <button type="button" class="layui-btn layui-btn-primary" id="test2">添加图片</button>
+            <button type="button" class="layui-btn custom-btn costom-btn layui-btn-primary" id="test2">添加图片</button>
             <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
                 预览图：
                 <div class="layui-upload-list" id="demo2"></div>
@@ -58,8 +71,8 @@
 
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <button type="button" id="btn_submit" class="layui-btn layui-btn-primary">立即提交</button>
-                <button type="reset" class="layui-btn layui-btn-primary layui-btn-danger">重置</button>
+                <button type="button" id="btn_submit" class="layui-btn custom-btn layui-btn-primary">立即提交</button>
+                <button type="reset" class="layui-btn custom-btn layui-btn-primary layui-btn-danger">重置</button>
 
             </div>
         </div>
