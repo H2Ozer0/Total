@@ -20,6 +20,9 @@
         }
         body.bg-gray {
             overflow: hidden; /* 禁用所有滚动条 */
+            background-image: url('${pageContext.request.contextPath}/static/no2.jpg');
+            background-size: cover;
+            background-position: center;
         }
 
         #myInfoContent {
@@ -50,7 +53,7 @@
 
 <jsp:include page="header.jsp"></jsp:include>
 
-<div class="st-banner" style="height: 150px"></div>
+<div class="st-banner layui-bg-blue" style="height: 150px"></div>
 
 <div style="background: white">
     <div class="home-information-box">
@@ -89,7 +92,8 @@
                             <label class="layui-form-label layui-col-md2 layui-col-md-offset3">用户名</label>
                             <div class="layui-input-inline layui-col-md4">
                                 <input type="text" name="username" id="username" value="${myInfo.username}" class="layui-input">
-                                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveUsername">保存</button>
+                                <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="saveEmail">保存</button>
+
                             </div>
                         </div>
 
@@ -97,12 +101,13 @@
                             <label class="layui-form-label layui-col-md2 layui-col-md-offset3">邮箱</label>
                             <div class="layui-input-inline layui-col-md4 ">
                                 <input type="text" name="email" id="email" value="${myInfo.email}" class="layui-input" >
-                                <button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveEmail">保存</button>
+                                <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="saveEmail">保存</button>
+
                             </div>
                         </div>
 
                         <div class="layui-form-item">
-                            <label class="layui-form-label layui-col-md-offset2">头像上传</label>
+                            <label class="layui-form-label layui-col-md-offset3">头像上传</label>
                             <div class="layui-input-block">
                                 <button type="button" class="layui-btn" id="avatarUploadBtn">选择头像</button>
                                 <input type="file" name="avatarFile" id="avatarFile" style="display: none;" accept="image/*">
@@ -110,9 +115,9 @@
 
                             </div>
                         </div>
-
-                        <button type="button" id="btn_submit_avatar" class="layui-btn">上传头像</button>
-
+                        <div class="layui-form-item layui-col-md-offset5">
+                              <button type="button" id="btn_submit_avatar" class="layui-btn">上传头像</button>
+                        </div>
                         <script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
                         <script src="https://cdn.staticfile.org/layui/2.5.7/layui.min.js"></script>
                         <script src="your-dropzone-library.js"></script>

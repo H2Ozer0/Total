@@ -8,9 +8,51 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
+<style>
+    .personal-menu {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+        border: 1px solid #ccc; /* 添加边框线 */
+        padding: 10px; /* 可选：为内容添加一些内边距 */
+    }
+
+    .personal-menu ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .personal-menu dd {
+        margin-bottom: 10px;
+    }
+
+    .personal-menu a {
+        text-decoration: none;
+        color: #333;
+    }
+    .personal-card-vertical {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+        border: 1px solid #ccc; /* 添加边框线 */
+        padding: 10px; /* 可选：为内容添加一些内边距 */
+    }
+
+    .personal-card-vertical ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .personal-card-vertical dd {
+        margin-bottom: 10px;
+    }
+
+    .personal-card-vertical a {
+        text-decoration: none;
+        color: #333;
+    }
+</style>
 <body>
 <div class = "vertical" style="width: 250px">
-    <div class="personal-card vertical" style="margin-bottom: 20px;padding:10px">
+    <div class="personal-card-vertical" style="margin-bottom: 20px;padding:10px">
         <div class="me-avatar content-center">
             <img src="${pageContext.request.contextPath}/getAvatar?username=${sessionScope.myInfo.username}" width="150px" height="150px"/>
         </div>

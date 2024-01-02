@@ -9,7 +9,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <body>
-<div class="layui-nav layui-bg-green st-header">
+<div class="layui-nav layui-bg-blue st-header">
     <div class="left" style="padding: 10px;margin-left: 60px;">
         <a href="/home" class="horizentol">
             <img width="30px" height="30px" src="${pageContext.request.contextPath}/getAvatar?username=${myInfo.username}">
