@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import server.AlbumServer;
+import server.InteractServer;
 import server.UserServer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,11 +36,12 @@ import server.AlbumServer;
 public class MeController {
     private final UserServer userServer;
     private  final AlbumServer albumServer;
-
+    private  final InteractServer interactServer;
     @Autowired
-    public MeController(AlbumServer albumServer,UserServer userServer) {
+    public MeController(AlbumServer albumServer,UserServer userServer,InteractServer interactServer) {
         this.albumServer= albumServer;
         this.userServer= userServer;
+        this.interactServer= interactServer;
     }
     @RequestMapping  ("/albums")
     public String albums(Model model, HttpSession session)
@@ -57,6 +59,13 @@ public class MeController {
         model.addAttribute("albumList",albumList);
         return "my_photos";
     }
+    @RequestMapping  ("/favourite")
+    public String favorite(Model model, HttpSession session)
+    {
+        User user = (User)session.getAttribute("myInfo");
+        model.addAttribute("myInfo",user);
+        return "favourite";
+    }
     @RequestMapping("/getMyAlbum")
     @ResponseBody
     public DataResult getMyAlbum( HttpSession session){
@@ -70,6 +79,35 @@ public class MeController {
         return dataResult;
     }
 
+    @PostMapping("/getMyFriendship")
+    @ResponseBody
+    public DataResult getMyFriendship(HttpSession session) {
+        try {
+            User user = (User) session.getAttribute("myInfo");
+            if (user == null) {
+                return DataResult.fail("User not authenticated");
+            }
+
+            // Assuming you have a method in your UserServer to retrieve friendships for the user
+            // Modify the following line according to your actual method in UserServer
+            DataResult result = userServer.getAllFriends(user.getUserId());
+
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return DataResult.fail("An error occurred while retrieving friendships");
+        }
+    }
+    @RequestMapping  ("/getMyFavorites")
+    @ResponseBody
+    public DataResult getMyFavorites(Model model, HttpSession session)
+    {
+        User user = (User)session.getAttribute("myInfo");
+        model.addAttribute("myInfo",user);
+        DataResult dataResult;
+        dataResult=interactServer.getFavoriteAlbumsByUser(user.getUserId());
+        return dataResult;
+    }
     @PostMapping("/updateUsername")
     @ResponseBody
     public DataResult updateUsername(@RequestParam String fieldValue,HttpSession session,Model model) {

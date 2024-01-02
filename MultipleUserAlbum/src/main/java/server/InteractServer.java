@@ -27,6 +27,7 @@ public class InteractServer {
         try {
             LikeDAO likeDAO=new LikeDAO();
             likeDAO.insertLike(like);
+            System.out.println(1);
             return DataResult.success("Like inserted successfully", null);
         } catch (Exception e) {
             return DataResult.fail("Failed to insert like: " + e.getMessage());
@@ -42,24 +43,15 @@ public class InteractServer {
             return DataResult.fail("Failed to retrieve like count: " + e.getMessage());
         }
     }
-
-    // 新增的方法：检查用户是否点赞了相册
-    public DataResult hasUserLikedAlbum(int userID, int albumID) {
+    public DataResult getFavoriteAlbumsByUser(int userID) {
         try {
-            LikeDAO likeDAO = new LikeDAO();
-            boolean hasLiked = likeDAO.hasUserLikedAlbum(userID, albumID);
-            likeDAO.closeConnection();  // 记得关闭数据库连接
-
-            if (hasLiked) {
-                return DataResult.success("User has liked the album", true);
-            } else {
-                return DataResult.success("User has not liked the album", false);
-            }
+            FavoriteDAO favoriteDAO = new FavoriteDAO();
+            List<Album> favoriteAlbums = favoriteDAO.getFavoriteAlbumsByUser(userID);
+            return DataResult.success("Favorite albums retrieved successfully", favoriteAlbums);
         } catch (Exception e) {
-            return DataResult.fail("Failed to check if user has liked the album: " + e.getMessage());
+            return DataResult.fail("Failed to retrieve favorite albums: " + e.getMessage());
         }
     }
-
 
     // Comment functionality
     public DataResult insertComment(Comment comment) {

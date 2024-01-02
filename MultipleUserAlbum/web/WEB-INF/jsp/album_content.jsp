@@ -1,15 +1,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%--
-  Created by IntelliJ IDEA.
-  User: 52491
-  Date: 2019/12/11
-  Time: 20:39
-  To change this template use File | Settings | File Templates.
---%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-<%--    <title>${albumInfo.albumName}</title>--%>
+    <title>${albumInfo.albumName}</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/layui/css/layui.css" type="text/css"/>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/st-style.css" type="text/css"/>
     <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
@@ -18,9 +12,9 @@
         $(function(){
             $("#icon_praise").click(function () {
                 $.ajax({
-                    url: "http://localhost:8080/addPraise",
+                    url: '${pageContext.request.contextPath}/albums/addLike',
                     type: "post",
-                    data: {"albumId":'${albumInfo.albumID}'},
+                    data: {"albumId":'${albumInfo.albumID}',"userId":'${sessionScope.myInfo.userId}'},
                     dataType: "json",
                     success: function (result) {
                         console.log(result.data);
@@ -29,6 +23,8 @@
                             var praise = parseInt($("#praise_count").html());
                             $("#praise_count").html(praise + 1);
                             console.log(praise);
+                        }else if(result.status == -1){
+                            layer.msg("已经点过赞啦",{offset:250});
                         } else {
                             layer.msg("点赞失败!",{offset:250});
                         }
@@ -42,6 +38,7 @@
             $("#COMMENT").click(function () {
                 var commentText = $("#CommentText").val();
                 var aId = "${albumInfo.albumID}";
+                console.log(commentText+aId);
                 if(commentText==="" ) {
                     layer.open({
                         title: '评论提示',
@@ -54,7 +51,7 @@
                 }
                 else{
                     $.ajax({
-                        url: "http://localhost:8080/addComment",
+                        url: '${pageContext.request.contextPath}/albums/addComment',
                         type: "post",
                         data: {"TEXT": commentText,"AID":aId},
                         dataType: "json",
@@ -68,7 +65,7 @@
                                     content: '请登录',
                                     shade: 0.5,
                                     yes: function(){
-                                        window.location.href = "http://localhost:8080/";
+                                        window.location.href = "${pageContext.request.contextPath}/login";
                                     }
                                 });
 
@@ -82,15 +79,15 @@
             });
 
             $("#COMMENT1").click(function () {
-                window.location.href = "http://localhost:8080/";
+                window.location.href = "${pageContext.request.contextPath}/login";
             });
 
             $("#GUANZHU").click(function () {
-                var toId = "${albumInfo.creatorID}"
+                var aId = "${albumInfo.albumID}"
                 $.ajax({
-                    url: "http://localhost:8080/addfow",
+                    url: "${pageContext.request.contextPath}/favorites/add",
                     type: "post",
-                    data: {"TID":toId},
+                    data: {"AID":aId},
                     dataType: "json",
                     success: function (result) {
                         console.log(result.data);
@@ -99,43 +96,43 @@
                         } else {
                             layer.open({
                                 offset:'250px',
-                                title: '关注失败 请登录！',
-                                content: '关注失败',
+                                title: '收藏失败 请登录！',
+                                content: '收藏失败',
                                 shade: 0.5,
                                 yes: function(){
-                                    window.location.href = "http://localhost:8080/";
+                                    window.location.href = "${pageContext.request.contextPath}/login";
                                 }
                             });
 
                         }
                     },
                     error: function () {
-                        alert("关注异常");
+                        alert("收藏异常");
                     }
                 });
             });
 
             $("#QUGUAN").click(function () {
-                var toId = "${albumInfo.creatorID}"
-                layer.confirm('确定取消关注吗?', {icon: 3, title:'提示',offset:'250px'}, function(index){
+                var aId = "${albumInfo.albumID}"
+                layer.confirm('确定取消收藏吗?', {icon: 3, title:'提示',offset:'250px'}, function(index){
                     $.ajax({
-                        url: "http://localhost:8080/delfow",
+                        url: "${pageContext.request.contextPath}/favorites/delete",
                         type: "post",
-                        data: {"TID":toId},
+                        data: {"AID":aId},
                         dataType: "json",
                         success: function (result) {
                             console.log(result.status);
                             console.log(result.data);
                             //如果删除成功
                             if (result.status == 0) {
-                                layer.msg('取消关注成功!', {icon: 6,offset:250});
+                                layer.msg('取消收藏成功!', {icon: 6,offset:250});
                                 window.location.reload();
                             } else {
                                 window.location.reload();
                             }
                         },
                         error: function () {
-                            alert("取消关注发生异常");
+                            alert("取消收藏发生异常");
                         }
                     });
                     layer.close(index);
@@ -150,7 +147,7 @@
 
             layer.confirm('确定删除该评论吗?', {icon: 3, title:'提示',offset:'250px'}, function(index){
                 $.ajax({
-                    url: "http://localhost:8080/delcomment",
+                    url: "${pageContext.request.contextPath}/albums/delcomment",
                     type: "post",
                     data: {"CID": commentId,"UID":userName},
                     dataType: "json",
@@ -171,18 +168,38 @@
             });
         }
     </script>
+    <script type="text/javascript">
+        // 等待页面加载完成
+        document.addEventListener("DOMContentLoaded", function () {
+            // 获取当前页面的链接
+            var currentUrl = window.location.href;
+
+            // 获取分享按钮
+            var shareButton = document.getElementById("shareButton");
+
+            // 添加点击事件处理程序
+            shareButton.addEventListener("click", function () {
+                // 使用 Share API 创建分享弹窗
+                navigator.share({
+                    title: "${albumInfo.albumName}", // 分享标题
+                    text: "Check out this awesome album!", // 分享文本
+                    url: currentUrl, // 分享链接
+                })
+                    .then(() => console.log("Successful share"))
+                    .catch((error) => console.log("Error sharing:", error));
+            });
+        });
+    </script>
 </head>
 <body>
 <jsp:include page="header.jsp"></jsp:include>
-<div class="st-banner-ad-box">
-    <div class="st-banner-ad theme-bg"></div>
+<%--<div class="st-banner-ad-box">--%>
+<%--    <div class="st-banner-ad theme-bg"></div>--%>
 </div>
 
 <div class="album-box horizentol border-bottom border-top">
-    <div class="album-info-box vertical">
-        <div style="font-size: 33px">${albumInfo.albumName}</div>
-        <div class="gray-color" style="font-size: 16px;margin-top: 10px">上传时间:${albumInfo.createTime}</div>
-        <div class="gray-color" style="font-size: 18px;margin-top: 10px">${albumInfo.albumName}</div>
+        <div class="album-info-box vertical">
+            <div style="font-size: 33px">${albumInfo.albumName}</div> <!-- 相册标题 -->
 
     </div>
     <div class="album-author-box horizentol border-left">
@@ -190,22 +207,22 @@
             <a href="/user?id=${albumInfo.creatorID}"><img src="/getAvatar?id=${albumInfo.creatorID}"></a>
         </div>
         <div class="vertical" style="margin-left: 10px">
-            <div style="font-size: 16px">上传者：${albumInfo.creatorID}</div>
+            <div style="font-size: 16px">上传者：${creatorName}</div>
             <div>
-                <c:if test="${sessionScope.myInfo.id != albumInfo.creatorID}">
+                <c:if test="${sessionScope.myInfo.userId != albumInfo.creatorID}">
                     <div style="margin-top:10px">
                         <c:if test="${empty sessionScope.myInfo}">
                             <a href="/index">
-                            <button id = "GUANZHU1" type="button" class="layui-btn">登录后关注</button>
+                            <button id = "GUANZHU1" type="button" class="layui-btn">登录后收藏</button>
                         </c:if>
-                                <c:if test="${not empty sessionScope.myInfo}">
-                                    <c:if test="${isFollow == 1}">
-                                    <button id = "QUGUAN" type="button" class="layui-btn layui-btn-primary">取消关注</button>
-                                    </c:if>
-                                    <c:if test="${isFollow == 0}">
-                                    <button id = "GUANZHU" type="button" class="layui-btn">关注</button>
-                                    </c:if>
-                                </c:if>
+                        <c:if test="${not empty sessionScope.myInfo}">
+                            <c:if test="${isFollow == 1}">
+                            <button id = "QUGUAN" type="button" class="layui-btn layui-btn-primary">取消收藏</button>
+                            </c:if>
+                            <c:if test="${isFollow == 0}">
+                            <button id = "GUANZHU" type="button" class="layui-btn">收藏</button>
+                            </c:if>
+                        </c:if>
 
 
                         <a href="/sendMessage?id=${albumInfo.creatorID}">
@@ -222,13 +239,16 @@
 <div style="margin-top: 20px">
     <c:forEach var="photo" items="${photoList}">
         <div class="album-photo vertical">
-            <img src="/getImage?url=${photo.url}"/>
-            <div class="gray-color">${photo.name}</div>
+            <img src="/getImage?url=${photo.path}"/>
+            <div class="gray-color">${photo.title}</div>
         </div>
     </c:forEach>
 
 </div>
-
+<!-- 分享按钮 -->
+<div>
+    <button id="shareButton" class="layui-btn layui-btn-lg layui-btn-radius">分享</button>
+</div>
 <%--点赞按钮--%>
 <div style="width: 100%">
     <div class="horizentol" style="margin-left: 45%;">
@@ -271,11 +291,11 @@
         </div>
         <div class="conmment_details">
             <div style="float:left;">
-                <span class="comment_name">${Info.commenterID} </span>
+                <span class="comment_name">${Info.commenterName} </span>
                 <span>${Info.commentTime}</span>
             </div>
 
-            <c:if  test="${Info.commenterID ==sessionScope.myInfo.id}">
+            <c:if  test="${Info.commenterID ==sessionScope.myInfo.userId}">
                 <div class="del" id="delCom" onclick = "clickDel(this)" data-id = '${Info.commentID}' data-name = '${Info.commenterID}'>
                     <a class="del_comment" data-id="1"> <i id = "del" class="icon layui-icon button-font" > 删除</i> </a>
                 </div>

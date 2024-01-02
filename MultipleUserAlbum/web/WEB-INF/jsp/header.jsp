@@ -30,6 +30,7 @@
         <dl class="layui-nav-child">
             <dd><a href="${pageContext.request.contextPath}/me/albums">管理相册</a></dd>
             <dd><a href="${pageContext.request.contextPath}/me/photos">好友界面</a></dd>
+            <dd><a href="${pageContext.request.contextPath}/albums/upload_photo">上传照片</a></dd>
             <dd><a href="${pageContext.request.contextPath}/login_page">退出</a></dd>
 
         </dl>

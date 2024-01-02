@@ -1,5 +1,6 @@
 package dao;
 
+import entity.Album;
 import entity.Favorite;
 
 import java.sql.*;
@@ -71,9 +72,7 @@ public class FavoriteDAO {
                 int rowsAffected = preparedStatement.executeUpdate();
 
                 if (rowsAffected == 0) {
-                    System.out.println("No matching Favorite record found for deletion.");
-                    // You can choose to throw an exception or handle it as needed.
-                    // For simplicity, I'm printing a message here.
+                    //System.out.println("No matching Favorite record found for deletion.");
                 }
             }
         } catch (SQLException e) {
@@ -81,7 +80,29 @@ public class FavoriteDAO {
             System.err.println("删除收藏记录时发生异常: " + e.getMessage());
         }
     }
+    // 根据用户ID和相册ID判断是否已经收藏该相册
+    public boolean isAlbumFavoritedByUser(int userID, int albumID) {
+        boolean isFavorited = false;
+        try {
+            String query = "SELECT COUNT(*) FROM Favorite WHERE AlbumID = ? AND UserID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, albumID);
+                preparedStatement.setInt(2, userID);
 
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        int count = resultSet.getInt(1);
+                        isFavorited = count > 0;
+                        System.out.println("userID:"+userID+"  albumID:"+albumID+"isFavourite:"+count);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("判断相册是否已被用户收藏时发生异常: " + e.getMessage());
+        }
+        return isFavorited;
+    }
 
     // 检查是否已存在相同的收藏记录
     private boolean checkDuplicateFavorite(Favorite favorite) {
@@ -150,7 +171,41 @@ public class FavoriteDAO {
             System.err.println("关闭数据库连接时发生异常: " + e.getMessage());
         }
     }
-
+    // 将 ResultSet 映射到 entity.Album 对象
+    private Album mapResultSetToAlbum(ResultSet resultSet) throws SQLException {
+        Album album = new Album();
+        album.setAlbumID(resultSet.getInt("AlbumID"));
+        album.setAlbumName(resultSet.getString("AlbumName"));
+        album.setDescription(resultSet.getString("Description"));
+        album.setCreatedAt(resultSet.getTimestamp("CreatedAt"));
+        album.setPublic(resultSet.getBoolean("IsPublic"));
+        album.setDeleted(resultSet.getBoolean("IsDeleted"));
+        album.setFavoritesCount(resultSet.getInt("FavoritesCount"));
+        album.setLikesCount(resultSet.getInt("LikesCount"));
+        album.setCreatorID(resultSet.getInt("CreatorID"));
+        return album;
+    }
+    public List<Album> getFavoriteAlbumsByUser(int userID) {
+        List<Album> favoriteAlbums = new ArrayList<>();
+        try {
+            String query = "SELECT a.* FROM Album a " +
+                    "JOIN Favorite f ON a.AlbumID = f.AlbumID " +
+                    "WHERE f.UserID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, userID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        Album album = mapResultSetToAlbum(resultSet);
+                        favoriteAlbums.add(album);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Failed to retrieve favorite albums: " + e.getMessage());
+        }
+        return favoriteAlbums;
+    }
     public static void main(String[] args) {
         FavoriteDAO favoriteDAO = new FavoriteDAO();
 

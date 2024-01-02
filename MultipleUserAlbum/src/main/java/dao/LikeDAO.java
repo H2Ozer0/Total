@@ -90,16 +90,32 @@ public class LikeDAO {
         }
     }
 
-    // 检查用户是否已经点赞了相册
-    private boolean userLikedAlbum(int userID, int albumID) throws SQLException {
-        String query = "SELECT COUNT(*) AS LikeCount FROM LikeTable WHERE UserID = ? AND AlbumID = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setInt(1, userID);
-            preparedStatement.setInt(2, albumID);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return resultSet.next() && resultSet.getInt("LikeCount") > 0;
+    // 检查某用户是否已经点赞某相册
+    public boolean userLikedAlbum(int userID, int albumID) {
+        boolean liked = false;
+        try {
+            // 检查相册是否存在
+            if (!albumExists(albumID)) {
+                throw new IllegalArgumentException("相册不存在，无法查询用户点赞记录。AlbumID: " + albumID);
             }
+
+            String query = "SELECT COUNT(*) AS LikeCount FROM LikeTable WHERE AlbumID = ? AND UserID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, albumID);
+                preparedStatement.setInt(2, userID);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        int likeCount = resultSet.getInt("LikeCount");
+                        liked = likeCount > 0;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("检查某用户是否已经点赞某相册时发生异常: " + e.getMessage());
         }
+        return liked;
     }
 
     // 方法：检查用户是否点赞了相册

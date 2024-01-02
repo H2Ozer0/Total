@@ -238,6 +238,26 @@ public class PhotoDAO {
         return photos;
     }
 
+    // 获取一个相册的所有照片路径
+    public List<String> getAllPhotoPathsInAlbum(int albumID) {
+        List<String> photoPaths = new ArrayList<>();
+        try {
+            String query = "SELECT Path FROM Photo WHERE AlbumID = ? AND IsDeleted = false";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, albumID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        String path = resultSet.getString("Path");
+                        photoPaths.add(path);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("获取相册中所有照片路径失败，发生数据库异常: " + e.getMessage());
+        }
+        return photoPaths;
+    }
     // 关闭数据库连接
     public void closeConnection() {
         try {

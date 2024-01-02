@@ -60,6 +60,26 @@ public class AlbumDAO {
         }
         return false; // 插入失败
     }
+    // 查询相册创建者ID根据AlbumID
+    public int getCreatorIDByAlbumID(int albumID) {
+        int creatorID = -1; // Default value indicating failure
+        try {
+            String query = "SELECT CreatorID FROM Album WHERE AlbumID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, albumID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        creatorID = resultSet.getInt("CreatorID");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // 记录查询异常日志
+            System.err.println("根据相册ID查询创建者ID时发生异常: " + e.getMessage());
+        }
+        return creatorID;
+    }
 
     // 将 ResultSet 映射到 entity.Album 对象
     private Album mapResultSetToAlbum(ResultSet resultSet) throws SQLException {
@@ -75,6 +95,35 @@ public class AlbumDAO {
         album.setCreatorID(resultSet.getInt("CreatorID"));
         return album;
     }
+    public boolean updateAlbumLikesCount(int albumID) {
+        try {
+            String query = "SELECT COUNT(*) AS LikeCount FROM LikeTable WHERE AlbumID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, albumID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        int likeCount = resultSet.getInt("LikeCount");
+
+                        // Update LikesCount in the Album table
+                        String updateQuery = "UPDATE Album SET LikesCount = ? WHERE AlbumID = ?";
+                        try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
+                            updateStatement.setInt(1, likeCount);
+                            updateStatement.setInt(2, albumID);
+
+                            int rowsAffected = updateStatement.executeUpdate();
+
+                            return rowsAffected > 0; // Update successful if rows affected
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("更新相册点赞数时发生异常: " + e.getMessage());
+        }
+        return false; // Update failed
+    }
+
 
     // 查询相册点赞数
     public int getLikesCount(int albumID) {
