@@ -80,63 +80,78 @@
     </div>
 </div>
 
-    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
-        <ul class="layui-tab-title" style="text-align: center; background:white">
-            <li class="layui-this" style="width: 300px" id="myInfoTab">个人信息</li>
-        </ul>
-        <div class="st-main">
-            <div class="layui-tab-content"id="userhomechange">
-                <%--编辑个人信息--%>
-                <div class="layui-tab-item layui-show" id="myInfoContent">
-                    <form class="layui-form" id="myInfoForm">
-                        <div class="layui-form-item">
-                            <label class="layui-form-label layui-col-md2">用户ID</label>
-                            <div class="layui-input-inline layui-col-md4">
-                                <input type="text" name="userId" id="userId" value="${myInfo.userId}" class="layui-input" disabled>
-                            </div>
+<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+    <ul class="layui-tab-title" style="text-align: center; background:white">
+        <li class="layui-this" style="width: 300px" id="myInfoTab">个人信息</li>
+    </ul>
+    <div class="st-main">
+        <div class="layui-tab-content"id="userhomechange">
+            <%--编辑个人信息--%>
+            <div class="layui-tab-item layui-show" id="myInfoContent">
+                <form class="layui-form" id="myInfoForm">
+                    <div class="layui-form-item">
+
+
+                        <label class="layui-form-label layui-col-md2 layui-col-md-offset3">用户ID</label>
+                        <div class="layui-input-inline layui-col-md4 ">
+                            <input type="text" name="userId" id="userId" value="${myInfo.userId}" class="layui-input" disabled>
                         </div>
 
-                        <div class="layui-form-item">
-                            <label class="layui-form-label layui-col-md2">用户名</label>
-                            <div class="layui-input-inline layui-col-md4">
-                                <input type="text" name="username" id="username" value="${myInfo.username}" class="layui-input">
-                                <button class="layui-btn custom-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="saveEmail">保存</button>
+                    </div>
 
-                            </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label layui-col-md2 layui-col-md-offset3">用户名</label>
+                        <div class="layui-input-inline layui-col-md4">
+                            <input type="text" name="username" id="username" value="${myInfo.username}" class="layui-input">
+                            <button type="button" class="layui-btn custom-btn layui-btn-sm layui-btn-normal" onclick="modifyInfo('username')">修改</button>
+                            <button class="layui-btn layui-btn-sm custom-btn layui-btn-normal" lay-submit lay-filter="saveEmail">保存</button>
+
                         </div>
+                    </div>
 
-                        <div class="layui-form-item">
-                            <label class="layui-form-label layui-col-md2 layui-col-md-offset3">邮箱</label>
-                            <div class="layui-input-inline layui-col-md4 ">
-                                <input type="text" name="email" id="email" value="${myInfo.email}" class="layui-input" >
-                                <button class="layui-btn custom-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="saveEmail">保存</button>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label layui-col-md2 layui-col-md-offset3">邮箱</label>
+                        <div class="layui-input-inline layui-col-md4 ">
+                            <input type="text" name="email" id="email" value="${myInfo.email}" class="layui-input" >
+                            <button type="button" class="layui-btn custom-btn layui-btn-sm layui-btn-normal" onclick="modifyInfo('email')">修改</button>
+                            <button class="layui-btn layui-btn-sm custom-btn layui-btn-normal" lay-submit lay-filter="saveEmail">保存</button>
 
-                            </div>
                         </div>
+                    </div>
 
-                        <div class="layui-form-item">
-                            <label class="layui-form-label layui-col-md-offset3">头像上传</label>
-                            <div class="layui-input-block">
-                                <button type="button" class="layui-btn custom-btn" id="avatarUploadBtn">选择头像</button>
-                                <input type="file" name="avatarFile" id="avatarFile" style="display: none;" accept="image/*">
-                                <div class="layui-upload-list" id="avatarPreview"></div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label layui-col-md-offset3">头像上传</label>
+                        <div class="layui-input-block">
+                            <button type="button" class="layui-btn custom-btn" id="avatarUploadBtn">选择头像</button>
+                            <input type="file" name="avatarFile" id="avatarFile" style="display: none;" accept="image/*">
+                            <div class="layui-upload-list" id="avatarPreview"></div>
 
-                            </div>
                         </div>
-                        <div class="layui-form-item layui-col-md-offset5">
-                              <button type="button" id="btn_submit_avatar" class="layui-btn custom-btn">上传头像</button>
-                        </div>
-                        <script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
-                        <script src="https://cdn.staticfile.org/layui/2.5.7/layui.min.js"></script>
-                        <script src="your-dropzone-library.js"></script>
-                        <script src="your-avatar-upload-script.js"></script>
+                    </div>
+                    <div class="layui-form-item layui-col-md-offset5">
+                        <button type="button" id="btn_submit_avatar" class="custom-btn layui-btn">上传头像</button>
+                    </div>
+                    <script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+                    <script src="https://cdn.staticfile.org/layui/2.5.7/layui.min.js"></script>
+                    <script src="your-dropzone-library.js"></script>
+                    <script src="your-avatar-upload-script.js"></script>
 
 
-                    </form>
+                </form>
 
-                </div>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- 添加每个信息独立的保存按钮 -->
+<!-- 例如：<button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveEmail">保存</button> -->
+
+</form>
+</div>
+</div>
+</div>
+</div>
     </div>
 
                     <!-- 添加每个信息独立的保存按钮 -->
