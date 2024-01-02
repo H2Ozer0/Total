@@ -275,7 +275,22 @@ public class UserServer implements ServletContextAware {
         friendShipDAO.closeConnection();
         return dataResult;
     }
-
+    public DataResult acceptFriendRequest(int senderId, int receiverId) {
+        DataResult dataResult = new DataResult();
+        FriendshipDAO friendShipDAO=new FriendshipDAO();
+        // 检查是否存在未处理的好友申请
+        if (friendShipDAO.hasPendingFriendRequest(senderId, receiverId)) {
+            // 通过好友申请
+            friendShipDAO.acceptFriendRequest(receiverId,senderId);
+            dataResult.setStatus(0);
+            dataResult.setMsg("已通过好友申请");
+        } else {
+            dataResult.setStatus(-1);
+            dataResult.setMsg("未找到对应的好友申请");
+        }
+        friendShipDAO.closeConnection();
+        return dataResult;
+    }
     // 删除好友
     public DataResult deleteFriend(int userId, int friendId) {
         DataResult dataResult = new DataResult();

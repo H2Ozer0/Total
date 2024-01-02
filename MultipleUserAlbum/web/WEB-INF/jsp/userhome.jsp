@@ -28,7 +28,7 @@
             align-items: center;
         }
         #userhomechange{
-            width: 600px; /* 设置固定宽度 */
+            width: 300px; /* 设置固定宽度 */
             margin-left: auto;
             margin-right: auto;
             position: fixed;
@@ -76,17 +76,14 @@
                 <div class="layui-tab-item layui-show" id="myInfoContent">
                     <form class="layui-form" id="myInfoForm">
                         <div class="layui-form-item">
-
-
-                                <label class="layui-form-label layui-col-md2 layui-col-md-offset3">用户ID</label>
-                                <div class="layui-input-inline layui-col-md4 ">
-                                    <input type="text" name="userId" id="userId" value="${myInfo.userId}" class="layui-input" disabled>
-                                </div>
-
+                            <label class="layui-form-label layui-col-md2">用户ID</label>
+                            <div class="layui-input-inline layui-col-md4">
+                                <input type="text" name="userId" id="userId" value="${myInfo.userId}" class="layui-input" disabled>
+                            </div>
                         </div>
 
                         <div class="layui-form-item">
-                            <label class="layui-form-label layui-col-md2 layui-col-md-offset3">用户名</label>
+                            <label class="layui-form-label layui-col-md2">用户名</label>
                             <div class="layui-input-inline layui-col-md4">
                                 <input type="text" name="username" id="username" value="${myInfo.username}" class="layui-input" disabled>
                                 <button type="button" class="layui-btn layui-btn-sm" onclick="modifyInfo('username')">修改</button>

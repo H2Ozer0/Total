@@ -97,21 +97,21 @@ public class Album_Controller {
     }
 
     @RequestMapping("/album_content")
-    public String enterAlbum(Model model, HttpSession session) {
+    public String enterAlbum(@RequestParam("albumId")int albumId,Model model, HttpSession session) {
         User user = (User)session.getAttribute("myInfo");
         InteractServer interactServer =new InteractServer();
         AlbumServer albumServer=new AlbumServer();
         AlbumDAO albumDAO =new AlbumDAO();
         UserDAO userDAO=new UserDAO();
         try {
-            List<Comment> albumCommentList = (List<Comment>) interactServer.getCommentsByAlbum(1).getData();
+            List<Comment> albumCommentList = (List<Comment>) interactServer.getCommentsByAlbum(albumId).getData();
             System.out.println(albumCommentList);
-            model.addAttribute("creatorName",userDAO.getUserById(albumDAO.getCreatorIDByAlbumID(1)).getUsername());
+            model.addAttribute("creatorName",userDAO.getUserById(albumDAO.getCreatorIDByAlbumID(albumId)).getUsername());
             model.addAttribute("commentInfo",albumCommentList);
         }catch (Exception e){
             e.printStackTrace();
         }
-        Album album=(Album) albumServer.getAlbumByID(1).getData();
+        Album album=(Album) albumServer.getAlbumByID(albumId).getData();
         PhotoDAO photoDAO =new PhotoDAO();
         FavoriteDAO favoriteDAO=new FavoriteDAO();
         int res = 0;
@@ -122,7 +122,7 @@ public class Album_Controller {
                 res=0;
             }
         }
-        List<Photo> photoList=photoDAO.getPhotosInAlbum(1);
+        List<Photo> photoList=photoDAO.getPhotosInAlbum(albumId);
         System.out.println("ALBUM FOLLOW:" + res);
 //        model.addAttribute("photoList",photoList);
         model.addAttribute("albumInfo",album);
@@ -181,10 +181,12 @@ public DataResult getphotos(@RequestParam("albumId")int albumId)
 
     @RequestMapping("/delAlbum")
     @ResponseBody
-    public DataResult delAlbum(@RequestParam("albumId") String albumId, HttpSession session) {
+    public DataResult delAlbum(@RequestParam("albumId") int albumId, HttpSession session) {
+        System.out.println("删除相册中");
         User user = (User) session.getAttribute("myInfo");
         System.out.println("session myInfo:" + user.getUserId());
-        return AlbumServer.deleteAlbum(Integer.parseInt(albumId));
+        System.out.println("删除相册中");
+        return AlbumServer.deleteAlbum(albumId);
     }
 
     @RequestMapping("/addComment")
@@ -256,6 +258,7 @@ public DataResult getphotos(@RequestParam("albumId")int albumId)
         albumDAO.updateAlbumLikesCount(albumId);
         return dataResult;
     }
+
 //    @GetMapping("/{albumID}")
 //    public String viewAlbum(@PathVariable int albumID, Model model) {
 //        Album album = albumServer.getAlbumByID(albumID);

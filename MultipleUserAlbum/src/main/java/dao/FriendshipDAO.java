@@ -219,12 +219,33 @@ public class FriendshipDAO {
             return false;
         }
     }
+    //通过好友申请
+    public boolean acceptFriendRequest(int senderID, int receiverID) {
+        try {
+            String query = "UPDATE Friendship SET FriendshipStatus = 'Accepted' " +
+                    "WHERE UserID1 = ? AND UserID2 = ? AND FriendshipStatus = 'Pending'";
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, senderID);
+                preparedStatement.setInt(2, receiverID);
+
+                int rowsAffected = preparedStatement.executeUpdate();
+                return rowsAffected > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // 记录异常日志
+            System.err.println("在接受好友请求时发生异常: " + e.getMessage());
+            return false;
+        }
+    }
+
 //获得好友待接受列表
     public List<Friendship> getFriendRequestsToUser(int userID) {
         List<Friendship> friendRequests = new ArrayList<>();
 
         try {
-            String query = "SELECT * FROM Friendship WHERE UserID2 = ? AND FriendshipStatus = 'Pending'";
+            String query = "SELECT * FROM Friendship WHERE UserID1 = ? AND FriendshipStatus = 'Pending'";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, userID);
 
@@ -316,40 +337,40 @@ public class FriendshipDAO {
     }
     public static void main(String[] args) {
         FriendshipDAO friendshipDAO = new FriendshipDAO();
-        // 发送好友请求
-        boolean sent = friendshipDAO.sendFriendRequest(2, 1);
-        if (sent) {
-            System.out.println("好友请求已发送");
-        } else {
-            System.out.println("发送好友请求失败");
-        }
-        boolean sent2 = friendshipDAO.sendFriendRequest(2, 3);
-        if (sent) {
-            System.out.println("好友请求已发送");
-        } else {
-            System.out.println("发送好友请求失败");
-        }
-        // 假设用户ID为1，查询该用户的待接受好友请求
-        int userID = 1;
-        List<Friendship> friendRequests = friendshipDAO.getFriendRequestsToUser(userID);
-
-        // 输出当前待接受好友请求
-        System.out.println("当前待接受好友请求:");
-        for (Friendship request : friendRequests) {
-            System.out.println(request);
-        }
-
-
-
-
-        // 插入好友关系记录
-        Friendship newFriendship = new Friendship(1, 3, "Pending", Timestamp.valueOf("2023-01-01 12:00:00"));
-        friendshipDAO.insertFriendship(newFriendship);
-
-        // 根据好友关系ID查询好友关系记录
-        Friendship retrievedFriendship = friendshipDAO.getFriendshipByID(newFriendship.getFriendshipID());
-        System.out.println("Retrieved Friendship: " + retrievedFriendship);
-
+    //        // 发送好友请求
+    //        boolean sent = friendshipDAO.sendFriendRequest(2, 1);
+    //        if (sent) {
+    //            System.out.println("好友请求已发送");
+    //        } else {
+    //            System.out.println("发送好友请求失败");
+    //        }
+    //        boolean sent2 = friendshipDAO.sendFriendRequest(2, 3);
+    //        if (sent) {
+    //            System.out.println("好友请求已发送");
+    //        } else {
+    //            System.out.println("发送好友请求失败");
+    //        }
+    //        // 假设用户ID为1，查询该用户的待接受好友请求
+    //        int userID = 1;
+    //        List<Friendship> friendRequests = friendshipDAO.getFriendRequestsToUser(userID);
+    //
+    //        // 输出当前待接受好友请求
+    //        System.out.println("当前待接受好友请求:");
+    //        for (Friendship request : friendRequests) {
+    //            System.out.println(request);
+    //        }
+    //
+    //
+    //
+    //
+    //        // 插入好友关系记录
+    //        Friendship newFriendship = new Friendship(1, 3, "Pending", Timestamp.valueOf("2023-01-01 12:00:00"));
+    //        friendshipDAO.insertFriendship(newFriendship);
+    //
+    //        // 根据好友关系ID查询好友关系记录
+    //        Friendship retrievedFriendship = friendshipDAO.getFriendshipByID(newFriendship.getFriendshipID());
+    //        System.out.println("Retrieved Friendship: " + retrievedFriendship);
+        friendshipDAO.acceptFriendRequest(14,1);
         // 关闭数据库连接
         friendshipDAO.closeConnection();
     }

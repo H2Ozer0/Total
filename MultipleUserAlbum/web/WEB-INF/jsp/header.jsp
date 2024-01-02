@@ -1,5 +1,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
+<%--
+  Created by IntelliJ IDEA.
+  User: 52491
+  Date: 2019/12/11
+  Time: 18:31
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <body>
@@ -23,8 +29,9 @@
         </a>
         <dl class="layui-nav-child">
             <dd><a href="${pageContext.request.contextPath}/me/albums">管理相册</a></dd>
-            <dd><a href="${pageContext.request.contextPath}/me/photos">好友界面</a></dd>
+            <dd><a href="${pageContext.request.contextPath}/me/friendship">查看好友</a></dd>
             <dd><a href="${pageContext.request.contextPath}/albums/upload_photo">上传照片</a></dd>
+            <dd><a href="${pageContext.request.contextPath}/me/favourite">查看收藏</a></dd>
             <dd><a href="${pageContext.request.contextPath}/login_page">退出</a></dd>
 
         </dl>

@@ -1,5 +1,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
+<%--
+  Created by IntelliJ IDEA.
+  User: 52491
+  Date: 2019/12/29
+  Time: 15:30
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <body>
@@ -34,18 +40,17 @@
     <div class="personal-menu" style="margin-bottom: 20px">
         <ul>
             <dd><a href="${pageContext.request.contextPath}/me/albums">管理相册</a></dd>
-            <dd><a href="${pageContext.request.contextPath}/me/photos">管理照片</a></dd>
             <dd><a href="${pageContext.request.contextPath}/me/info">个人信息</a></dd>
+            <dd><a href="${pageContext.request.contextPath}/me/friendapplication">好友申请</a></dd>
         </ul>
     </div>
 
     <%--管理员才有的后台菜单--%>
-    <c:if test="${sessionScope.myInfo.admin }">
+    <c:if test="${sessionScope.myInfo.admin}">
         <div class="personal-menu" style="margin-bottom: 20px">
             <ul>
                 <li><a href="${pageContext.request.contextPath}/admin/viewAllAlbums">管理用户相册</a></li>
                 <li><a href="${pageContext.request.contextPath}/admin/viewAllUsers">管理用户状态</a></li>
-                <li><a href="/admin/operations">操作记录</a></li>
 
             </ul>
         </div>

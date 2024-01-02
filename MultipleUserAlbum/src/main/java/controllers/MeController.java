@@ -50,6 +50,11 @@ public class MeController {
         model.addAttribute("myInfo",user);
         return "my_albums";
     }
+    @RequestMapping("getfavourite")
+    public String getfavourite()
+    {
+        return "favourite";
+    }
     @RequestMapping("/photos")
     public String enterMyPhotos(HttpSession session,Model model)
     {
@@ -78,8 +83,13 @@ public class MeController {
 
         return dataResult;
     }
+    @RequestMapping("/friendship")
+    public String friendship()
+    {
+        return "friendship";
+    }
 
-    @PostMapping("/getMyFriendship")
+    @RequestMapping("/getMyFriendship")
     @ResponseBody
     public DataResult getMyFriendship(HttpSession session) {
         try {
@@ -91,7 +101,8 @@ public class MeController {
             // Assuming you have a method in your UserServer to retrieve friendships for the user
             // Modify the following line according to your actual method in UserServer
             DataResult result = userServer.getAllFriends(user.getUserId());
-
+            List<User> userlist=(List<User>)result.getData();
+            System.out.println("好友个数为"+userlist.size());
             return result;
         } catch (Exception e) {
             e.printStackTrace();
@@ -170,6 +181,40 @@ public class MeController {
             return successResult;
 
     }
+@RequestMapping("/delfriendship")
+@ResponseBody
+    public DataResult delfriendship(@RequestParam("friendid")int friendid,HttpSession session)
+{
+    User user = (User)session.getAttribute("myInfo");
+    int myid= user.getUserId();
+    DataResult dataResult=userServer.deleteFriend(myid,friendid);
 
+    return dataResult;
+}
+@RequestMapping("/addFriend")
+    @ResponseBody
+public DataResult addFriend(@RequestParam("friendInputValue")int senderid,HttpSession session)
+{
+    User user = (User)session.getAttribute("myInfo");
+    int receverid= user.getUserId();
+    DataResult dataResult;
+    dataResult=userServer.sendFriendRequest(senderid,receverid);
+    System.out.println("从"+senderid+"到"+receverid);
+    return dataResult;
+}
+@RequestMapping("/friendapplication")
+    public String friendshipapplication(HttpSession session)
+    {
+        User user = (User)session.getAttribute("myInfo");
+        return "friendapplication";
+    }
+    @RequestMapping("/get_application")
+    @ResponseBody
+    public DataResult get_application(HttpSession session)
+    {
+        User user = (User)session.getAttribute("myInfo");
+        DataResult dataResult=userServer.getPendingFriendRequests(user.getUserId());
 
+        return dataResult;
+    }
 }
