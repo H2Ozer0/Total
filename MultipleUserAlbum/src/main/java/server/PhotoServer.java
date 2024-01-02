@@ -72,7 +72,7 @@ public class PhotoServer {
     // 上传用户头像
     public DataResult uploadAvatar(MultipartFile file, int userId) {
         try {
-            String fileName = userId + ".jpg";
+            String fileName = userId + ".png";
             String filePath = AVATAR_PATH + "/" + fileName;
 
             // 保存文件
@@ -88,7 +88,7 @@ public class PhotoServer {
 
     // 获取用户头像
     public DataResult getAvatar(int userId) {
-        String fileName = userId + ".jpg";
+        String fileName = userId + ".png";
         String avatarPath = AVATAR_PATH + "/" + fileName;
 
         File avatarFile = new File(avatarPath);
@@ -102,7 +102,7 @@ public class PhotoServer {
     // 上传相册封面
     public DataResult uploadAlbumCover(MultipartFile file, int albumId) {
         try {
-            String fileName = albumId + "_cover.jpg";
+            String fileName = albumId + ".png";
             String filePath = ALBUM_COVER_PATH + "/" + fileName;
 
             // 保存文件
@@ -118,7 +118,7 @@ public class PhotoServer {
 
     // 获取相册封面
     public DataResult getAlbumCover(int albumId) {
-        String fileName = albumId + "_cover.jpg";
+        String fileName = albumId + ".png";
         String coverPath = ALBUM_COVER_PATH + "/" + fileName;
 
         File coverFile = new File(coverPath);

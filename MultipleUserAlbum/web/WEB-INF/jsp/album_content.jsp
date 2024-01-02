@@ -147,7 +147,7 @@
 
             layer.confirm('确定删除该评论吗?', {icon: 3, title:'提示',offset:'250px'}, function(index){
                 $.ajax({
-                    url: "${pageContext.request.contextPath}/delcomment",
+                    url: "${pageContext.request.contextPath}/albums/delcomment",
                     type: "post",
                     data: {"CID": commentId,"UID":userName},
                     dataType: "json",
@@ -193,60 +193,50 @@
 </head>
 <body>
 <jsp:include page="header.jsp"></jsp:include>
-<div class="st-banner-ad-box">
-    <div class="st-banner-ad theme-bg"></div>
+<%--<div class="st-banner-ad-box">--%>
+<%--    <div class="st-banner-ad theme-bg"></div>--%>
 </div>
 
 <div class="album-box horizentol border-bottom border-top">
-    <%--    <div class="album-info-box vertical">--%>
-    <%--        <div style="font-size: 33px">${albumInfo.albumName}</div>--%>
-    <%--        <c:out value="${albumInfo}" />--%>
-    <%--        <div class="gray-color" style="font-size: 16px;margin-top: 10px">上传时间:${albumInfo.createTime}</div>--%>
-    <%--        <div class="gray-color" style="font-size: 18px;margin-top: 10px">${albumInfo.albumName}</div>--%>
+        <div class="album-info-box vertical">
+            <div style="font-size: 33px">${albumInfo.albumName}</div> <!-- 相册标题 -->
 
-</div>
-<div class="album-author-box horizentol border-left">
-    <div class="album-info-avatar">
-        <a href="/user?id=${albumInfo.creatorID}"><img src="/getAvatar?id=${albumInfo.creatorID}"></a>
     </div>
-    <div class="vertical" style="margin-left: 10px">
-        <div style="font-size: 16px">上传者：${creatorName}</div>
-        <div>
-            <c:if test="${sessionScope.myInfo.userId != albumInfo.creatorID}">
-                <div style="margin-top:10px">
-                    <c:if test="${empty sessionScope.myInfo}">
-                    <a href="/index">
-                        <button id = "GUANZHU1" type="button" class="layui-btn">登录后收藏</button>
+    <div class="album-author-box horizentol border-left">
+        <div class="album-info-avatar">
+            <a href="/user?id=${albumInfo.creatorID}"><img src="/getAvatar?id=${albumInfo.creatorID}"></a>
+        </div>
+        <div class="vertical" style="margin-left: 10px">
+            <div style="font-size: 16px">上传者：${creatorName}</div>
+            <div>
+                <c:if test="${sessionScope.myInfo.userId != albumInfo.creatorID}">
+                    <div style="margin-top:10px">
+                        <c:if test="${empty sessionScope.myInfo}">
+                            <a href="/index">
+                            <button id = "GUANZHU1" type="button" class="layui-btn">登录后收藏</button>
                         </c:if>
                         <c:if test="${not empty sessionScope.myInfo}">
-                        <c:if test="${isFollow == 1}">
-                        <button id = "QUGUAN" type="button" class="layui-btn layui-btn-primary">取消收藏</button>
-                        </c:if>
-                        <c:if test="${isFollow == 0}">
-                        <button id = "GUANZHU" type="button" class="layui-btn">收藏</button>
-                        </c:if>
+                            <c:if test="${isFollow == 1}">
+                            <button id = "QUGUAN" type="button" class="layui-btn layui-btn-primary">取消收藏</button>
+                            </c:if>
+                            <c:if test="${isFollow == 0}">
+                            <button id = "GUANZHU" type="button" class="layui-btn">收藏</button>
+                            </c:if>
                         </c:if>
 
-
-                        <a href="/sendMessage?id=${albumInfo.creatorID}">
-                            <button type="button" class="layui-btn">私信</button>
-                        </a>
-                </div>
-            </c:if>
+                    </div>
+                </c:if>
+            </div>
         </div>
     </div>
 </div>
-</div>
 
-<%--展示照片--%>
-<div style="margin-top: 20px">
-    <c:forEach var="photo" items="${photoList}">
-        <div class="album-photo vertical">
-            <img src="/getImage?url=${photo.url}"/>
-            <div class="gray-color">${photo.name}</div>
-        </div>
-    </c:forEach>
-
+<%--展示相册封面--%>
+<div style="margin-top: 20px; text-align: center;">
+    <div class="album-cover vertical" style="line-height: 600px;">
+        <!-- 添加 max-width 和 max-height 样式以等比例缩放图像 -->
+        <img src="${pageContext.request.contextPath}/getCover?url=${albumInfo.albumID}" style="max-width: 900px; max-height: 900px;margin: auto;" />
+    </div>
 </div>
 <!-- 分享按钮 -->
 <div>
@@ -304,7 +294,7 @@
                 </div>
             </c:if>
 
-            <div class="comment_content" >
+            <div class="comment_content" > 
                     ${Info.content}
             </div>
         </div>
@@ -312,7 +302,7 @@
     <hr>
     </c:forEach>
     <c:if test="${commentInfo.size()==0}">
-    <div style="color: #bbbbbb;margin-left: 25px;margin-top:25px">暂时还没有评论哦!</div>
+        <div style="color: #bbbbbb;margin-left: 25px;margin-top:25px">暂时还没有评论哦!</div>
     </c:if>
 
     <div class="comment_add_or_last" >
