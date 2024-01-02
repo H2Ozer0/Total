@@ -439,6 +439,46 @@ public class AlbumDAO {
         return false; // 更新失败
     }
 
+    // 获取所有相册列表
+    public List<Album> getAllAlbums() {
+        List<Album> allAlbums = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM Album";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        Album album = mapResultSetToAlbum(resultSet);
+                        allAlbums.add(album);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // 记录查询异常日志
+            System.err.println("获取所有相册列表时发生异常: " + e.getMessage());
+        }
+        return allAlbums;
+    }
+
+    //获取所有公开相册
+    public List<Album> getAllPublicAlbums() {
+        List<Album> publicAlbums = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM Album WHERE IsPublic = 1";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query);
+                 ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    Album album = mapResultSetToAlbum(resultSet);
+                    publicAlbums.add(album);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("获取所有公开相册时发生异常: " + e.getMessage());
+        }
+        return publicAlbums;
+    }
+
     // 关闭数据库连接
     public boolean closeConnection() {
         try {
@@ -494,26 +534,6 @@ public class AlbumDAO {
 //    public AlbumDAO albumDAO() {
 //        return new AlbumDAO();
 //    }
-    /*
-public static void main(String[] args) {
-    AlbumDAO albumDAO = new AlbumDAO();
 
-    // 假设有一个相册的 CreatorID 为 1
-    int creatorID = 1;
-
-    // 调用获取相册创建者名字的方法
-    String creatorName = albumDAO.getCreatorName(creatorID);
-
-    // 打印结果
-    if (creatorName != null) {
-        System.out.println("Creator Name: " + creatorName);
-    } else {
-        System.out.println("Failed to get creator name.");
-    }
-
-    // 关闭数据库连接
-    albumDAO.closeConnection();
-}
-*/
 }
 

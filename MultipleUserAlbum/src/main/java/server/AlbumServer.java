@@ -175,6 +175,30 @@ public class AlbumServer {
         }
     }
 
+    // 获取所有相册列表
+    public DataResult getAllAlbums() {
+        AlbumDAO albumDAO = new AlbumDAO();
+        try {
+            List<Album> allAlbums = albumDAO.getAllAlbums();
+
+            return DataResult.success("获取所有相册列表成功", allAlbums);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return DataResult.fail("获取所有相册列表失败");
+        }
+    }
+
+    // 获取所有公开相册
+    public DataResult getAllPublicAlbums() {
+        AlbumDAO albumDAO = new AlbumDAO();
+        List<Album> publicAlbums = albumDAO.getAllPublicAlbums();
+        if (!publicAlbums.isEmpty()) {
+            return DataResult.success("获取所有公开相册成功", publicAlbums);
+        } else {
+            return DataResult.fail("没有公开相册");
+        }
+    }
+
     // 关闭数据库连接
     public static DataResult closeConnection() {
         AlbumDAO albumDAO = new AlbumDAO();

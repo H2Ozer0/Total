@@ -24,11 +24,22 @@
             align-items: center;
             height: 100vh; /* 使容器充满整个视口高度 */
         }
+        body.bg-gray {
+            overflow: hidden; /* 禁用所有滚动条 */
+        }
 
         #myInfoContent {
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
+        #userhomechange{
+            width: 300px; /* 设置固定宽度 */
+            margin-left: auto;
+            margin-right: auto;
+            position: fixed;
+            left: 0;
+            right: 0;
         }
     </style>
     <style>
@@ -66,7 +77,7 @@
             <li class="layui-this" style="width: 300px" id="myInfoTab">个人信息</li>
         </ul>
         <div class="st-main">
-            <div class="layui-tab-content">
+            <div class="layui-tab-content"id="userhomechange">
                 <%--编辑个人信息--%>
                 <div class="layui-tab-item layui-show" id="myInfoContent">
                     <form class="layui-form" id="myInfoForm">
