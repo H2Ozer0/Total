@@ -97,21 +97,21 @@ public class Album_Controller {
     }
 
     @RequestMapping("/album_content")
-    public String enterAlbum(@RequestParam("albumId")int albumID,Model model, HttpSession session) {
+    public String enterAlbum(Model model, HttpSession session) {
         User user = (User)session.getAttribute("myInfo");
         InteractServer interactServer =new InteractServer();
         AlbumServer albumServer=new AlbumServer();
         AlbumDAO albumDAO =new AlbumDAO();
         UserDAO userDAO=new UserDAO();
         try {
-            List<Comment> albumCommentList = (List<Comment>) interactServer.getCommentsByAlbum(albumID).getData();
+            List<Comment> albumCommentList = (List<Comment>) interactServer.getCommentsByAlbum(1).getData();
             System.out.println(albumCommentList);
-            model.addAttribute("creatorName",userDAO.getUserById(albumDAO.getCreatorIDByAlbumID(albumID)).getUsername());
+            model.addAttribute("creatorName",userDAO.getUserById(albumDAO.getCreatorIDByAlbumID(1)).getUsername());
             model.addAttribute("commentInfo",albumCommentList);
         }catch (Exception e){
             e.printStackTrace();
         }
-        Album album=(Album) albumServer.getAlbumByID(albumID).getData();
+        Album album=(Album) albumServer.getAlbumByID(1).getData();
         PhotoDAO photoDAO =new PhotoDAO();
         FavoriteDAO favoriteDAO=new FavoriteDAO();
         int res = 0;
@@ -122,14 +122,54 @@ public class Album_Controller {
                 res=0;
             }
         }
-        List<Photo> photoList=photoDAO.getPhotosInAlbum(albumID);
+        List<Photo> photoList=photoDAO.getPhotosInAlbum(1);
         System.out.println("ALBUM FOLLOW:" + res);
-        model.addAttribute("photoList",photoList);
+//        model.addAttribute("photoList",photoList);
         model.addAttribute("albumInfo",album);
         model.addAttribute("isFollow",res);
         return "album_content";
     }
+    @RequestMapping("/showphotos")
+    public String showphotos(@RequestParam("albumId")int albumId, Model model) {
+        model.addAttribute("albumId",albumId);
+        return "showphotos";
+    }
+@RequestMapping("/getPhotos")
+@ResponseBody
+public DataResult getphotos(@RequestParam("albumId")int albumId)
+{
+    DataResult dataResult=AlbumServer.getPhotosInAlbum(albumId);
+    return dataResult;
+}
 
+
+
+//    @RequestMapping("/album")
+//    public ModelAndView enterAlbum(@RequestParam("albumId") int albumId, Model model, HttpSession session) {
+//        List<Photo> photoList = (List<Photo>) AlbumServer.getPhotosInAlbum(albumId).getData();
+//        albumId=1;
+//        Album album = (Album) AlbumServer.getAlbumByID(albumId).getData();
+//
+//        try {
+//            List<Comment> albumCommentList = (List<Comment>) InteractServer.getCommentsByAlbum(albumId).getData();
+//            model.addAttribute("commentInfo", albumCommentList);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        User user = (User) session.getAttribute("myInfo");
+////        int res = 0;
+////        if (user != null) {
+////            if (InteractServer.checkFollow(user.getId(), album.getUserId()).getStatus() == 0) {
+////                res = 1;
+////            }
+////        }
+////        System.out.println("ALBUM FOLLOW:" + res);
+////        model.addAttribute("photoList", photoList);
+//        model.addAttribute("albumInfo", album);
+////        model.addAttribute("isFollow", res);
+//        return new ModelAndView("album_content");
+//    }
 
     @RequestMapping("/editAlbum")
     public String editAlbum(@RequestParam("albumId") String albumId, Model model) {
@@ -139,7 +179,6 @@ public class Album_Controller {
     }
 
 
-
     @RequestMapping("/delAlbum")
     @ResponseBody
     public DataResult delAlbum(@RequestParam("albumId") String albumId, HttpSession session) {
@@ -147,7 +186,6 @@ public class Album_Controller {
         System.out.println("session myInfo:" + user.getUserId());
         return AlbumServer.deleteAlbum(Integer.parseInt(albumId));
     }
-
 
     @RequestMapping("/addComment")
     @ResponseBody
@@ -196,6 +234,7 @@ public class Album_Controller {
         }
     }
 
+
     @RequestMapping("/addLike")
     @ResponseBody
     public DataResult addLike(@RequestParam("albumId") int albumId, @RequestParam("userId") int userId) throws SQLException {
@@ -217,5 +256,50 @@ public class Album_Controller {
         albumDAO.updateAlbumLikesCount(albumId);
         return dataResult;
     }
+//    @GetMapping("/{albumID}")
+//    public String viewAlbum(@PathVariable int albumID, Model model) {
+//        Album album = albumServer.getAlbumByID(albumID);
+//        model.addAttribute("album", album);
+//        return "albumDetails";
+//    }
+//
+//    @GetMapping("/search")
+//    public String searchPublicAlbums(@RequestParam String albumName, Model model) {
+//        List<Album> publicAlbums = albumServer.getPublicAlbumsByName(albumName);
+//        model.addAttribute("publicAlbums", publicAlbums);
+//        return "searchResults";
+//    }
+//
+//    @GetMapping("/{albumID}/likesCount")
+//    @ResponseBody
+//    public int getLikesCount(@PathVariable int albumID) {
+//        return albumServer.getLikesCount(albumID);
+//    }
+//
+//    @GetMapping("/{albumID}/favoritesCount")
+//    @ResponseBody
+//    public int getFavoritesCount(@PathVariable int albumID) {
+//        return albumServer.getFavoritesCount(albumID);
+//    }
+//
+//    @GetMapping("/{albumID}/createdAt")
+//    @ResponseBody
+//    public Timestamp getCreatedAt(@PathVariable int albumID) {
+//        return albumServer.getCreatedAt(albumID);
+//    }
+//
+//    @PostMapping("/{albumID}/updateName")
+//    @ResponseBody
+//    public String updateAlbumName(@PathVariable int albumID, @RequestParam String newAlbumName) {
+//        albumServer.updateAlbumName(albumID, newAlbumName);
+//        return "Album name updated successfully!";
+//    }
+//
+//    @PostMapping("/{albumID}/updateDescription")
+//    @ResponseBody
+//    public String updateAlbumDescription(@PathVariable int albumID, @RequestParam String newDescription) {
+//        albumServer.updateAlbumDescription(albumID, newDescription);
+//        return "Album description updated successfully!";
+//    }
 
 }
