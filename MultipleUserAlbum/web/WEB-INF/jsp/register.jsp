@@ -41,7 +41,10 @@
       height: 700px;
       border-radius: 15px;
       padding: 0 50px;
-      position: relative;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      position: fixed;
       text-align: center;
 
       /* 添加阴影效果 */

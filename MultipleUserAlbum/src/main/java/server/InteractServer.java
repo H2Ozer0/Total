@@ -43,7 +43,15 @@ public class InteractServer {
             return DataResult.fail("Failed to retrieve like count: " + e.getMessage());
         }
     }
-
+    public DataResult getFavoriteAlbumsByUser(int userID) {
+        try {
+            FavoriteDAO favoriteDAO = new FavoriteDAO();
+            List<Album> favoriteAlbums = favoriteDAO.getFavoriteAlbumsByUser(userID);
+            return DataResult.success("Favorite albums retrieved successfully", favoriteAlbums);
+        } catch (Exception e) {
+            return DataResult.fail("Failed to retrieve favorite albums: " + e.getMessage());
+        }
+    }
 
     // Comment functionality
     public DataResult insertComment(Comment comment) {
