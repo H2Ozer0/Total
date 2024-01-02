@@ -208,16 +208,31 @@
           console.log(result);
 
           if (result.status == 0) {
-            layer.open({
-              title: '登录成功',
-              content: '欢迎你,' + result.data.username,
-              shade: 0.5,
-              yes: function () {
-                layer.closeAll();
-                //刷新页面
-                window.location.href = "${pageContext.request.contextPath}/userhome";
-              }
-            });
+            if(result.data.admin==false){
+              console.log(result.data.isAdmin)
+              layer.open({
+                title: '登录成功',
+                content: '欢迎你,' + result.data.username,
+                shade: 0.5,
+                yes: function () {
+                  layer.closeAll();
+                  //刷新页面
+                  window.location.href = "${pageContext.request.contextPath}/userhome";
+                }
+              });
+            }else{
+              layer.open({
+                title: '登录成功',
+                content: '欢迎你,管理员' + result.data.username,
+                shade: 0.5,
+                yes: function () {
+                  layer.closeAll();
+                  //刷新页面
+                  window.location.href = "${pageContext.request.contextPath}/admin/viewAllAlbums";
+                }
+              });
+            }
+
           } else if (result.status == -1) {
             layer.open({
               title: '登录失败',
