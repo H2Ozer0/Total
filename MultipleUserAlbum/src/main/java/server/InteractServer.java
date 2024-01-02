@@ -141,6 +141,7 @@ public class InteractServer {
             // Implement your logic to add the album to the user's favorites
             Favorite newFavorite = new Favorite(albumID, userID, getCurrentTimestamp());
             favoriteDAO.insertFavorite(newFavorite);
+            AlbumDAO albumDAO =new AlbumDAO();
 
             return DataResult.success("Album added to favorites successfully", null);
         } catch (Exception e) {
