@@ -88,27 +88,26 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label layui-col-md2 layui-col-md-offset3">用户名</label>
                             <div class="layui-input-inline layui-col-md4">
-                                <input type="text" name="username" id="username" value="${myInfo.username}" class="layui-input" disabled>
-                                <button type="button" class="layui-btn layui-btn-sm" onclick="modifyInfo('username')">修改</button>
+                                <input type="text" name="username" id="username" value="${myInfo.username}" class="layui-input">
                                 <button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveUsername">保存</button>
                             </div>
                         </div>
 
                         <div class="layui-form-item">
-                            <label class="layui-form-label layui-col-md2">邮箱</label>
-                            <div class="layui-input-inline layui-col-md4">
-                                <input type="text" name="email" id="email" value="${myInfo.email}" class="layui-input" disabled>
-                                <button type="button" class="layui-btn layui-btn-sm" onclick="modifyInfo('email')">修改</button>
+                            <label class="layui-form-label layui-col-md2 layui-col-md-offset3">邮箱</label>
+                            <div class="layui-input-inline layui-col-md4 ">
+                                <input type="text" name="email" id="email" value="${myInfo.email}" class="layui-input" >
                                 <button class="layui-btn layui-btn-sm" lay-submit lay-filter="saveEmail">保存</button>
                             </div>
                         </div>
 
                         <div class="layui-form-item">
-                            <label class="layui-form-label">头像上传</label>
+                            <label class="layui-form-label layui-col-md-offset2">头像上传</label>
                             <div class="layui-input-block">
                                 <button type="button" class="layui-btn" id="avatarUploadBtn">选择头像</button>
                                 <input type="file" name="avatarFile" id="avatarFile" style="display: none;" accept="image/*">
                                 <div class="layui-upload-list" id="avatarPreview"></div>
+
                             </div>
                         </div>
 
