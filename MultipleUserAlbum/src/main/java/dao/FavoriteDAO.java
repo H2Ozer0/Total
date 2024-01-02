@@ -1,5 +1,6 @@
 package dao;
 
+import entity.Album;
 import entity.Favorite;
 
 import java.sql.*;
@@ -170,7 +171,41 @@ public class FavoriteDAO {
             System.err.println("关闭数据库连接时发生异常: " + e.getMessage());
         }
     }
-
+    // 将 ResultSet 映射到 entity.Album 对象
+    private Album mapResultSetToAlbum(ResultSet resultSet) throws SQLException {
+        Album album = new Album();
+        album.setAlbumID(resultSet.getInt("AlbumID"));
+        album.setAlbumName(resultSet.getString("AlbumName"));
+        album.setDescription(resultSet.getString("Description"));
+        album.setCreatedAt(resultSet.getTimestamp("CreatedAt"));
+        album.setPublic(resultSet.getBoolean("IsPublic"));
+        album.setDeleted(resultSet.getBoolean("IsDeleted"));
+        album.setFavoritesCount(resultSet.getInt("FavoritesCount"));
+        album.setLikesCount(resultSet.getInt("LikesCount"));
+        album.setCreatorID(resultSet.getInt("CreatorID"));
+        return album;
+    }
+    public List<Album> getFavoriteAlbumsByUser(int userID) {
+        List<Album> favoriteAlbums = new ArrayList<>();
+        try {
+            String query = "SELECT a.* FROM Album a " +
+                    "JOIN Favorite f ON a.AlbumID = f.AlbumID " +
+                    "WHERE f.UserID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, userID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        Album album = mapResultSetToAlbum(resultSet);
+                        favoriteAlbums.add(album);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Failed to retrieve favorite albums: " + e.getMessage());
+        }
+        return favoriteAlbums;
+    }
     public static void main(String[] args) {
         FavoriteDAO favoriteDAO = new FavoriteDAO();
 

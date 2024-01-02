@@ -147,7 +147,7 @@
 
             layer.confirm('确定删除该评论吗?', {icon: 3, title:'提示',offset:'250px'}, function(index){
                 $.ajax({
-                    url: "${pageContext.request.contextPath}/delcomment",
+                    url: "${pageContext.request.contextPath}/albums/delcomment",
                     type: "post",
                     data: {"CID": commentId,"UID":userName},
                     dataType: "json",
@@ -193,16 +193,13 @@
 </head>
 <body>
 <jsp:include page="header.jsp"></jsp:include>
-<div class="st-banner-ad-box">
-    <div class="st-banner-ad theme-bg"></div>
+<%--<div class="st-banner-ad-box">--%>
+<%--    <div class="st-banner-ad theme-bg"></div>--%>
 </div>
 
 <div class="album-box horizentol border-bottom border-top">
-<%--    <div class="album-info-box vertical">--%>
-<%--        <div style="font-size: 33px">${albumInfo.albumName}</div>--%>
-<%--        <c:out value="${albumInfo}" />--%>
-<%--        <div class="gray-color" style="font-size: 16px;margin-top: 10px">上传时间:${albumInfo.createTime}</div>--%>
-<%--        <div class="gray-color" style="font-size: 18px;margin-top: 10px">${albumInfo.albumName}</div>--%>
+        <div class="album-info-box vertical">
+            <div style="font-size: 33px">${albumInfo.albumName}</div> <!-- 相册标题 -->
 
     </div>
     <div class="album-author-box horizentol border-left">
@@ -242,8 +239,8 @@
 <div style="margin-top: 20px">
     <c:forEach var="photo" items="${photoList}">
         <div class="album-photo vertical">
-            <img src="/getImage?url=${photo.url}"/>
-            <div class="gray-color">${photo.name}</div>
+            <img src="/getImage?url=${photo.path}"/>
+            <div class="gray-color">${photo.title}</div>
         </div>
     </c:forEach>
 
