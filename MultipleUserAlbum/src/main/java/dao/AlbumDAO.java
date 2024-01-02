@@ -376,7 +376,7 @@ public class AlbumDAO {
     public List<Album> getFriendSharedAlbums(int userID) {
         List<Album> friendSharedAlbums = new ArrayList<>();
         try {
-            String query = "SELECT DISTINCT A.* FROM Album A " +
+            String query = "SELECT * FROM Album" +
                     "JOIN ShareRecord S ON A.AlbumID = S.AlbumID " +
                     "JOIN Friendship F ON (A.CreatorID = F.UserID1 OR A.CreatorID = F.UserID2) " +
                     "WHERE (F.UserID1 = ? OR F.UserID2 = ?) AND F.FriendshipStatus = 'Accepted' AND A.IsPublic = true";

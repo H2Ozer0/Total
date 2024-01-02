@@ -7,24 +7,6 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/st-style.css" type="text/css"/>
     <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
     <script src="${pageContext.request.contextPath}/static/layui/layui.all.js"></script>
-    <style>
-        .layui-table-view .layui-table {
-            margin-top: 20px; /* 调整行间距的大小，可以根据需要进行调整 */
-        }
-
-        .layui-table-cell {
-            height: 60px; /* 调整每行的高度，可以根据需要进行调整 */
-            line-height: 40px; /* 使文本垂直居中，可以根据需要进行调整 */
-        }
-        .custom-btn {
-            background-color: #336699; /* 自定义颜色的背景色 */
-            color: white; /* 文字颜色 */
-        }
-        .custom-btn2 {
-            background-color: #990033; /* 自定义颜色的背景色 */
-            color: white; /* 文字颜色 */
-        }
-    </style>
 </head>
 <body class="bg-gray">
 <jsp:include page="header.jsp"></jsp:include>
@@ -54,9 +36,9 @@
         <script type="text/html" id="actionBar">
             <!-- 删除按钮的HTML代码 -->
 
-            <a class="layui-btn custom-btn layui-btn-xs" lay-event="albums">公开相册列表</a>
-            <a class="layui-btn custom-btn layui-btn-xs" lay-event="infromation">好友信息</a>
-            <a class="layui-btn custom-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+            <a class="layui-btn layui-btn-xs" lay-event="albums">公开相册列表</a>
+            <a class="layui-btn layui-btn-xs" lay-event="infromation">好友信息</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
         </script>
 
         <script>
@@ -99,11 +81,11 @@
                         [
                             {field: 'userId', title: '好友ID',sort:true},
                             {field: 'url', title: '头像',
-                            templet: function(d){
-                                var url='${pageContext.request.contextPath}/getAvatar?username='+encodeURIComponent(d.username);
-                                return '<div><img  src= "'+url+'" alt="" width="50px" height="50px"></a></div>';
-                            },width:80,event :'preview'
-                        },
+                                templet: function(d){
+                                    var url='${pageContext.request.contextPath}/getAvatar?username='+encodeURIComponent(d.username);
+                                    return '<div><img  src= "'+url+'" alt="" width="50px" height="50px"></a></div>';
+                                },width:80,event :'preview'
+                            },
                             {field: 'username', title: '好友名',sort:true},
                             {field: 'description', title: '好友描述',sort:true},
                             {title: '操作', align: 'center', toolbar: '#actionBar',sort:true,width:240,},
@@ -125,7 +107,6 @@
                 table.on('tool(friendshipTable)', function(obj){
                     var data = obj.data;
                     var layEvent = obj.event;
-
                     // 如果点击了删除按钮
                     if(layEvent === 'delete'){
                         var friendId = obj.data.userId;
@@ -186,6 +167,13 @@
                             },
                             content: '<div style="text-align:center"><img src="'+url+'" /></div>'
                         });
+                    }
+                    else if(layEvent === 'albums'){
+                        // 获取好友的userId
+                        var friendId = obj.data.userId;
+
+                        // 发起跳转请求，将friendId作为参数传递给控制器
+                        window.location.href = '${pageContext.request.contextPath}/me/friendalbums_page?friendid=' + friendId;
                     }
                 });
 
