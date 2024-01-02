@@ -132,8 +132,8 @@ public class PhotoServer {
     public DataResult deletePhoto(int photoId) {
         Photo photo = photoDAO.getPhotoByID(photoId);
         if (photo != null) {
-            // 在数据库中软删除照片记录
-            photoDAO.deletePhoto(photoId);
+            // 在数据库中硬删除照片记录
+            photoDAO.hardDeletePhoto(photoId);
 
             // 删除照片文件
             File photoFile = new File(photo.getPath());

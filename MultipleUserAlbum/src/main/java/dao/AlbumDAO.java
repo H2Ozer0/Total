@@ -380,7 +380,7 @@ public class AlbumDAO {
         return friendSharedAlbums;
     }
 
-    // 在 AlbumDAO 中添加方法
+    // 获取相册创建者姓名
     public String getCreatorName(int creatorID) {
         String creatorName = null;
         try {
@@ -398,6 +398,45 @@ public class AlbumDAO {
             System.err.println("获取相册创建者名字时发生异常: " + e.getMessage());
         }
         return creatorName;
+    }
+
+    // 根据AlbumID，到Favorite表里获取这个相册被收藏了多少次
+    public int getFavoritesCountByAlbumID(int albumID) {
+        int favoritesCount = 0;
+        try {
+            String query = "SELECT COUNT(*) AS FavoritesCount FROM Favorite WHERE AlbumID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, albumID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        favoritesCount = resultSet.getInt("FavoritesCount");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("查询相册收藏次数时发生异常: " + e.getMessage());
+        }
+        return favoritesCount;
+    }
+
+    // 更新收藏次数
+    public boolean updateAlbumFavoritesCount(int albumID, int favoritesCount) {
+        try {
+            String query = "UPDATE Album SET FavoritesCount = ? WHERE AlbumID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, favoritesCount);
+                preparedStatement.setInt(2, albumID);
+
+                int rowsAffected = preparedStatement.executeUpdate();
+
+                return rowsAffected > 0; // 更新成功返回true，否则返回false
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("更新相册收藏次数时发生异常: " + e.getMessage());
+        }
+        return false; // 更新失败
     }
 
     // 关闭数据库连接
@@ -455,6 +494,7 @@ public class AlbumDAO {
 //    public AlbumDAO albumDAO() {
 //        return new AlbumDAO();
 //    }
+    /*
 public static void main(String[] args) {
     AlbumDAO albumDAO = new AlbumDAO();
 
@@ -474,7 +514,7 @@ public static void main(String[] args) {
     // 关闭数据库连接
     albumDAO.closeConnection();
 }
-
+*/
 }
 
 

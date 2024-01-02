@@ -197,6 +197,20 @@ public class PhotoDAO {
         return deletedPhotos;
     }
 
+    // 彻底删除照片记录（硬删除）
+    public void hardDeletePhoto(int photoID) {
+        try {
+            String query = "DELETE FROM Photo WHERE PhotoID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, photoID);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("硬删除照片记录失败，发生数据库异常: " + e.getMessage());
+        }
+    }
+
     // 根据照片ID查询照片
     public Photo getPhotoByID(int photoID) {
         Photo photo = null;
