@@ -146,6 +146,19 @@ public class AlbumServer {
         List<Album> friendSharedAlbums = albumDAO.getFriendSharedAlbums(userID);
         return DataResult.success("get friend shared albums success", friendSharedAlbums);
     }
+    // 在 AlbumServer 中添加方法
+    public static DataResult getPublicAlbumsByUserID(int userID) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        try {
+            // 获取用户的所有公开相册
+            List<Album> publicAlbums = albumDAO.getPublicAlbumsByUserID(userID);
+
+            return DataResult.success("获取用户所有公开相册成功", publicAlbums);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return DataResult.fail("获取用户所有公开相册失败");
+        }
+    }
 
     // 在 AlbumServer 中添加方法
     public static DataResult getCreatorName(int creatorID) {

@@ -46,6 +46,26 @@ public class AlbumDAO {
         }
         return false; // 更新失败
     }
+    // 获取用户所有公开相册
+    public List<Album> getPublicAlbumsByUserID(int userID) {
+        List<Album> publicAlbums = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM Album WHERE CreatorID = ? AND IsPublic = true";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, userID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        Album album = mapResultSetToAlbum(resultSet);
+                        publicAlbums.add(album);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("根据用户ID查询公开相册列表时发生异常: " + e.getMessage());
+        }
+        return publicAlbums;
+    }
     // 插入相册记录
     public boolean insertAlbum(Album album) {
         try {
