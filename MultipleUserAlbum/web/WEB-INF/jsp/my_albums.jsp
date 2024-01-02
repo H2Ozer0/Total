@@ -15,6 +15,34 @@
     <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
     <script src="${pageContext.request.contextPath}/static/layui/layui.all.js"></script>
     <style>
+
+        body.bg-gray{
+            overflow: hidden; /* 禁用所有滚动条 */
+            background-image: url('${pageContext.request.contextPath}/static/no2.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .personal-content {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+            border: 1px solid #ccc; /* 添加边框线 */
+            padding: 10px; /* 可选：为内容添加一些内边距 */
+        }
+
+        .personal-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .personal-content dd {
+            margin-bottom: 10px;
+        }
+
+        .personal-content a {
+            text-decoration: none;
+            color: #333;
+        }
         .layui-table-view .layui-table {
             margin-top: 20px; /* 调整行间距的大小，可以根据需要进行调整 */
         }
