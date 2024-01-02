@@ -100,7 +100,6 @@
                             form.on('submit(editAlbumForm)', function (data) {
                                 var formData = data.field;
 
-                                // TODO: 发送请求更新相册信息
                                 $.ajax({
                                     url: "${pageContext.request.contextPath}/albums/editAlbum",
                                     type: "post",
