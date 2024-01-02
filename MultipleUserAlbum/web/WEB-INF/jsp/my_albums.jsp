@@ -45,7 +45,7 @@
                     ,{field:'favoritesCount',  title: '收藏数', width:80, sort: true}
                     ,{field: 'url', title: '封面',
                         templet: function(d){
-                            var url = '${pageContext.request.contextPath}/getCover?url='+encodeURIComponent(d.albumName); ;
+                            var url = '${pageContext.request.contextPath}/getCover?url='+encodeURIComponent(d.albumID); ;
                             return '<div><img  src= "'+url+'" alt="" width="50px" height="50px"></a></div>';
                         },width:80,event :'preview'
                     }
@@ -63,7 +63,7 @@
             });
             table.on('tool(album_table)',function (obj) {
                 if(obj.event === 'check'){
-                    var url = '${pageContext.request.contextPath}/CreateAlbum?albumId=' + obj.data.albumID;
+                    var url = '${pageContext.request.contextPath}/albums/showphotos?albumId=' + obj.data.albumID;
                     window.open(url,"_blank");
                 }
                 else if(obj.event === 'edit'){

@@ -28,6 +28,7 @@ public class PhotoServer {
         try {
             String userUploadPath = UPLOAD_PATH + "\\" + userId + "\\albums\\" + albumId;
             String fileName = generateFileName(file.getOriginalFilename());
+            String path=userUploadPath+'\\'+fileName;
             String filePath = absolutepath+'\\'+userUploadPath + "\\" + fileName;
 
             // 确保用户和相册目录存在
@@ -43,7 +44,7 @@ public class PhotoServer {
             // 获取当前时间
             Timestamp uploadTime = new Timestamp(System.currentTimeMillis());
             // 创建照片对象
-            Photo photo = new Photo(albumId, title,filePath, uploadTime, false);
+            Photo photo = new Photo(albumId, title,path, uploadTime, false);
             photoDAO.insertPhoto(photo);
 
             return DataResult.success("照片上传成功", photo);
@@ -71,7 +72,7 @@ public class PhotoServer {
     // 上传用户头像
     public DataResult uploadAvatar(MultipartFile file, int userId) {
         try {
-            String fileName = userId + ".jpg";
+            String fileName = userId + ".png";
             String filePath = AVATAR_PATH + "/" + fileName;
 
             // 保存文件
@@ -87,7 +88,7 @@ public class PhotoServer {
 
     // 获取用户头像
     public DataResult getAvatar(int userId) {
-        String fileName = userId + ".jpg";
+        String fileName = userId + ".png";
         String avatarPath = AVATAR_PATH + "/" + fileName;
 
         File avatarFile = new File(avatarPath);
@@ -101,7 +102,7 @@ public class PhotoServer {
     // 上传相册封面
     public DataResult uploadAlbumCover(MultipartFile file, int albumId) {
         try {
-            String fileName = albumId + "_cover.jpg";
+            String fileName = albumId + ".png";
             String filePath = ALBUM_COVER_PATH + "/" + fileName;
 
             // 保存文件
@@ -117,7 +118,7 @@ public class PhotoServer {
 
     // 获取相册封面
     public DataResult getAlbumCover(int albumId) {
-        String fileName = albumId + "_cover.jpg";
+        String fileName = albumId + ".png";
         String coverPath = ALBUM_COVER_PATH + "/" + fileName;
 
         File coverFile = new File(coverPath);
@@ -129,14 +130,14 @@ public class PhotoServer {
     }
 
     // 根据照片ID删除照片
-    public DataResult deletePhoto(int photoId) {
+    public DataResult deletePhoto(int photoId,String filepath) {
         Photo photo = photoDAO.getPhotoByID(photoId);
         if (photo != null) {
-            // 在数据库中软删除照片记录
-            photoDAO.deletePhoto(photoId);
+            // 在数据库中硬删除照片记录
+            photoDAO.hardDeletePhoto(photoId);
 
             // 删除照片文件
-            File photoFile = new File(photo.getPath());
+            File photoFile = new File(filepath);
             if (photoFile.exists()) {
                 photoFile.delete();
             }

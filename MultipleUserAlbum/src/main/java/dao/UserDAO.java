@@ -4,7 +4,9 @@ import entity.User;
 import server.UserServer;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UserDAO {
@@ -168,16 +170,18 @@ public class UserDAO {
         }
     }
 
-    public void deleteUser(int userId) {
+    //删除用户
+    public boolean deleteUser(int userId) {
         try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM " + TABLE_NAME + " WHERE " + COLUMN_USER_ID + " = ?")) {
             preparedStatement.setInt(1, userId);
 
-            preparedStatement.executeUpdate();
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false; // 删除失败时返回 false
         }
     }
-
 
     public boolean updatePassword(int userId, String newPassword) {
         try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE " + TABLE_NAME + " SET " + COLUMN_PASSWORD + " = ? WHERE " + COLUMN_USER_ID + " = ?")) {
@@ -216,6 +220,28 @@ public class UserDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    //获取除自己以外所有用户
+    public List<User> getAllUsersExceptCurrentUser(int currentUserId) {
+        List<User> users = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_USER_ID + " != ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, currentUserId);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        User user = mapResultSetToUser(resultSet);
+                        users.add(user);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // 记录查询异常日志
+            System.err.println("获取除当前用户以外所有用户时发生异常: " + e.getMessage());
+        }
+        return users;
     }
 
     public void closeConnection() {

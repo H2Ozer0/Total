@@ -152,6 +152,17 @@ public class UserServer implements ServletContextAware {
         return dataResult;
 
     }
+
+    // 删除用户
+    public DataResult deleteUser(int userId) {
+        UserDAO userDAO=new UserDAO();
+        boolean isDeleted = userDAO.deleteUser(userId);
+        if (isDeleted) {
+            return DataResult.success("用户删除成功",null);
+        } else {
+            return DataResult.fail("用户删除失败");
+        }
+    }
     //编辑用户名
     public DataResult editUsername(int userId,String name){
         UserDAO userDAO=new UserDAO();
@@ -295,5 +306,18 @@ public class UserServer implements ServletContextAware {
         userDAO.closeConnection();
         return dataResult;
     }
+
+    //获取除自己以外所有用户
+    public DataResult getAllUsersExceptCurrent(int currentUserId) {
+        UserDAO userDAO=new UserDAO();
+        try {
+            List<User> users = userDAO.getAllUsersExceptCurrentUser(currentUserId);
+            return DataResult.success("获取除当前用户以外所有用户成功", users);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return DataResult.fail("获取除当前用户以外所有用户失败");
+        }
+    }
+
 
 }

@@ -118,6 +118,31 @@ public class LikeDAO {
         return liked;
     }
 
+    // 方法：检查用户是否点赞了相册
+    public boolean hasUserLikedAlbum(int userID, int albumID) {
+        try {
+            // 检查相册是否存在
+            if (!albumExists(albumID)) {
+                throw new IllegalArgumentException("指定的相册不存在。AlbumID: " + albumID);
+            }
+
+            // 检查用户是否已经点赞了相册
+            String query = "SELECT COUNT(*) AS LikeCount FROM LikeTable WHERE UserID = ? AND AlbumID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, userID);
+                preparedStatement.setInt(2, albumID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    return resultSet.next() && resultSet.getInt("LikeCount") > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("检查用户是否点赞了相册时发生异常：" + e.getMessage());
+        }
+        return false; // 在发生异常或相册不存在的情况下返回 false
+    }
+
+
     public void closeConnection() {
         try {
             if (connection != null && !connection.isClosed()) {
@@ -131,15 +156,11 @@ public class LikeDAO {
 
     public static void main(String[] args) {
         LikeDAO likeDAO = new LikeDAO();
-
-        // 插入点赞记录
-        Like newLike = new Like(1, 1, Timestamp.valueOf("2023-01-02 14:30:00"));
-        likeDAO.insertLike(newLike);
-
-        // 查询某相册的点赞数
-        int likeCount = likeDAO.getLikeCountByAlbum(newLike.getAlbumID());
-        System.out.println("Album Like Count: " + likeCount);
-
+        /// 检查用户是否已经点赞了相册
+        int userID = 1;  // 替换成你的用户ID
+        int albumID = 2; // 替换成你的相册ID
+        boolean hasLiked = likeDAO.hasUserLikedAlbum(userID, albumID);
+        System.out.println("User has liked the album: " + hasLiked);
         // 关闭数据库连接
         likeDAO.closeConnection();
     }

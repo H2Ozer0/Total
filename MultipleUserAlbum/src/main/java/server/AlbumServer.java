@@ -147,6 +147,58 @@ public class AlbumServer {
         return DataResult.success("get friend shared albums success", friendSharedAlbums);
     }
 
+    // 在 AlbumServer 中添加方法
+    public static DataResult getCreatorName(int creatorID) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        String creatorName = albumDAO.getCreatorName(creatorID);
+        return DataResult.success("get creator name success", creatorName);
+    }
+
+    // 在 AlbumServer 中调用方法更新相册的收藏次数
+    public DataResult updateAlbumFavoritesCount(int albumId) {
+        AlbumDAO albumDAO = new AlbumDAO();
+        try {
+            // 获取相册收藏次数
+            int favoritesCount = albumDAO.getFavoritesCountByAlbumID(albumId);
+
+            // 更新相册表中的FavoritesCount字段
+            boolean updateSuccess = albumDAO.updateAlbumFavoritesCount(albumId, favoritesCount);
+
+            if (updateSuccess) {
+                return DataResult.success("更新相册收藏次数成功", null);
+            } else {
+                return DataResult.fail("更新相册收藏次数失败");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return DataResult.fail("更新相册收藏次数失败");
+        }
+    }
+
+    // 获取所有相册列表
+    public DataResult getAllAlbums() {
+        AlbumDAO albumDAO = new AlbumDAO();
+        try {
+            List<Album> allAlbums = albumDAO.getAllAlbums();
+
+            return DataResult.success("获取所有相册列表成功", allAlbums);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return DataResult.fail("获取所有相册列表失败");
+        }
+    }
+
+    // 获取所有公开相册
+    public DataResult getAllPublicAlbums() {
+        AlbumDAO albumDAO = new AlbumDAO();
+        List<Album> publicAlbums = albumDAO.getAllPublicAlbums();
+        if (!publicAlbums.isEmpty()) {
+            return DataResult.success("获取所有公开相册成功", publicAlbums);
+        } else {
+            return DataResult.fail("没有公开相册");
+        }
+    }
+
     // 关闭数据库连接
     public static DataResult closeConnection() {
         AlbumDAO albumDAO = new AlbumDAO();

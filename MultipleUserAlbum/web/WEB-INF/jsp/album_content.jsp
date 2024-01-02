@@ -224,10 +224,6 @@
                             </c:if>
                         </c:if>
 
-
-                        <a href="/sendMessage?id=${albumInfo.creatorID}">
-                        <button type="button" class="layui-btn">私信</button>
-                        </a>
                     </div>
                 </c:if>
             </div>
@@ -235,15 +231,12 @@
     </div>
 </div>
 
-<%--展示照片--%>
-<div style="margin-top: 20px">
-    <c:forEach var="photo" items="${photoList}">
-        <div class="album-photo vertical">
-            <img src="/getImage?url=${photo.path}"/>
-            <div class="gray-color">${photo.title}</div>
-        </div>
-    </c:forEach>
-
+<%--展示相册封面--%>
+<div style="margin-top: 20px; text-align: center;">
+    <div class="album-cover vertical" style="line-height: 600px;">
+        <!-- 添加 max-width 和 max-height 样式以等比例缩放图像 -->
+        <img src="${pageContext.request.contextPath}/getCover?url=${albumInfo.albumID}" style="max-width: 900px; max-height: 900px;margin: auto;" />
+    </div>
 </div>
 <!-- 分享按钮 -->
 <div>

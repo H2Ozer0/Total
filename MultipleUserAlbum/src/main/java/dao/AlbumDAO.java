@@ -380,6 +380,105 @@ public class AlbumDAO {
         return friendSharedAlbums;
     }
 
+    // 获取相册创建者姓名
+    public String getCreatorName(int creatorID) {
+        String creatorName = null;
+        try {
+            String query = "SELECT UserName FROM User WHERE UserID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, creatorID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        creatorName = resultSet.getString("UserName");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("获取相册创建者名字时发生异常: " + e.getMessage());
+        }
+        return creatorName;
+    }
+
+    // 根据AlbumID，到Favorite表里获取这个相册被收藏了多少次
+    public int getFavoritesCountByAlbumID(int albumID) {
+        int favoritesCount = 0;
+        try {
+            String query = "SELECT COUNT(*) AS FavoritesCount FROM Favorite WHERE AlbumID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, albumID);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        favoritesCount = resultSet.getInt("FavoritesCount");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("查询相册收藏次数时发生异常: " + e.getMessage());
+        }
+        return favoritesCount;
+    }
+
+    // 更新收藏次数
+    public boolean updateAlbumFavoritesCount(int albumID, int favoritesCount) {
+        try {
+            String query = "UPDATE Album SET FavoritesCount = ? WHERE AlbumID = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, favoritesCount);
+                preparedStatement.setInt(2, albumID);
+
+                int rowsAffected = preparedStatement.executeUpdate();
+
+                return rowsAffected > 0; // 更新成功返回true，否则返回false
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("更新相册收藏次数时发生异常: " + e.getMessage());
+        }
+        return false; // 更新失败
+    }
+
+    // 获取所有相册列表
+    public List<Album> getAllAlbums() {
+        List<Album> allAlbums = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM Album";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        Album album = mapResultSetToAlbum(resultSet);
+                        allAlbums.add(album);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // 记录查询异常日志
+            System.err.println("获取所有相册列表时发生异常: " + e.getMessage());
+        }
+        return allAlbums;
+    }
+
+    //获取所有公开相册
+    public List<Album> getAllPublicAlbums() {
+        List<Album> publicAlbums = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM Album WHERE IsPublic = 1";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query);
+                 ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    Album album = mapResultSetToAlbum(resultSet);
+                    publicAlbums.add(album);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("获取所有公开相册时发生异常: " + e.getMessage());
+        }
+        return publicAlbums;
+    }
+
     // 关闭数据库连接
     public boolean closeConnection() {
         try {
@@ -435,6 +534,6 @@ public class AlbumDAO {
 //    public AlbumDAO albumDAO() {
 //        return new AlbumDAO();
 //    }
-}
 
+}
 

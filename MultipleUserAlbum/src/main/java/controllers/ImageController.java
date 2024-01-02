@@ -78,4 +78,52 @@ public class ImageController {
         handleRp(rp,absolutepath,filename, 1);
 
     }
+    @RequestMapping("/getphoto")
+    @ResponseBody
+    public void getphoto(@RequestParam("path")String path,HttpServletResponse rp,HttpServletRequest request)
+    {
+        String truepath=convertToBackslash(path);
+        String absolutepath = request.getServletContext().getRealPath("");
+        System.out.println("接收到请求"+path);
+        getPhoto(rp,absolutepath,truepath,0);
+    }
+
+    public static String convertToBackslash(String input) {
+        // 将所有正斜杠替换为反斜杠
+        return input.replace("/", "\\");
+    }
+    public void getPhoto(HttpServletResponse rp,String absolutepath,String filepath,int type) {
+        String filePath=absolutepath+filepath;
+        String DEFAULT_PATH=absolutepath+DEAFULT;
+        File imageFile = new File(filePath);
+        if(!imageFile.exists()) {
+            System.out.println("照片不存在"+filePath);
+            imageFile = new File(DEFAULT_PATH);
+        }
+        if (imageFile.exists()) {
+            System.out.println("照片存在");
+            FileInputStream fis = null;
+            OutputStream os = null;
+            try {
+                fis = new FileInputStream(imageFile);
+                os = rp.getOutputStream();
+                int count = 0;
+                byte[] buffer = new byte[1024 * 8];
+                while ((count = fis.read(buffer)) != -1) {
+                    os.write(buffer, 0, count);
+                    os.flush();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    fis.close();
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
